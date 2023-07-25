@@ -18,6 +18,7 @@ defmodule ElixirconfChatWeb.Router do
     pipe_through(:browser)
 
     live("/hello", HelloLive)
+    live("/auth", AuthLive)
 
     get("/", PageController, :home)
   end

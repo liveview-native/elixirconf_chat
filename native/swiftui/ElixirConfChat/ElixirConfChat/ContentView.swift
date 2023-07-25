@@ -7,11 +7,23 @@
 
 import SwiftUI
 import LiveViewNative
+import LiveViewNativeLiveForm
+
+struct MyRegistry: CustomRegistry {
+    typealias Root = AppRegistries
+}
+
+struct AppRegistries: AggregateRegistry {
+    typealias Registries = Registry2<
+        MyRegistry,
+        LiveFormRegistry<Self>
+    >
+}
 
 struct ContentView: View {
     var body: some View {
-        LiveView(
-            .localhost(path: "hello"),
+        LiveView<AppRegistries>(
+            .localhost(path: "auth"),
             configuration: LiveSessionConfiguration(navigationMode: .enabled)
         )
     }

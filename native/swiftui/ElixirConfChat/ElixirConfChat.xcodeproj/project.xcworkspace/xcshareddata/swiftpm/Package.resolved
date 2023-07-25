@@ -19,6 +19,15 @@
       }
     },
     {
+      "identity" : "liveview-native-live-form",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/liveview-native/liveview-native-live-form",
+      "state" : {
+        "branch" : "main",
+        "revision" : "fa0c94d891078bf5ff7bc8104ef358ef47ad3e76"
+      }
+    },
+    {
       "identity" : "swift-argument-parser",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-argument-parser",
