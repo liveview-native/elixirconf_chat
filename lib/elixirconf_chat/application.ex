@@ -17,7 +17,9 @@ defmodule ElixirconfChat.Application do
       # Start Finch
       {Finch, name: ElixirconfChat.Finch},
       # Start the Endpoint (http/https)
-      ElixirconfChatWeb.Endpoint
+      ElixirconfChatWeb.Endpoint,
+      # Start Oban job processing system
+      {Oban, Application.fetch_env!(:elixirconf_chat, Oban)},
       # Start a worker by calling: ElixirconfChat.Worker.start_link(arg)
       # {ElixirconfChat.Worker, arg}
     ]
