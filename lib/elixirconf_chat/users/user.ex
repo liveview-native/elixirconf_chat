@@ -6,12 +6,15 @@ defmodule ElixirconfChat.Users.User do
     field :email, :string
     field :first_name, :string
     field :last_name, :string
+    field :login_code, :string
+    field :login_code_expires_at, :naive_datetime
 
     timestamps()
   end
 
-  @allowed_fields ~w(email first_name last_name)a
+  @optional_fields ~w(login_code login_code_expires_at)a
   @required_fields ~w(email first_name last_name)a
+  @allowed_fields @optional_fields ++ @required_fields
 
   def changeset(user, attrs) do
     user

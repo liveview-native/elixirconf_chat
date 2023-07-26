@@ -2,6 +2,8 @@ defmodule ElixirconfChatWeb.AuthLive do
   use Phoenix.LiveView
   use LiveViewNative.LiveView
 
+  alias ElixirconfChat.Users
+
   @impl true
   def render(%{platform_id: :swiftui} = assigns) do
     ~SWIFTUI"""
@@ -15,35 +17,27 @@ defmodule ElixirconfChatWeb.AuthLive do
         <Text><%= welcome_message() %></Text>
         <Spacer />
       </HStack>
-      <VStack>
-        <LiveForm id="login" phx-submit="login">
-          <HStack>
-            <Spacer modifiers={frame(width: 16)} />
-            <TextField name="email" modifiers={frame(height: 48)}>
+      <%= if assigns[:success] do %>
+        <VStack>
+          <Text id="success-message">Success! Check your email for magic link</Text>
+        </VStack>
+      <% else %>
+        <VStack>
+          <LiveForm id="login" phx-submit="login">
+            <TextField name="email" modifiers={frame(height: 48) |> text_input_autocapitalization(autocapitalization: :never)}>
               Email
             </TextField>
-            <Spacer modifiers={frame(width: 16)} />
-          </HStack>
-          <Spacer modifiers={frame(height: 16)} />
-          <HStack modifiers={multiline_text_alignment(alignment: :trailing)}>
-            <LiveSubmitButton>
-              <Text modifiers={
-                background(content: :text_bg)
-                |> foreground_style({:color, :white})
-              }>
-                Enter
-                <RoundedRectangle
-                  template={:text_bg}
-                  corner-radius="8"
-                  modifiers={
-                    frame(width: 92, height: 48)
-                    |> foreground_style({:color, "#6558f5"})
-                  } />
-              </Text>
+            <LiveSubmitButton modifiers={button_style(style: :bordered_prominent) |> tint(color: "#6558f5")}>
+              <Text>Enter</Text>
             </LiveSubmitButton>
-          </HStack>
-        </LiveForm>
-      </VStack>
+            <%= if assigns[:error] do %>
+              <Text modifiers={foreground_style({:color, :red})}>
+                <%= @error %>
+              </Text>
+            <% end %>
+          </LiveForm>
+        </VStack>
+      <% end %>
       <Spacer />
     </VStack>
     """
@@ -64,12 +58,22 @@ defmodule ElixirconfChatWeb.AuthLive do
   end
 
   @impl true
-  def handle_event("login", %{"email" => _email}, socket) do
-    {:noreply, socket}
+  def handle_event("login", %{"email" => email}, socket) do
+    case Users.get_user_by_email(email) do
+      nil ->
+        {:noreply, assign(socket, error: no_user_error(), success: false)}
+
+      user ->
+        {:noreply, assign(socket, error: nil, success: true)}
+    end
   end
 
   ###
 
   defp welcome_heading, do: "Welcome to ElixirConf 2023 Chat!"
+
   defp welcome_message, do: "Enter your email you used to register to get started"
+
+  defp no_user_error,
+    do: "There was no user associated. Try again or contact the conference staff."
 end
