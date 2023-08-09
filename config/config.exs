@@ -61,18 +61,18 @@ config :phoenix, :json_library, Jason
 
 # Define platform support for LiveView Native
 config :live_view_native,
-  platforms: [
-    LiveViewNativeSwiftUi.Platform
+  plugins: [
+    LiveViewNativeSwiftUi
   ]
-
-config :live_view_native, LiveViewNativeSwiftUi.Platform,
-  app_name: "ElixirConf Chat"
 
 # Use Oban for background job processing
 config :elixirconf_chat, Oban,
   repo: ElixirconfChat.Repo,
   plugins: [Oban.Plugins.Pruner],
   queues: [default: 10]
+
+# Use Tzdata time zone database
+config :elixir, :time_zone_database, Tz.TimeZoneDatabase
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

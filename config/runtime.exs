@@ -20,7 +20,23 @@ if System.get_env("PHX_SERVER") do
   config :elixirconf_chat, ElixirconfChatWeb.Endpoint, server: true
 end
 
+if config_env() in [:dev, :test] do
+  # Session token configuration
+  config :elixirconf_chat, token_salt: "elixirconfdev"
+end
+
 if config_env() == :prod do
+  # Session token configuration
+  token_salt =
+    System.get_env("TOKEN_SALT") ||
+      raise """
+      environment variable TOKEN_SALT is missing.
+      This field is required to support session tokens.
+      """
+
+  config :elixirconf_chat, token_salt: token_salt
+
+  # Ecto / PostgreSQL configuration
   database_url =
     System.get_env("DATABASE_URL") ||
       raise """

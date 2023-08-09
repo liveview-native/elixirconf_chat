@@ -11,6 +11,10 @@ import LiveViewNativeLiveForm
 
 struct MyRegistry: CustomRegistry {
     typealias Root = AppRegistries
+
+    static func loadingView(for url: URL, state: LiveSessionState) -> some View {
+        ProgressView()
+    }
 }
 
 struct AppRegistries: AggregateRegistry {
@@ -23,8 +27,8 @@ struct AppRegistries: AggregateRegistry {
 struct ContentView: View {
     var body: some View {
         LiveView<AppRegistries>(
-            .localhost(path: "auth"),
-            configuration: LiveSessionConfiguration(navigationMode: .enabled)
+            .localhost,
+            configuration: LiveSessionConfiguration(navigationMode: .replaceOnly)
         )
     }
 }

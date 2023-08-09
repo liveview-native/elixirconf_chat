@@ -1,18 +1,22 @@
 defmodule ElixirconfChatWeb.AuthLive do
   use Phoenix.LiveView
   use LiveViewNative.LiveView
-  import ElixirconfChatWeb.AuthComponents, only: [logo: 1]
+  import ElixirconfChatWeb.SharedComponents, only: [logo: 1]
 
   alias ElixirconfChat.Auth
   alias ElixirconfChat.Users
   alias ElixirconfChat.Users.User
+
+  on_mount ElixirconfChatWeb.LiveSession
+
+  native_binding :token, :string, default: "", persist: :global
 
   @impl true
   def render(%{platform_id: :swiftui} = assigns) do
     ~SWIFTUI"""
     <VStack modifiers={multiline_text_alignment(alignment: :center) |> text_field_style(style: :rounded_border)}}>
       <Spacer />
-      <.logo platform_id={:swiftui} />
+      <.logo height={256} width={256} platform_id={:swiftui} />
       <VStack>
         <%= if assigns[:user] do %>
           <.login_code_form platform_id={:swiftui} />
@@ -25,6 +29,7 @@ defmodule ElixirconfChatWeb.AuthLive do
           </Text>
         <% end %>
       </VStack>
+      <TextField modclass="hidden" value-binding="token" />
       <Spacer />
     </VStack>
     """
@@ -59,10 +64,16 @@ defmodule ElixirconfChatWeb.AuthLive do
 
   @impl true
   def handle_event("verify_code", %{"login_code" => login_code}, socket) do
-    with %User{login_code: user_login_code} when is_binary(user_login_code) <- Map.get(socket.assigns, :user),
-         {:login_code_valid?, true} <- {:login_code_valid?, login_code == user_login_code}
+    with %User{id: user_id, login_code: user_login_code} when is_binary(user_login_code) <- Map.get(socket.assigns, :user),
+         {:login_code_valid?, true} <- {:login_code_valid?, login_code == user_login_code},
+         token <- Auth.generate_token(user_id)
     do
-      {:noreply, push_navigate(socket, to: "/hello")}
+      socket =
+        socket
+        |> push_navigate(to: "/chat", replace: true)
+        # |> assign_native_bindings(%{token: token})
+
+      {:noreply, socket}
     else
       {:login_code_valid?, false} ->
         {:noreply, assign(socket, error: "That code did not match the email associated.")}
@@ -124,5 +135,10 @@ defmodule ElixirconfChatWeb.AuthLive do
       </HStack>
     </VStack>
     """
+  end
+
+  def modclass(native, "hidden") do
+    native
+    |> hidden(true)
   end
 end

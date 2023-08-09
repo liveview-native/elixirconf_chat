@@ -5,6 +5,9 @@ defmodule ElixirconfChat.Application do
 
   use Application
 
+  alias ElixirconfChat.Chat
+  alias ElixirconfChat.Chat.RoomSupervisor
+
   @impl true
   def start(_type, _args) do
     children = [
@@ -22,6 +25,8 @@ defmodule ElixirconfChat.Application do
       {Oban, Application.fetch_env!(:elixirconf_chat, Oban)},
       # Start a worker by calling: ElixirconfChat.Worker.start_link(arg)
       # {ElixirconfChat.Worker, arg}
+      {DynamicSupervisor, strategy: :one_for_one, name: RoomSupervisor},
+      {Task, &on_start/0}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
@@ -36,5 +41,13 @@ defmodule ElixirconfChat.Application do
   def config_change(changed, _new, removed) do
     ElixirconfChatWeb.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  def on_start do
+    rooms = Chat.all_rooms()
+
+    for room <- rooms do
+      RoomSupervisor.start_child(room.id)
+    end
   end
 end

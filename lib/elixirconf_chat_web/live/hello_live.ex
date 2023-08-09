@@ -3,16 +3,14 @@ defmodule ElixirconfChatWeb.HelloLive do
   use LiveViewNative.LiveView
 
   @impl true
-  def render(%{platform_id: :swiftui} = assigns) do
-    ~SWIFTUI"""
-    <Text>Hello world on iOS!</Text>
-    """
+  def mount(_params, _session, socket) do
+    if connected?(socket) do
+      {:ok, push_navigate(socket, to: "/", replace: true)}
+    else
+      {:ok, socket}
+    end
   end
 
   @impl true
-  def render(assigns) do
-    ~H"""
-    <div>Hello world on the web!</div>
-    """
-  end
+  def render(%{platform_id: :swiftui} = assigns), do: ~SWIFTUI""
 end
