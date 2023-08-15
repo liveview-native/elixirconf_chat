@@ -7,13 +7,14 @@ defmodule ElixirconfChat.Chat.Message do
 
   schema "messages" do
     field :body, :string
+    field :posted_at, :naive_datetime
 
     belongs_to :room, Room
     belongs_to :user, User
   end
 
   @optional_fields ~w()a
-  @required_fields ~w(body room_id user_id)a
+  @required_fields ~w(body posted_at room_id user_id)a
   @allowed_fields @optional_fields ++ @required_fields
 
   def changeset(room, attrs) do

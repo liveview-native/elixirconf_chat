@@ -27,7 +27,7 @@ struct AppRegistries: AggregateRegistry {
 struct ContentView: View {
     var body: some View {
         LiveView<AppRegistries>(
-            .localhost,
+            .localhost(path: "/"),
             configuration: LiveSessionConfiguration(navigationMode: .replaceOnly)
         )
     }

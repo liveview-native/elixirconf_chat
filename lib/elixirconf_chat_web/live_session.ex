@@ -7,15 +7,14 @@ defmodule ElixirconfChatWeb.LiveSession do
   alias ElixirconfChat.Auth
 
   def on_mount(_key, params, session, socket) do
-    IO.puts "on_mount called"
-    with [_ | _] = global_native_bindings <- Map.get(socket.assigns, :global_native_bindings),
-         token when is_binary(token) <- Keyword.get(global_native_bindings, :token),
-         {:ok, user_id} <- Auth.verify_token(token),
-         %{} = user <- ElixirconfChat.Users.get_user(user_id)
+    with [_ | _] = global_native_bindings <- Map.get(socket.assigns, :global_native_bindings) |> IO.inspect(),
+         token when is_binary(token) <- Keyword.get(global_native_bindings, :token) |> IO.inspect(),
+         {:ok, user_id} <- Auth.verify_token(token) |> IO.inspect(),
+         %{} = user <- ElixirconfChat.Users.get_user(user_id) |> IO.inspect()
     do
       {:cont, assign(socket, :current_user, user)}
     else
-      _result ->
+      result ->
         {:cont, socket}
     end
   end

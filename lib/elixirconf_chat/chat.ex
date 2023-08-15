@@ -39,7 +39,6 @@ defmodule ElixirconfChat.Chat do
 
     if room do
       %Room{room | server_state: Server.get_state(room_id)}
-      |> Repo.preload(:messages)
     else
       nil
     end
@@ -62,8 +61,8 @@ defmodule ElixirconfChat.Chat do
   @doc """
   Posts a Message to a Room by ID.
   """
-  def post_message(room_id, message, opts) do
-    Server.post(room_id, message, opts)
+  def post_message(room_id, params) do
+    Server.post(room_id, params)
   end
 
   @doc """

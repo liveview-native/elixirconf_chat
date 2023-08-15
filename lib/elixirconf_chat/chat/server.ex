@@ -6,7 +6,7 @@ defmodule ElixirconfChat.Chat.Server do
   alias ElixirconfChat.Chat.Message
 
   @initial_state [
-    log: [],
+    messages: [],
     subscribers: %{}
   ]
 
@@ -35,8 +35,8 @@ defmodule ElixirconfChat.Chat.Server do
     call_room(room_id, {:leave, pid})
   end
 
-  def post(room_id, message, opts) do
-    call_room(room_id, {:post, message, opts})
+  def post(room_id, params) do
+    call_room(room_id, {:post, params})
   end
 
   def call_room(room_id, message) do
@@ -51,11 +51,12 @@ defmodule ElixirconfChat.Chat.Server do
     {:ok, initial_state}
   end
 
-  def handle_call({:post_message, %{} = params}, _from, %{subscribers: %{} = subscribers} = state) do
+  def handle_call({:post, params}, _from, %{subscribers: %{} = subscribers} = state) do
     case Message.changeset(%Message{}, params) do
       %Ecto.Changeset{valid?: true} = message ->
-        new_log = Enum.concat(state.log || [], [message])
-        new_state = %{state | log: new_log}
+        message = Ecto.Changeset.apply_changes(message)
+        new_messages = Enum.concat(state.messages || [], [message])
+        new_state = %{state | messages: new_messages}
         notify_subscribers(subscribers, {:new_message, message})
 
         {:reply, :ok, new_state}
@@ -87,13 +88,6 @@ defmodule ElixirconfChat.Chat.Server do
     {:reply, :ok, %{state | subscribers: updated_subscribers}}
   end
 
-  def handle_call({:post, message, opts}, _from, %{subscribers: %{} = _subscribers} = state) do
-    IO.inspect message
-    IO.inspect opts
-
-    {:reply, :ok, state}
-  end
-
   def handle_info({:DOWN, _ref, :process, pid, _reason}, %{subscribers: %{} = subscribers} = state) do
     updated_subscribers = Map.delete(subscribers, pid)
 
@@ -103,6 +97,7 @@ defmodule ElixirconfChat.Chat.Server do
   # Private functions
 
   defp notify_subscribers(subscribers, message) do
+    IO.inspect subscribers
     Enum.each(subscribers, fn {pid, _monitor_ref} -> send(pid, message) end)
   end
 end

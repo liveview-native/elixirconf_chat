@@ -4,10 +4,9 @@ defmodule ElixirconfChat.Repo.Migrations.AddMessagesTable do
   def change do
     create table(:messages) do
       add :body, :text, null: false
+      add :posted_at, :naive_datetime
       add :room_id, references(:rooms), null: false
       add :user_id, references(:users), null: false
-
-      timestamps()
     end
   end
 end

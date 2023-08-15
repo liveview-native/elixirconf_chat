@@ -12,11 +12,22 @@ defmodule ElixirconfChatWeb.AuthLive do
   native_binding :token, :string, default: "", persist: :global
 
   @impl true
+  def mount(_params, _session, socket) do
+    case socket.assigns do
+      %{current_user: %User{}, platform_id: :swiftui} ->
+        {:ok, push_navigate(socket, to: "/chat")}
+
+      _ ->
+        {:ok, socket}
+    end
+  end
+
+  @impl true
   def render(%{platform_id: :swiftui} = assigns) do
     ~SWIFTUI"""
     <VStack modifiers={multiline_text_alignment(alignment: :center) |> text_field_style(style: :rounded_border)}}>
       <Spacer />
-      <.logo height={256} width={256} platform_id={:swiftui} />
+      <.logo platform_id={:swiftui} height={256} width={256} />
       <VStack>
         <%= if assigns[:user] do %>
           <.login_code_form platform_id={:swiftui} />
@@ -70,8 +81,8 @@ defmodule ElixirconfChatWeb.AuthLive do
     do
       socket =
         socket
+        |> assign_native_bindings(%{token: token}) # TODO: Fix this
         |> push_navigate(to: "/chat", replace: true)
-        # |> assign_native_bindings(%{token: token})
 
       {:noreply, socket}
     else

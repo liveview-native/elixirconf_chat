@@ -129,7 +129,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 2F9982FB2A60800400F76113 /* Build configuration list for PBXProject "ElixirConfChat" */;
+			buildConfigurationList = 2F9982FB2A60800400F76113 /* Build configuration list for PBXProject "ElixirconfChat" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -354,7 +354,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		2F9982FB2A60800400F76113 /* Build configuration list for PBXProject "ElixirConfChat" */ = {
+		2F9982FB2A60800400F76113 /* Build configuration list for PBXProject "ElixirconfChat" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2F99830C2A60800500F76113 /* Debug */,
@@ -379,7 +379,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/liveview-native/liveview-client-swiftui";
 			requirement = {
-				branch = "platform-updates";
+				branch = main;
 				kind = branch;
 			};
 		};
@@ -387,7 +387,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/liveview-native/liveview-native-live-form";
 			requirement = {
-				branch = "temp--use-platform-updates-branch";
+				branch = main;
 				kind = branch;
 			};
 		};
