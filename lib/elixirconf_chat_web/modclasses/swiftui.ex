@@ -1,21 +1,6 @@
 defmodule ElixirconfChatWeb.Modclasses.SwiftUi do
   use LiveViewNative.Modclasses, platform: :swiftui
 
-  @fonts ~w(
-    large_title
-    title
-    title2
-    title3
-    headline
-    subheadline
-    body
-    callout
-    footnote
-    caption
-    caption2
-  )a
-  @font_names Enum.map(@fonts, &Atom.to_string/1)
-
   def modclass(native, "button-style-" <> button_style, _assigns) do
     button_style(native, style: modclass_value(button_style, :atom))
   end
@@ -64,10 +49,6 @@ defmodule ElixirconfChatWeb.Modclasses.SwiftUi do
     resizable(native, resizing_mode: :stretch)
   end
 
-  def modclass(native, "font-" <> font, _assigns) when font in @fonts or font in @font_names do
-    font(native, font: {:system, modclass_value(font, :atom)})
-  end
-
   def modclass(native, "italic", _assigns) do
     italic(native, is_active: true)
   end
@@ -90,6 +71,23 @@ defmodule ElixirconfChatWeb.Modclasses.SwiftUi do
 
   def modclass(native, "font-weight-" <> weight, _assigns) do
     font_weight(native, modclass_value(weight, :atom))
+  end
+
+  @fonts %{
+    "large-title" => :large_title,
+    "title" => :title,
+    "title2" => :title2,
+    "title3" => :title3,
+    "headline" => :headline,
+    "subheadline" => :subheadline,
+    "body" => :body,
+    "callout" => :callout,
+    "footnote" => :footnote,
+    "caption" => :caption,
+    "caption2" => :caption2
+  }
+  def modclass(native, "font-" <> font, _assigns) do
+    font(native, font: {:system, Map.get(@fonts, font)})
   end
 
   def modclass(native, "line-spacing-" <> line_spacing, _assigns) do
