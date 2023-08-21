@@ -37,7 +37,6 @@ defmodule ElixirconfChatWeb.ChatLive do
         <VStack modclass="w-400">
           <HStack>
             <Text modclass="font-title font-weight-semibold h-48 ph-24">Schedule</Text>
-            <Spacer />
           </HStack>
           <.hallway {assigns} />
           <.rooms_list {assigns} />
@@ -207,19 +206,18 @@ defmodule ElixirconfChatWeb.ChatLive do
             <Spacer />
           </VStack>
         <% else %>
-          <VStack>
-            <ScrollView modclass="refreshable:refresh">
-              <%= for message <- @messages do %>
-                <.chat_message
-                  current_user_id={@current_user.id}
-                  message={message}
-                  native={@native}
-                  platform_id={:swiftui}
-                />
-              <% end %>
-              <Spacer modclass="h-32" />
-            </ScrollView>
-          </VStack>
+          <Spacer />
+          <ScrollView modclass="refreshable:refresh">
+            <%= for message <- @messages do %>
+              <.chat_message
+                current_user_id={@current_user.id}
+                message={message}
+                native={@native}
+                platform_id={:swiftui}
+              />
+            <% end %>
+          </ScrollView>
+          <Spacer />
         <% end %>
       <% end %>
     </VStack>
