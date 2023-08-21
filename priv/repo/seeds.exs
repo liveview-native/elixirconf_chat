@@ -21,6 +21,13 @@ Repo.insert! %User{
   last_name: "Matyi"
 }
 
+# Test user
+Repo.insert! %User{
+  email: "tester@dockyard.com",
+  first_name: "Testy",
+  last_name: "Tester"
+}
+
 # Schedule
 # day => [
 #   {from, to, [

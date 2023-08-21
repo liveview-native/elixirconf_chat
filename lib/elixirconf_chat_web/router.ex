@@ -17,9 +17,9 @@ defmodule ElixirconfChatWeb.Router do
   scope "/", ElixirconfChatWeb do
     pipe_through(:browser)
 
-    live("/auth", AuthLive)
+    live("/chat/:token", ChatLive)
     live("/chat", ChatLive)
-    live("/", LandingLive)
+    live("/", AuthLive)
   end
 
   # Other scopes may use custom stacks.

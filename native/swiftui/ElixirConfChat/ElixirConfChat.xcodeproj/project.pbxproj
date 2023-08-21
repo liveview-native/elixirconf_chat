@@ -7,21 +7,34 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2F83A2A72A84385500909435 /* LiveViewNative in Frameworks */ = {isa = PBXBuildFile; productRef = 2F83A2A62A84385500909435 /* LiveViewNative */; };
-		2F83A2A92A84385500909435 /* BuiltinRegistryGenerator in Frameworks */ = {isa = PBXBuildFile; productRef = 2F83A2A82A84385500909435 /* BuiltinRegistryGenerator */; };
-		2F83A2AC2A84399B00909435 /* LiveViewNativeLiveForm in Frameworks */ = {isa = PBXBuildFile; productRef = 2F83A2AB2A84399B00909435 /* LiveViewNativeLiveForm */; };
+		2F4FA3292A8F3D12003DC87C /* LiveViewNative in Frameworks */ = {isa = PBXBuildFile; productRef = 2F4FA3282A8F3D12003DC87C /* LiveViewNative */; };
+		2F4FA32B2A8F3D14003DC87C /* LiveViewNativeLiveForm in Frameworks */ = {isa = PBXBuildFile; productRef = 2F4FA32A2A8F3D14003DC87C /* LiveViewNativeLiveForm */; };
 		2F9983042A60800400F76113 /* ElixirConfChatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9983032A60800400F76113 /* ElixirConfChatApp.swift */; };
 		2F9983062A60800400F76113 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9983052A60800400F76113 /* ContentView.swift */; };
 		2F9983082A60800500F76113 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F9983072A60800500F76113 /* Assets.xcassets */; };
 		2F99830B2A60800500F76113 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F99830A2A60800500F76113 /* Preview Assets.xcassets */; };
+		2FE23A482A935ADE00D26178 /* ElixirConfChatMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FE23A472A935ADE00D26178 /* ElixirConfChatMacApp.swift */; };
+		2FE23A4A2A935ADE00D26178 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FE23A492A935ADE00D26178 /* ContentView.swift */; };
+		2FE23A4C2A935ADE00D26178 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2FE23A4B2A935ADE00D26178 /* Assets.xcassets */; };
+		2FE23A4F2A935ADE00D26178 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2FE23A4E2A935ADE00D26178 /* Preview Assets.xcassets */; };
+		2FE23A552A935B2000D26178 /* LiveViewNative in Frameworks */ = {isa = PBXBuildFile; productRef = 2FE23A542A935B2000D26178 /* LiveViewNative */; };
+		2FE23A572A935B2200D26178 /* LiveViewNativeLiveForm in Frameworks */ = {isa = PBXBuildFile; productRef = 2FE23A562A935B2200D26178 /* LiveViewNativeLiveForm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2F4FA3262A8F3C4F003DC87C /* liveview-client-swiftui */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "liveview-client-swiftui"; path = "../../../../liveview-client-swiftui"; sourceTree = "<group>"; };
+		2F4FA3272A8F3CC0003DC87C /* liveview-native-live-form */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "liveview-native-live-form"; path = "../../../../liveview-native-live-form"; sourceTree = "<group>"; };
 		2F9983002A60800400F76113 /* ElixirConfChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ElixirConfChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F9983032A60800400F76113 /* ElixirConfChatApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElixirConfChatApp.swift; sourceTree = "<group>"; };
 		2F9983052A60800400F76113 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		2F9983072A60800500F76113 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2F99830A2A60800500F76113 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		2FE23A452A935ADE00D26178 /* ElixirConfChatMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ElixirConfChatMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2FE23A472A935ADE00D26178 /* ElixirConfChatMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElixirConfChatMacApp.swift; sourceTree = "<group>"; };
+		2FE23A492A935ADE00D26178 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		2FE23A4B2A935ADE00D26178 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		2FE23A4E2A935ADE00D26178 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		2FE23A502A935ADE00D26178 /* ElixirConfChatMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ElixirConfChatMac.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,9 +42,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2F83A2A72A84385500909435 /* LiveViewNative in Frameworks */,
-				2F83A2A92A84385500909435 /* BuiltinRegistryGenerator in Frameworks */,
-				2F83A2AC2A84399B00909435 /* LiveViewNativeLiveForm in Frameworks */,
+				2F4FA32B2A8F3D14003DC87C /* LiveViewNativeLiveForm in Frameworks */,
+				2F4FA3292A8F3D12003DC87C /* LiveViewNative in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2FE23A422A935ADE00D26178 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2FE23A572A935B2200D26178 /* LiveViewNativeLiveForm in Frameworks */,
+				2FE23A552A935B2000D26178 /* LiveViewNative in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -43,6 +64,7 @@
 			children = (
 				2FCBE8252A61D09F004A443D /* Packages */,
 				2F9983022A60800400F76113 /* ElixirConfChat */,
+				2FE23A462A935ADE00D26178 /* ElixirConfChatMac */,
 				2F9983012A60800400F76113 /* Products */,
 				2FD3A81E2A82DEF700371EF8 /* Frameworks */,
 			);
@@ -52,6 +74,7 @@
 			isa = PBXGroup;
 			children = (
 				2F9983002A60800400F76113 /* ElixirConfChat.app */,
+				2FE23A452A935ADE00D26178 /* ElixirConfChatMac.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -78,6 +101,8 @@
 		2FCBE8252A61D09F004A443D /* Packages */ = {
 			isa = PBXGroup;
 			children = (
+				2F4FA3262A8F3C4F003DC87C /* liveview-client-swiftui */,
+				2F4FA3272A8F3CC0003DC87C /* liveview-native-live-form */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
@@ -87,6 +112,26 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2FE23A462A935ADE00D26178 /* ElixirConfChatMac */ = {
+			isa = PBXGroup;
+			children = (
+				2FE23A472A935ADE00D26178 /* ElixirConfChatMacApp.swift */,
+				2FE23A492A935ADE00D26178 /* ContentView.swift */,
+				2FE23A4B2A935ADE00D26178 /* Assets.xcassets */,
+				2FE23A502A935ADE00D26178 /* ElixirConfChatMac.entitlements */,
+				2FE23A4D2A935ADE00D26178 /* Preview Content */,
+			);
+			path = ElixirConfChatMac;
+			sourceTree = "<group>";
+		};
+		2FE23A4D2A935ADE00D26178 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				2FE23A4E2A935ADE00D26178 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -106,12 +151,32 @@
 			);
 			name = ElixirConfChat;
 			packageProductDependencies = (
-				2F83A2A62A84385500909435 /* LiveViewNative */,
-				2F83A2A82A84385500909435 /* BuiltinRegistryGenerator */,
-				2F83A2AB2A84399B00909435 /* LiveViewNativeLiveForm */,
+				2F4FA3282A8F3D12003DC87C /* LiveViewNative */,
+				2F4FA32A2A8F3D14003DC87C /* LiveViewNativeLiveForm */,
 			);
 			productName = ElixirConfChat;
 			productReference = 2F9983002A60800400F76113 /* ElixirConfChat.app */;
+			productType = "com.apple.product-type.application";
+		};
+		2FE23A442A935ADE00D26178 /* ElixirConfChatMac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2FE23A512A935ADE00D26178 /* Build configuration list for PBXNativeTarget "ElixirConfChatMac" */;
+			buildPhases = (
+				2FE23A412A935ADE00D26178 /* Sources */,
+				2FE23A422A935ADE00D26178 /* Frameworks */,
+				2FE23A432A935ADE00D26178 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ElixirConfChatMac;
+			packageProductDependencies = (
+				2FE23A542A935B2000D26178 /* LiveViewNative */,
+				2FE23A562A935B2200D26178 /* LiveViewNativeLiveForm */,
+			);
+			productName = ElixirConfChatMac;
+			productReference = 2FE23A452A935ADE00D26178 /* ElixirConfChatMac.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -127,6 +192,9 @@
 					2F9982FF2A60800400F76113 = {
 						CreatedOnToolsVersion = 14.3.1;
 					};
+					2FE23A442A935ADE00D26178 = {
+						CreatedOnToolsVersion = 14.3.1;
+					};
 				};
 			};
 			buildConfigurationList = 2F9982FB2A60800400F76113 /* Build configuration list for PBXProject "ElixirconfChat" */;
@@ -139,14 +207,13 @@
 			);
 			mainGroup = 2F9982F72A60800400F76113;
 			packageReferences = (
-				2F83A2A52A84385500909435 /* XCRemoteSwiftPackageReference "liveview-client-swiftui" */,
-				2F83A2AA2A84399B00909435 /* XCRemoteSwiftPackageReference "liveview-native-live-form" */,
 			);
 			productRefGroup = 2F9983012A60800400F76113 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				2F9982FF2A60800400F76113 /* ElixirConfChat */,
+				2FE23A442A935ADE00D26178 /* ElixirConfChatMac */,
 			);
 		};
 /* End PBXProject section */
@@ -161,6 +228,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2FE23A432A935ADE00D26178 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2FE23A4F2A935ADE00D26178 /* Preview Assets.xcassets in Resources */,
+				2FE23A4C2A935ADE00D26178 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -170,6 +246,15 @@
 			files = (
 				2F9983062A60800400F76113 /* ContentView.swift in Sources */,
 				2F9983042A60800400F76113 /* ElixirConfChatApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2FE23A412A935ADE00D26178 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2FE23A4A2A935ADE00D26178 /* ContentView.swift in Sources */,
+				2FE23A482A935ADE00D26178 /* ElixirConfChatMacApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -296,7 +381,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = elixirpurple;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ElixirConfChat/Preview Content\"";
@@ -325,7 +410,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = elixirpurple;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ElixirConfChat/Preview Content\"";
@@ -351,6 +436,60 @@
 			};
 			name = Release;
 		};
+		2FE23A522A935ADE00D26178 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ElixirConfChatMac/ElixirConfChatMac.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"ElixirConfChatMac/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dockyard.ElixirConfChatMac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		2FE23A532A935ADE00D26178 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ElixirConfChatMac/ElixirConfChatMac.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"ElixirConfChatMac/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dockyard.ElixirConfChatMac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -372,41 +511,32 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		2FE23A512A935ADE00D26178 /* Build configuration list for PBXNativeTarget "ElixirConfChatMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2FE23A522A935ADE00D26178 /* Debug */,
+				2FE23A532A935ADE00D26178 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		2F83A2A52A84385500909435 /* XCRemoteSwiftPackageReference "liveview-client-swiftui" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/liveview-native/liveview-client-swiftui";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
-		2F83A2AA2A84399B00909435 /* XCRemoteSwiftPackageReference "liveview-native-live-form" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/liveview-native/liveview-native-live-form";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
 /* Begin XCSwiftPackageProductDependency section */
-		2F83A2A62A84385500909435 /* LiveViewNative */ = {
+		2F4FA3282A8F3D12003DC87C /* LiveViewNative */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 2F83A2A52A84385500909435 /* XCRemoteSwiftPackageReference "liveview-client-swiftui" */;
 			productName = LiveViewNative;
 		};
-		2F83A2A82A84385500909435 /* BuiltinRegistryGenerator */ = {
+		2F4FA32A2A8F3D14003DC87C /* LiveViewNativeLiveForm */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 2F83A2A52A84385500909435 /* XCRemoteSwiftPackageReference "liveview-client-swiftui" */;
-			productName = BuiltinRegistryGenerator;
+			productName = LiveViewNativeLiveForm;
 		};
-		2F83A2AB2A84399B00909435 /* LiveViewNativeLiveForm */ = {
+		2FE23A542A935B2000D26178 /* LiveViewNative */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 2F83A2AA2A84399B00909435 /* XCRemoteSwiftPackageReference "liveview-native-live-form" */;
+			productName = LiveViewNative;
+		};
+		2FE23A562A935B2200D26178 /* LiveViewNativeLiveForm */ = {
+			isa = XCSwiftPackageProductDependency;
 			productName = LiveViewNativeLiveForm;
 		};
 /* End XCSwiftPackageProductDependency section */

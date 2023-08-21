@@ -1,8 +1,8 @@
 //
 //  ContentView.swift
-//  ElixirConfChat
+//  ElixirConfChatMac
 //
-//  Created by May Matyi on 7/13/23.
+//  Created by May Matyi on 8/21/23.
 //
 
 import SwiftUI

@@ -61,7 +61,7 @@ defmodule ElixirconfChat.Chat.Server do
 
         {:reply, :ok, new_state}
 
-      _ ->
+      result ->
         {:reply, :ok, state}
     end
   end
@@ -97,7 +97,6 @@ defmodule ElixirconfChat.Chat.Server do
   # Private functions
 
   defp notify_subscribers(subscribers, message) do
-    IO.inspect subscribers
     Enum.each(subscribers, fn {pid, _monitor_ref} -> send(pid, message) end)
   end
 end

@@ -4,12 +4,11 @@ defmodule ElixirconfChatWeb.ChatLive do
 
   alias ElixirconfChat.Chat
   alias ElixirconfChat.Chat.Room
+  alias ElixirconfChat.Utils
 
-  import ElixirconfChatWeb.SharedComponents, only: [logo: 1]
+  import ElixirconfChatWeb.Modclasses.SwiftUi, only: [modclass: 3]
 
-  on_mount ElixirconfChatWeb.LiveSession
-
-  native_binding :show_room_page, :boolean, default: false
+  on_mount ElixirconfChatWeb.AssignUser
 
   @impl true
   def mount(_params, _session, socket) do
@@ -19,12 +18,40 @@ defmodule ElixirconfChatWeb.ChatLive do
       loading_room: false,
       messages: [],
       room_id: nil,
+      room_page: false,
       room: nil,
       schedule: schedule,
-      show_room_page: false,
       sorted_days: sorted_days(schedule),
       track_labels: %{1 => "A", 2 => "B", 3 => "C"}
     )}
+  end
+
+  @impl true
+  def render(%{native: %{platform_config: %{user_interface_idiom: ui_idiom}}, platform_id: :swiftui} = assigns) when ui_idiom in ~w(mac pad) do
+    ~SWIFTUI"""
+    <VStack modclass="w-full">
+      <HStack>
+        <.logo height={48} width={48} native={@native} platform_id={:swiftui} />
+      </HStack>
+      <HStack>
+        <VStack modclass="w-400">
+          <HStack>
+            <Text modclass="font-title font-weight-semibold h-48 ph-24">Schedule</Text>
+            <Spacer />
+          </HStack>
+          <.hallway {assigns} />
+          <.rooms_list {assigns} />
+        </VStack>
+        <Spacer />
+        <VStack>
+          <%= if @room_page do %>
+            <.room_page {assigns} />
+          <% end %>
+          <Spacer modclass="h-24" />
+        </VStack>
+      </HStack>
+    </VStack>
+    """
   end
 
   @impl true
@@ -56,12 +83,7 @@ defmodule ElixirconfChatWeb.ChatLive do
     Process.send_after(self(), {:get_room, room_id}, 10)
     Chat.join_room(room_id, self())
 
-    socket =
-      socket
-      |> assign(loading_room: true)
-      |> assign_native_bindings(show_room_page: true)
-
-    {:noreply, socket}
+    {:noreply, assign(socket, loading_room: true, room_page: true)}
   end
 
   @impl true
@@ -72,29 +94,30 @@ defmodule ElixirconfChatWeb.ChatLive do
       Chat.leave_room(room_id, self())
     end
 
-    socket =
-      socket
-      |> assign(messages: [], room: nil, room_id: nil)
-      |> assign_native_bindings(show_room_page: false)
-
-    {:noreply, socket}
+    {:noreply, assign(socket, messages: [], room: nil, room_id: nil, room_page: false)}
   end
 
   @impl true
   def handle_event("post_message", %{"body" => body}, socket) do
     case socket.assigns do
-      %{current_user: %{id: user_id}, room: %{id: room_id}} ->
+      %{room: %{id: room_id}} ->
         Chat.post_message(room_id, %{
           body: body,
+          posted_at: Utils.server_time() |> DateTime.to_naive(),
           from: self(),
           room_id: room_id,
-          user_id: user_id
+          user_id: socket.assigns.current_user.id
         })
         {:noreply, socket}
 
       _ ->
         {:noreply, socket}
     end
+  end
+
+  @impl true
+  def handle_event("refresh", _params, socket) do
+    {:noreply, socket}
   end
 
   @impl true
@@ -117,40 +140,84 @@ defmodule ElixirconfChatWeb.ChatLive do
     {:noreply, assign(socket, messages: updated_messages)}
   end
 
+  def logo(%{platform_id: :swiftui} = assigns) do
+    ~SWIFTUI"""
+    <VStack modclass="pv-12">
+      <Image modclass="stretch w-52 h-52" name="Logo" />
+    </VStack>
+    """
+  end
+
+  def chat_input(%{platform_id: :swiftui} = assigns) do
+    ~SWIFTUI"""
+    <LiveForm id="chat" phx-submit="post_message">
+      <HStack modclass="background:rect">
+        <RoundedRectangle modclass="stroke:lightchrome h-60 p-16 fg-color-secondary opacity-0.5" template={:rect} corner-radius="8" />
+        <TextField name="body" modclass="ph-24">
+          Enter Message...
+        </TextField>
+        <LiveSubmitButton modclass="button-style-bordered-prominent tint:elixirpurple">
+          <Image system-name="paperplane.fill" />
+        </LiveSubmitButton>
+        <Spacer modclass="h-16 w-32" />
+      </HStack>
+    </LiveForm>
+    """
+  end
+
   def chat_history(%{platform_id: :swiftui} = assigns) do
     ~SWIFTUI"""
     <VStack>
-      <HStack modifiers={padding(edges: :horizontal, length: 24)}>
-        <Text phx-click="leave_room">Go Back</Text>
-        <Spacer />
-        <.logo height={48} width={48} native={@native} platform_id={:swiftui} />
-        <Spacer />
-        <Spacer />
-      </HStack>
+      <ZStack modclass="font-weight-semibold fg-color:elixirpurple ph-24">
+        <%= if @native.platform_config.user_interface_idiom == "phone" do %>
+          <HStack>
+            <HStack>
+              <Image system-name="arrow.left" />
+                <Text phx-click="leave_room">
+                  Go Back
+                </Text>
+            </HStack>
+            <Spacer />
+          </HStack>
+          <.logo height={48} width={48} native={@native} platform_id={:swiftui} />
+        <% end %>
+      </ZStack>
       <%= if @loading_room do %>
-        <ProgressView />
+        <Spacer />
+        <HStack>
+          <Spacer />
+            <ProgressView id="loading-room" />
+          <Spacer />
+        </HStack>
+        <Spacer />
       <% else %>
         <%= if @messages == [] do %>
           <VStack>
             <Spacer />
             <HStack>
               <ZStack modifiers={background(alignment: :center, content: :hero_emoji)}>
-                <Circle modclass="hero-emoji-container" template={:hero_emoji} />
-                <Text modclass="hero-emoji">👋</Text>
+                <Circle modclass="w-60 h-60 fg-color:lightchrome opacity-0.325" template={:hero_emoji} />
+                <Text modclass="type-size-accessibility-2">👋</Text>
               </ZStack>
             </HStack>
-            <Spacer modifiers={frame(height: 24, width: :infinity)} />
-            <Text modclass="no-messages-text">
+            <Spacer modclass="h-24" />
+            <Text modclass="w-375 align-center">
               No Messages in this room. Be the first one to send a message.
             </Text>
             <Spacer />
           </VStack>
         <% else %>
           <VStack>
-            <ScrollView>
+            <ScrollView modclass="refreshable:refresh">
               <%= for message <- @messages do %>
-                <.chat_message message={message} native={@native} platform_id={:swiftui} />
+                <.chat_message
+                  current_user_id={@current_user.id}
+                  message={message}
+                  native={@native}
+                  platform_id={:swiftui}
+                />
               <% end %>
+              <Spacer modclass="h-32" />
             </ScrollView>
           </VStack>
         <% end %>
@@ -159,31 +226,44 @@ defmodule ElixirconfChatWeb.ChatLive do
     """
   end
 
-  def chat_input(%{platform_id: :swiftui} = assigns) do
-    ~SWIFTUI"""
-    <LiveForm id="chat" phx-submit="post_message">
-      <HStack modifiers={background(alignment: :center, content: :chat_input_background)}>
-        <RoundedRectangle modclass="chat-input-background" template={:chat_input_background} corner-radius="8" />
-        <TextField name="body" modclass="chat-input">
-          Enter Message...
-        </TextField>
-        <LiveSubmitButton modifiers={button_style(style: :bordered_prominent) |> tint(color: "#6558f5")}>
-          <Image system-name="paperplane.fill" />
-        </LiveSubmitButton>
-        <Spacer modifiers={frame(height: 16, width: 32)} />
-      </HStack>
-    </LiveForm>
-    """
-  end
-
   def chat_message(%{platform_id: :swiftui} = assigns) do
     ~SWIFTUI"""
-    <VStack modclass="chat-message">
-      <RoundedRectangle modclass="chat-message-item" template={:bg_content} corner-radius="16" />
-      <HStack modclass="w-full">
-        <Text modclass="chat-message-body"><%= @message.body %></Text>
-      </HStack>
-    </VStack>
+    <HStack>
+      <%= if @message.user_id == @current_user_id do %>
+        <Spacer />
+      <% end %>
+      <VStack modclass="background:rect ph-10 pv-2">
+        <%= if @message.user_id == @current_user_id do %>
+          <RoundedRectangle modclass="fg-color:elixirpurple" template={:rect} corner-radius="16" />
+        <% else %>
+          <RoundedRectangle modclass="fg-color:lightchrome opacity-0.25" template={:rect} corner-radius="16" />
+        <% end %>
+        <HStack modclass="p-12 align-leading">
+          <%= if @message.user_id == @current_user_id do %>
+            <VStack spacing={8} alignment="leading" modclass="fg-color-white">
+              <HStack modclass="capitalize type-size-x-small">
+                <Text>You</Text>
+                <Spacer modclass="w-32" />
+                <Text><%= Utils.time_formatted(@message.posted_at) %></Text>
+              </HStack>
+              <Text><%= @message.body %></Text>
+            </VStack>
+          <% else %>
+            <VStack spacing={8} alignment="leading">
+              <HStack modclass="capitalize type-size-x-small">
+                <Text><%= @message.posted_by %></Text>
+                <Spacer modclass="w-32" />
+                <Text><%= Utils.time_formatted(@message.posted_at) %></Text>
+              </HStack>
+              <Text><%= @message.body %></Text>
+            </VStack>
+          <% end %>
+        </HStack>
+      </VStack>
+      <%= if @message.user_id != @current_user_id do %>
+        <Spacer />
+      <% end %>
+    </HStack>
     """
   end
 
@@ -199,12 +279,14 @@ defmodule ElixirconfChatWeb.ChatLive do
 
   def hallway_item(%{platform_id: :swiftui} = assigns) do
     ~SWIFTUI"""
-    <VStack modclass="hallway">
-      <RoundedRectangle modclass="hallway-item" template={:bg_content} corner-radius="16" />
-      <HStack modclass="w-full" spacing={0.0} phx-click="join_room" phx-value-room-id={"#{@room.id}"}>
+    <VStack modclass="background:rect ph-24">
+      <RoundedRectangle modclass="fg-color:lightchrome opacity-0.25" template={:rect} corner-radius="16" />
+      <HStack spacing={0} phx-click="join_room" phx-value-room-id={"#{@room.id}"}>
         <Spacer />
-        <Circle modclass="dot-#049372" />
-        <Text modclass="hallway-title"><%= @room.title %></Text>
+        <Circle modclass="h-10 w-10 p-10 fg-color:forestgreen" />
+        <Text modclass="font-subheadline font-weight-semibold h-48 capitalize kerning-3">
+          <%= @room.title %>
+        </Text>
         <Spacer />
       </HStack>
     </VStack>
@@ -213,11 +295,11 @@ defmodule ElixirconfChatWeb.ChatLive do
 
   def rooms_list(%{platform_id: :swiftui} = assigns) do
     ~SWIFTUI"""
-    <ScrollView modclass="w-full">
+    <ScrollView>
       <%= for {day, timeslots} <- @sorted_days do %>
-        <VStack modclass="w-full" pinnedViews="sectionHeaders">
-          <Section modclass="w-full">
-            <VStack modclass="w-full" template={:content}>
+        <LazyVStack pinned-views="section-headers">
+          <Section>
+            <VStack template={:content}>
               <%= for timeslot <- timeslots do %>
                 <.timeslot_item
                   timeslot={timeslot}
@@ -226,20 +308,31 @@ defmodule ElixirconfChatWeb.ChatLive do
                   track_labels={@track_labels} />
               <% end %>
             </VStack>
-            <HStack modclass="w-full" template={:header}>
-              <Text modclass="day-heading"><%= day %></Text>
+            <HStack modclass="background:rect" template={:header}>
+              <Rectangle modclass="fg-color:bgcolor" template={:rect} />
+              <Text modclass="font-title h-48 ph-24"><%= day %></Text>
+              <Spacer />
             </HStack>
           </Section>
-        </VStack>
+        </LazyVStack>
       <% end %>
     </ScrollView>
     """
   end
 
+  def room_page(%{native: %{platform_config: %{user_interface_idiom: ui_idiom}}, platform_id: :swiftui} = assigns) when ui_idiom in ~w(mac pad) do
+    ~SWIFTUI"""
+    <VStack>
+      <.chat_history {assigns} />
+      <.chat_input {assigns} />
+    </VStack>
+    """
+  end
+
   def room_page(%{platform_id: :swiftui} = assigns) do
     ~SWIFTUI"""
-    <VStack modclass="room-page">
-      <VStack template={:room_content}>
+    <VStack modclass="full-screen-cover:room-page">
+      <VStack template={:room_page}>
         <Spacer />
         <.chat_history {assigns} />
         <.chat_input {assigns} />
@@ -250,33 +343,42 @@ defmodule ElixirconfChatWeb.ChatLive do
 
   def timeslot_item(%{platform_id: :swiftui} = assigns) do
     ~SWIFTUI"""
-    <VStack modclass="timeslot">
-      <RoundedRectangle modclass="timeslot-item" template={:bg_content} corner-radius="16" />
-      <VStack>
+    <VStack modclass="background:rect ph-24 align-leading image-scale-small">
+      <RoundedRectangle modclass="fg-color:lightchrome opacity-0.25" template={:rect} corner-radius="16" />
+      <VStack spacing={16} modclass="p-16">
         <HStack>
-          <Text modclass="time-range"><%= @timeslot.formatted_string %></Text>
+          <Text modclass="font-subheadline type-size-x-small font-weight-semibold h-12 capitalize kerning-2 opacity-0.825">
+            <%= @timeslot.formatted_string %>
+          </Text>
           <Spacer />
         </HStack>
         <%= for room <- @timeslot.rooms do %>
-          <VStack modclass="room" alignment="trailing">
+          <VStack>
             <HStack>
               <%= if room.track > 0 do %>
-                <ZStack modclass="track">
-                  <Text>Track <%= Map.get(@track_labels, room.track, "?") %></Text>
-                </ZStack>
+                <HStack modclass="fg-color-secondary h-24 opacity-0.75 overlay:rect">
+                  <RoundedRectangle modclass="stroke-secondary fg-color-clear" template={:rect} corner-radius="8" />
+                  <Text modclass="capitalize p-8 kerning-4 font-subheadline type-size-x-small font-weight-semibold offset-x-2">Track <%= Map.get(@track_labels, room.track, "?") %></Text>
+                </HStack>
                 <Spacer />
               <% end %>
             </HStack>
-            <HStack modclass="room-link" phx-click="join_room" phx-value-room-id={"#{room.id}"}>
-              <VStack>
-                <Text modclass="room-title w-full"><%= room.title %></Text>
+            <HStack phx-click="join_room" phx-value-room-id={"#{room.id}"} spacing={8}>
+              <VStack spacing={8}>
+                <HStack>
+                  <Text modclass="font-headline font-weight-semibold"><%= room.title %></Text>
+                  <Spacer />
+                </HStack>
                 <%= if room.presenters != [] do %>
-                  <Text modclass="room-presenter w-full"><%= Enum.join(room.presenters, ", ") %></Text>
+                  <HStack>
+                    <Text modclass="font-subheadline opacity-0.825"><%= Enum.join(room.presenters, ", ") %></Text>
+                    <Spacer />
+                  </HStack>
                 <% end %>
               </VStack>
-              <HStack>
-                <Image modclass="users-icon" system-name="person.2" />
-                <Text modclass="users-count">0</Text>
+              <HStack modclass="opacity-0.75 type-size-x-small">
+                <Image system-name="person.2" />
+                <Text>0</Text>
               </HStack>
             </HStack>
           </VStack>
@@ -284,183 +386,6 @@ defmodule ElixirconfChatWeb.ChatLive do
       </VStack>
     </VStack>
     """
-  end
-
-  def modclass(native, "hallway") do
-    native
-    |> background(alignment: :center, content: :bg_content)
-    |> padding(edges: :horizontal, length: 10)
-  end
-
-  def modclass(native, "hallway-item") do
-    native
-    |> foreground_color(:secondary)
-    |> opacity(0.15)
-  end
-
-  def modclass(native, "chat-message") do
-    native
-    |> background(alignment: :center, content: :bg_content)
-    |> padding(edges: :horizontal, length: 10)
-    |> padding(edges: :vertical, length: 2)
-  end
-
-  def modclass(native, "chat-message-item") do
-    native
-    |> foreground_color(:secondary)
-    |> opacity(0.15)
-  end
-
-  def modclass(native, "timeslot") do
-    native
-    |> padding(edges: :all, length: 16)
-    |> background(alignment: :center, content: :bg_content)
-    |> padding(edges: :horizontal, length: 10)
-    |> padding(edges: :vertical, length: 2)
-    |> multiline_text_alignment(:leading)
-  end
-
-  def modclass(native, "timeslot-item") do
-    native
-    |> foreground_color(:secondary)
-    |> opacity(0.15)
-  end
-
-  def modclass(native, "track") do
-    native
-    |> foreground_color(:secondary)
-    |> frame(height: 24)
-    |> opacity(0.75)
-  end
-
-  def modclass(native, "hallway-title") do
-    native
-    |> font(font: {:system, :subheadline})
-    |> font_weight(:semibold)
-    |> frame(height: 48)
-    |> text_case(:uppercase)
-    |> kerning(2.5)
-  end
-
-  def modclass(native, "room") do
-    native
-    |> padding(edges: :vertical, length: 1)
-  end
-
-  def modclass(native, "room-link") do
-    native
-    |> button_style(:plain)
-    |> font(font: {:system, :body})
-    |> frame(max_width: :infinity, alignment: :leading)
-    |> multiline_text_alignment(:leading)
-  end
-
-  def modclass(native, "hallway-link") do
-    native
-    |> button_style(:plain)
-    |> font(font: {:system, :body})
-    |> frame(max_width: :infinity, alignment: :center)
-    |> multiline_text_alignment(:center)
-  end
-
-  def modclass(native, "room-page") do
-    native
-    |> full_screen_cover(content: :room_content, is_presented: :show_room_page)
-  end
-
-  def modclass(native, "room-title") do
-    native
-    |> font(font: {:system, :headline})
-    |> font_weight(:semibold)
-    |> frame(max_width: :infinity, alignment: :leading)
-    |> padding(edges: :vertical, length: 0.5)
-  end
-
-  def modclass(native, "room-presenter") do
-    native
-    |> font(font: {:system, :subheadline})
-    |> frame(max_width: :infinity, alignment: :leading)
-    |> opacity(0.825)
-  end
-
-  def modclass(native, "w-full") do
-    native
-    |> frame(width: :infinity, max_width: 400, alignment: :leading)
-  end
-
-  def modclass(native, "users-icon") do
-    native
-    |> image_scale(:small)
-    |> opacity(0.75)
-  end
-
-  def modclass(native, "users-count") do
-    native
-    |> dynamic_type_size(:small)
-    |> opacity(0.75)
-  end
-
-  def modclass(native, "day-heading") do
-    native
-    |> font(font: {:system, :title})
-    |> font_weight(:light)
-    |> frame(height: 48, width: :infinity, max_width: 400, alignment: :leading)
-    |> padding(edges: :horizontal, length: 16)
-  end
-
-  def modclass(native, "dot-" <> color) do
-    native
-    |> foreground_color(color)
-    |> frame(height: 10, width: 10)
-    |> padding(edges: :horizontal, length: 10)
-  end
-
-  def modclass(native, "time-range") do
-    native
-    |> font(font: {:system, :subheadline})
-    |> dynamic_type_size(:x_small)
-    |> font_weight(:semibold)
-    |> frame(height: 12)
-    |> text_case(:uppercase)
-    |> kerning(2.5)
-    |> opacity(0.925)
-  end
-
-  def modclass(native, "no-messages-text") do
-    native
-    |> frame(width: :infinity, max_width: 375, alignment: :center)
-    |> multiline_text_alignment(:center)
-  end
-
-  def modclass(native, "hero-emoji") do
-    native
-    |> dynamic_type_size(:accessibility_2)
-  end
-
-  def modclass(native, "hero-emoji-container") do
-    native
-    |> frame(width: 60, height: 60)
-    |> foreground_style({:color, :secondary})
-    |> opacity(0.25)
-  end
-
-  def modclass(native, "chat-input") do
-    native
-    |> padding(edges: :horizontal, length: 24)
-  end
-
-  def modclass(native, "chat-input-background") do
-    native
-    |> stroke(content: {:color, :secondary}, style: [line_width: 1])
-    |> frame(width: :infinity, height: 60)
-    |> padding(edges: :all, length: 16)
-    |> foreground_style({:color, :secondary})
-    |> opacity(0.25)
-  end
-
-  def modclass(native, "chat-message-body") do
-    native
-    |> padding(edges: :all, length: 16)
   end
 
   ###
