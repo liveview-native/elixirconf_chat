@@ -207,16 +207,19 @@ defmodule ElixirconfChatWeb.ChatLive do
           </VStack>
         <% else %>
           <Spacer />
-          <ScrollView modclass="refreshable:refresh">
-            <%= for message <- @messages do %>
-              <.chat_message
-                current_user_id={@current_user.id}
-                message={message}
-                native={@native}
-                platform_id={:swiftui}
-              />
-            <% end %>
-          </ScrollView>
+          <VStack>
+            <ScrollView modclass="refreshable:refresh">
+              <%= for {message, index} <- Enum.with_index(@messages) do %>
+                <.chat_message
+                  current_user_id={@current_user.id}
+                  index={index}
+                  message={message}
+                  native={@native}
+                  platform_id={:swiftui}
+                />
+              <% end %>
+            </ScrollView>
+          </VStack>
           <Spacer />
         <% end %>
       <% end %>
@@ -226,7 +229,7 @@ defmodule ElixirconfChatWeb.ChatLive do
 
   def chat_message(%{platform_id: :swiftui} = assigns) do
     ~SWIFTUI"""
-    <HStack>
+    <HStack id={"message_#{@index}"}>
       <%= if @message.user_id == @current_user_id do %>
         <Spacer />
       <% end %>
