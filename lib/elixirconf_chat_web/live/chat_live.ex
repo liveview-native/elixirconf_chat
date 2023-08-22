@@ -14,20 +14,25 @@ defmodule ElixirconfChatWeb.ChatLive do
   def mount(_params, _session, socket) do
     schedule = Chat.schedule()
 
-    {:ok, assign(socket,
-      loading_room: false,
-      messages: [],
-      room_id: nil,
-      room_page: false,
-      room: nil,
-      schedule: schedule,
-      sorted_days: sorted_days(schedule),
-      track_labels: %{1 => "A", 2 => "B", 3 => "C"}
-    )}
+    {:ok,
+     assign(socket,
+       loading_room: false,
+       messages: [],
+       room_id: nil,
+       room_page: false,
+       room: nil,
+       schedule: schedule,
+       sorted_days: sorted_days(schedule),
+       track_labels: %{1 => "A", 2 => "B", 3 => "C"}
+     )}
   end
 
   @impl true
-  def render(%{native: %{platform_config: %{user_interface_idiom: ui_idiom}}, platform_id: :swiftui} = assigns) when ui_idiom in ~w(mac pad) do
+  def render(
+        %{native: %{platform_config: %{user_interface_idiom: ui_idiom}}, platform_id: :swiftui} =
+          assigns
+      )
+      when ui_idiom in ~w(mac pad) do
     ~SWIFTUI"""
     <VStack modclass="w-full">
       <HStack>
@@ -70,8 +75,11 @@ defmodule ElixirconfChatWeb.ChatLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div>
-      TODO: Build this
+    <div class="w-full">
+      <.room_page {assigns} />
+      <.logo height={48} width={48} native={@native} platform_id={:swiftui} />
+      <.hallway {assigns} />
+      <.rooms_list {assigns} />
     </div>
     """
   end
@@ -107,6 +115,7 @@ defmodule ElixirconfChatWeb.ChatLive do
           room_id: room_id,
           user_id: socket.assigns.current_user.id
         })
+
         {:noreply, socket}
 
       _ ->
@@ -161,6 +170,12 @@ defmodule ElixirconfChatWeb.ChatLive do
         <Spacer modclass="h-16 w-32" />
       </HStack>
     </LiveForm>
+    """
+  end
+
+  def chat_input(assigns) do
+    ~H"""
+
     """
   end
 
@@ -227,6 +242,63 @@ defmodule ElixirconfChatWeb.ChatLive do
     """
   end
 
+  def chat_history(assigns) do
+    ~H"""
+    <div>
+      <div class="font-weight-semibold fg-color:elixirpurple ph-24">
+        <img system-name="arrow.left" />
+        <p phx-click="leave_room">
+          Go Back
+        </p>
+        <br />
+        <.logo height={48} width={48} native={@native} platform_id={:swiftui} />
+      </div>
+      <%= if @loading_room do %>
+        <br />
+        <div>
+          <br />
+          <div id="loading-room" />
+          <br />
+        </div>
+        <br />
+      <% else %>
+        <%= if @messages == [] do %>
+          <div>
+            <br />
+            <div>
+              <div modifiers={background(alignment: :center, content: :hero_emoji)}>
+                <span class="w-60 h-60 fg-color:lightchrome opacity-0.325" template={:hero_emoji} />
+                <p class="type-size-accessibility-2">👋</p>
+              </div>
+            </div>
+            <br class="h-24" />
+            <p modclass="w-375 align-center">
+              No Messages in this room. Be the first one to send a message.
+            </p>
+            <br />
+          </div>
+        <% else %>
+          <br />
+          <div>
+            <div modclass="refreshable:refresh">
+              <%= for {message, index} <- Enum.with_index(@messages) do %>
+                <.chat_message
+                  current_user_id={@current_user.id}
+                  index={index}
+                  message={message}
+                  native={@native}
+                  platform_id={:swiftui}
+                />
+              <% end %>
+            </div>
+          </div>
+          <br />
+        <% end %>
+      <% end %>
+    </div>
+    """
+  end
+
   def chat_message(%{platform_id: :swiftui} = assigns) do
     ~SWIFTUI"""
     <HStack id={"message_#{@index}"}>
@@ -268,8 +340,59 @@ defmodule ElixirconfChatWeb.ChatLive do
     """
   end
 
+  def chat_message(assigns) do
+    ~H"""
+    <div id={"message_#{@index}"}>
+      <%= if @message.user_id == @current_user_id do %>
+        <br />
+      <% end %>
+      <div class="background:rect ph-10 pv-2">
+        <%= if @message.user_id == @current_user_id do %>
+          <div class="fg-color:elixirpurple" template={:rect} corner-radius="16" />
+        <% else %>
+          <div class="fg-color:lightchrome opacity-0.25" template={:rect} corner-radius="16" />
+        <% end %>
+        <div class="p-12 align-leading">
+          <%= if @message.user_id == @current_user_id do %>
+            <div spacing={8} alignment="leading" modclass="fg-color-white">
+              <div class="capitalize type-size-x-small">
+                <p>You</p>
+                <br class="w-32" />
+                <p><%= Utils.time_formatted(@message.posted_at) %></p>
+              </div>
+              <p><%= @message.body %></p>
+            </div>
+          <% else %>
+            <div spacing={8} alignment="leading">
+              <div class="capitalize type-size-x-small">
+                <p><%= @message.posted_by %></p>
+                <br class="w-32" />
+                <p><%= Utils.time_formatted(@message.posted_at) %></p>
+              </div>
+              <p><%= @message.body %></p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      <%= if @message.user_id != @current_user_id do %>
+        <br />
+      <% end %>
+    </div>
+    """
+  end
+
   def hallway(%{platform_id: :swiftui} = assigns) do
     ~SWIFTUI"""
+    <%= for timeslot <- @schedule.pinned do %>
+      <%= for room <- timeslot.rooms do %>
+        <.hallway_item room={room} native={@native} platform_id={:swiftui} />
+      <% end %>
+    <% end %>
+    """
+  end
+
+  def hallway(assigns) do
+    ~H"""
     <%= for timeslot <- @schedule.pinned do %>
       <%= for room <- timeslot.rooms do %>
         <.hallway_item room={room} native={@native} platform_id={:swiftui} />
@@ -321,7 +444,37 @@ defmodule ElixirconfChatWeb.ChatLive do
     """
   end
 
-  def room_page(%{native: %{platform_config: %{user_interface_idiom: ui_idiom}}, platform_id: :swiftui} = assigns) when ui_idiom in ~w(mac pad) do
+  def rooms_list(assigns) do
+    ~H"""
+    <%= for {day, timeslots} <- @sorted_days do %>
+      <div pinned-views="section-headers">
+        <section>
+          <div template={:content}>
+            <%= for timeslot <- timeslots do %>
+              <.timeslot_item
+                timeslot={timeslot}
+                native={@native}
+                platform_id={:swiftui}
+                track_labels={@track_labels}
+              />
+            <% end %>
+          </div>
+          <div class="background:rect" template={:header}>
+            <div class="fg-color:bgcolor" template={:rect} />
+            <p class="font-title h-48 ph-24"><%= day %></p>
+            <br />
+          </div>
+        </section>
+      </div>
+    <% end %>
+    """
+  end
+
+  def room_page(
+        %{native: %{platform_config: %{user_interface_idiom: ui_idiom}}, platform_id: :swiftui} =
+          assigns
+      )
+      when ui_idiom in ~w(mac pad) do
     ~SWIFTUI"""
     <VStack>
       <.chat_history {assigns} />
@@ -339,6 +492,15 @@ defmodule ElixirconfChatWeb.ChatLive do
         <.chat_input {assigns} />
       </VStack>
     </VStack>
+    """
+  end
+
+  def room_page(assigns) do
+    ~H"""
+    <div>
+      <.chat_history {assigns} />
+      <.chat_input {assigns} />
+    </div>
     """
   end
 
