@@ -155,7 +155,7 @@ defmodule ElixirconfChatWeb.ChatLive do
         <TextField name="body" modclass="ph-24">
           Enter Message...
         </TextField>
-        <LiveSubmitButton modclass="button-style-bordered-prominent tint:elixirpurple">
+        <LiveSubmitButton modclass="button-style-bordered-prominent tint:elixirpurple" after-submit="clear">
           <Image system-name="paperplane.fill" />
         </LiveSubmitButton>
         <Spacer modclass="h-16 w-32" />
