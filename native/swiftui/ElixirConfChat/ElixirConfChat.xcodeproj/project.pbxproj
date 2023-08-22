@@ -7,8 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2F4FA3292A8F3D12003DC87C /* LiveViewNative in Frameworks */ = {isa = PBXBuildFile; productRef = 2F4FA3282A8F3D12003DC87C /* LiveViewNative */; };
-		2F4FA32B2A8F3D14003DC87C /* LiveViewNativeLiveForm in Frameworks */ = {isa = PBXBuildFile; productRef = 2F4FA32A2A8F3D14003DC87C /* LiveViewNativeLiveForm */; };
+		2F0AC6E62A95201C00F60947 /* LiveViewNative in Frameworks */ = {isa = PBXBuildFile; productRef = 2F0AC6E52A95201C00F60947 /* LiveViewNative */; };
+		2F0AC6E82A95201C00F60947 /* BuiltinRegistryGenerator in Frameworks */ = {isa = PBXBuildFile; productRef = 2F0AC6E72A95201C00F60947 /* BuiltinRegistryGenerator */; };
+		2F0AC6EB2A95204E00F60947 /* LiveViewNativeLiveForm in Frameworks */ = {isa = PBXBuildFile; productRef = 2F0AC6EA2A95204E00F60947 /* LiveViewNativeLiveForm */; };
 		2F9983042A60800400F76113 /* ElixirConfChatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9983032A60800400F76113 /* ElixirConfChatApp.swift */; };
 		2F9983062A60800400F76113 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9983052A60800400F76113 /* ContentView.swift */; };
 		2F9983082A60800500F76113 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F9983072A60800500F76113 /* Assets.xcassets */; };
@@ -17,13 +18,9 @@
 		2FE23A4A2A935ADE00D26178 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FE23A492A935ADE00D26178 /* ContentView.swift */; };
 		2FE23A4C2A935ADE00D26178 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2FE23A4B2A935ADE00D26178 /* Assets.xcassets */; };
 		2FE23A4F2A935ADE00D26178 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2FE23A4E2A935ADE00D26178 /* Preview Assets.xcassets */; };
-		2FE23A552A935B2000D26178 /* LiveViewNative in Frameworks */ = {isa = PBXBuildFile; productRef = 2FE23A542A935B2000D26178 /* LiveViewNative */; };
-		2FE23A572A935B2200D26178 /* LiveViewNativeLiveForm in Frameworks */ = {isa = PBXBuildFile; productRef = 2FE23A562A935B2200D26178 /* LiveViewNativeLiveForm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		2F4FA3262A8F3C4F003DC87C /* liveview-client-swiftui */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "liveview-client-swiftui"; path = "../../../../liveview-client-swiftui"; sourceTree = "<group>"; };
-		2F4FA3272A8F3CC0003DC87C /* liveview-native-live-form */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "liveview-native-live-form"; path = "../../../../liveview-native-live-form"; sourceTree = "<group>"; };
 		2F9983002A60800400F76113 /* ElixirConfChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ElixirConfChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F9983032A60800400F76113 /* ElixirConfChatApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElixirConfChatApp.swift; sourceTree = "<group>"; };
 		2F9983052A60800400F76113 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -42,8 +39,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2F4FA32B2A8F3D14003DC87C /* LiveViewNativeLiveForm in Frameworks */,
-				2F4FA3292A8F3D12003DC87C /* LiveViewNative in Frameworks */,
+				2F0AC6E62A95201C00F60947 /* LiveViewNative in Frameworks */,
+				2F0AC6E82A95201C00F60947 /* BuiltinRegistryGenerator in Frameworks */,
+				2F0AC6EB2A95204E00F60947 /* LiveViewNativeLiveForm in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -51,8 +49,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2FE23A572A935B2200D26178 /* LiveViewNativeLiveForm in Frameworks */,
-				2FE23A552A935B2000D26178 /* LiveViewNative in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -101,8 +97,6 @@
 		2FCBE8252A61D09F004A443D /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				2F4FA3262A8F3C4F003DC87C /* liveview-client-swiftui */,
-				2F4FA3272A8F3CC0003DC87C /* liveview-native-live-form */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
@@ -151,8 +145,9 @@
 			);
 			name = ElixirConfChat;
 			packageProductDependencies = (
-				2F4FA3282A8F3D12003DC87C /* LiveViewNative */,
-				2F4FA32A2A8F3D14003DC87C /* LiveViewNativeLiveForm */,
+				2F0AC6E52A95201C00F60947 /* LiveViewNative */,
+				2F0AC6E72A95201C00F60947 /* BuiltinRegistryGenerator */,
+				2F0AC6EA2A95204E00F60947 /* LiveViewNativeLiveForm */,
 			);
 			productName = ElixirConfChat;
 			productReference = 2F9983002A60800400F76113 /* ElixirConfChat.app */;
@@ -172,8 +167,6 @@
 			);
 			name = ElixirConfChatMac;
 			packageProductDependencies = (
-				2FE23A542A935B2000D26178 /* LiveViewNative */,
-				2FE23A562A935B2200D26178 /* LiveViewNativeLiveForm */,
 			);
 			productName = ElixirConfChatMac;
 			productReference = 2FE23A452A935ADE00D26178 /* ElixirConfChatMac.app */;
@@ -207,6 +200,8 @@
 			);
 			mainGroup = 2F9982F72A60800400F76113;
 			packageReferences = (
+				2F0AC6E42A95201C00F60947 /* XCRemoteSwiftPackageReference "liveview-client-swiftui" */,
+				2F0AC6E92A95204E00F60947 /* XCRemoteSwiftPackageReference "liveview-native-live-form" */,
 			);
 			productRefGroup = 2F9983012A60800400F76113 /* Products */;
 			projectDirPath = "";
@@ -522,21 +517,39 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		2F0AC6E42A95201C00F60947 /* XCRemoteSwiftPackageReference "liveview-client-swiftui" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/liveview-native/liveview-client-swiftui";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		2F0AC6E92A95204E00F60947 /* XCRemoteSwiftPackageReference "liveview-native-live-form" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/liveview-native/liveview-native-live-form";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
-		2F4FA3282A8F3D12003DC87C /* LiveViewNative */ = {
+		2F0AC6E52A95201C00F60947 /* LiveViewNative */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = 2F0AC6E42A95201C00F60947 /* XCRemoteSwiftPackageReference "liveview-client-swiftui" */;
 			productName = LiveViewNative;
 		};
-		2F4FA32A2A8F3D14003DC87C /* LiveViewNativeLiveForm */ = {
+		2F0AC6E72A95201C00F60947 /* BuiltinRegistryGenerator */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = LiveViewNativeLiveForm;
+			package = 2F0AC6E42A95201C00F60947 /* XCRemoteSwiftPackageReference "liveview-client-swiftui" */;
+			productName = BuiltinRegistryGenerator;
 		};
-		2FE23A542A935B2000D26178 /* LiveViewNative */ = {
+		2F0AC6EA2A95204E00F60947 /* LiveViewNativeLiveForm */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = LiveViewNative;
-		};
-		2FE23A562A935B2200D26178 /* LiveViewNativeLiveForm */ = {
-			isa = XCSwiftPackageProductDependency;
+			package = 2F0AC6E92A95204E00F60947 /* XCRemoteSwiftPackageReference "liveview-native-live-form" */;
 			productName = LiveViewNativeLiveForm;
 		};
 /* End XCSwiftPackageProductDependency section */

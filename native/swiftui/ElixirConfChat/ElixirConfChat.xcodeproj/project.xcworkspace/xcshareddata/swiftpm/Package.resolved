@@ -1,12 +1,30 @@
 {
   "pins" : [
     {
+      "identity" : "liveview-client-swiftui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/liveview-native/liveview-client-swiftui",
+      "state" : {
+        "branch" : "main",
+        "revision" : "10929f9078fcb9ed82ea6610a33ec62dbe76c447"
+      }
+    },
+    {
       "identity" : "liveview-native-core-swift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/liveviewnative/liveview-native-core-swift.git",
       "state" : {
         "branch" : "main",
-        "revision" : "5d2dbc8fdbeaa939a9b9a23deae62dc596c4a694"
+        "revision" : "b6a24652b35acd534fa437cb4cf4654fcb33828f"
+      }
+    },
+    {
+      "identity" : "liveview-native-live-form",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/liveview-native/liveview-native-live-form",
+      "state" : {
+        "branch" : "main",
+        "revision" : "fa0c94d891078bf5ff7bc8104ef358ef47ad3e76"
       }
     },
     {
@@ -28,30 +46,12 @@
       }
     },
     {
-      "identity" : "swift-cmark",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-cmark.git",
-      "state" : {
-        "branch" : "gfm",
-        "revision" : "3bc2f3e25df0cecc5dc269f7ccae65d0f386f06a"
-      }
-    },
-    {
       "identity" : "swift-collections",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections.git",
       "state" : {
         "revision" : "937e904258d22af6e447a0b72c0bc67583ef64a2",
         "version" : "1.0.4"
-      }
-    },
-    {
-      "identity" : "swift-markdown",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-markdown.git",
-      "state" : {
-        "branch" : "main",
-        "revision" : "3d4b36cff09f785adf5efb190d458a3d44e6df87"
       }
     },
     {
