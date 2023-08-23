@@ -13,9 +13,32 @@ module.exports = {
   ],
   theme: {
     extend: {
+      spacing: {
+        15: '3.75rem',
+      },
       colors: {
         brand: "#FD4F00",
-      }
+        "brand-purple": "#6B21A8",
+        "brand-red": "#F23630",
+        "brand-gray": {
+          50: "#F0F5F9",
+          100: "#E1E8F0",
+          200: "#CAD5E0",
+          300: "#91A4B7",
+          400: "#61758A",
+          500: "#445668",
+          600: "#304254",
+          700: "#1C2A3A",
+          800: "#0D1829",
+          900: "#030913",
+        },
+      },
+      fontFamily: {
+        system: ["-apple-system", "system-ui", "BlinkMacSystemFont"],
+      },
+      fontSize: {
+        '3.5xl': ['2rem', '2.5rem'],
+      },
     },
   },
   plugins: [
