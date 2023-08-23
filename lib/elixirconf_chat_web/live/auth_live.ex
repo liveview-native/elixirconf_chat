@@ -29,13 +29,15 @@ defmodule ElixirconfChatWeb.AuthLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div style="text-align: center">
+    <div class="min-h-screen p-4 bg-brand-purple flex items-center align-center font-system">
+      <div class="mx-auto w-full max-w-[500px] p-4 min-[448px]:p-12 sm:p-15 bg-white rounded-[32px]">
       <.logo logo_title={true} {assigns} />
       <%= if assigns[:user] do %>
         <.login_code_form {assigns} />
       <% else %>
         <.email_form {assigns} />
       <% end %>
+      </div>
     </div>
     """
   end
@@ -94,7 +96,10 @@ defmodule ElixirconfChatWeb.AuthLive do
 
   def logo(assigns) do
     ~H"""
-    Logo TODO
+    <div class="text-center text-sm text-brand-gray-700 font-semibold uppercase tracking-[3px]">
+      <img class="mx-auto" src="/images/elixir-logo.png" width="75" height="60" alt="" />
+      <h1 class="mt-3">ElixirConf Chat</h1>
+    </div>
     """
   end
 
@@ -128,23 +133,23 @@ defmodule ElixirconfChatWeb.AuthLive do
 
   defp email_form(assigns) do
     ~H"""
-    <form id="email" phx-submit="check_email" class="text-align: center">
+    <form id="email" phx-submit="check_email">
       <.welcome_message {assigns} />
 
-      <div class="align-leading h-32">
+      <div class="mt-12">
+        <label for="email-input" class="text-lg text-black">Your Email Address</label>
         <input
           name="email"
-          class="disable-autocorrect autocapitalize-never h-42 p-8 text-field-plain overlay:rect type-size-x-large align-leading"
-          style="border: 1px solid gray"
+          class="mt-2 w-full h-14 p-3 text-xl text-brand-gray-800 border border-brand-gray-200 rounded-lg outline-none transition duration-200 focus:bg-brand-gray-50 focus:ring-2 focus:ring-[#1ff4ff] disable-autocorrect autocapitalize-never"
+          id="email-input"
         />
-        <label for="email" class="align-leading h-32">Your Email Address</label>
       </div>
 
-      <button type="submit" class="w-full h-56 background:rect">
-        <span class="fg-color-white font-weight-semibold type-size-x-large">Log In</span>
+      <button type="submit" class="mt-8 w-full h-14 bg-brand-purple text-xl text-semibold text-white rounded-lg border-2 border-transparent outline-none transition duration-200 hover:text-brand-purple hover:bg-white hover:border-brand-purple focus:ring-2 focus:ring-[#1ff4ff]">
+        Log In
       </button>
       <%= if assigns[:error] do %>
-        <%= @error %>
+        <p class="mt-2 text-base text-center text-brand-red italic" id="email-error"><%= @error %></p>
       <% end %>
     </form>
     """
@@ -195,24 +200,32 @@ defmodule ElixirconfChatWeb.AuthLive do
   defp login_code_form(assigns) do
     ~H"""
     <form id="login_code" phx-submit="verify_code">
-      <p class="font-title font-weight-semibold p-8">Enter Code to access</p>
-      <p class="line-spacing-8 font-weight-light">
-        We’ve sent a unique code to your email address. Please enter it below to continue.
-      </p>
-      <%= if assigns[:error] do %>
-        <img system-name="exclamationmark.circle.fill" />
-        <p class="italic type-size-small">
-          <%= @error %>
+      <div class="mt-8 text-center">
+        <h2 class="text-2xl sm:text-3.5xl font-semibold">Enter Code to access</h2>
+        <p class="max-w-[360px] mt-2 font-normal text-brand-gray-600">
+          We’ve sent a unique code to your email address. Please enter it below to continue.
         </p>
-      <% end %>
-      <input
-        type="text"
-        name="login_code"
-        class="text-field-plain overlay:steps align-leading kerning-46 w-300 keyboard-type-numbers-and-punctuation"
-      />
+      </div>
+      <div class="relative mt-12">
+        <%= if assigns[:error] do %>
+          <div class="absolute left-0 -top-6 w-full flex items-center justify-center text-brand-red">
+            <.icon name="hero-exclamation-circle-solid" class="h-5 w-5" />
+            <p class="ml-[10px] italic" id="login-code-error">
+              <%= @error %>
+            </p>
+          </div>
+        <% end %>
+        <label for="login-code-input" class="sr-only">Your login code</label>
+        <input
+          type="text"
+          name="login_code"
+          class="w-full h-14 p-3 text-xl text-brand-gray-800 border border-brand-gray-200 rounded-lg outline-none transition duration-200 focus:bg-brand-gray-50 focus:ring-2 focus:ring-[#1ff4ff] keyboard-type-numbers-and-punctuation"
+          id="login-code-input"
+        />
+      </div>
       <!-- todo: boxes for code -->
-      <button type="submit" class="w-full h-56 background:rect">
-        <p class="fg-color-white font-weight-semibold type-size-x-large">Log In</p>
+      <button type="submit" class="mt-8 w-full h-14 bg-brand-purple text-xl text-semibold text-white rounded-lg border-2 border-transparent outline-none transition duration-200 hover:text-brand-purple hover:bg-white hover:border-brand-purple focus:ring-2 focus:ring-[#1ff4ff]">
+        Verify
       </button>
     </form>
     """
@@ -229,12 +242,19 @@ defmodule ElixirconfChatWeb.AuthLive do
 
   defp welcome_message(assigns) do
     ~H"""
-    <div id="welcome">
-      <p class="font-title font-weight-semibold p-16">Welcome to ElixirConf 2023 Chat!</p>
-      <p class="line-spacing-8 font-weight-light">
+    <div class="mt-8 text-center" id="welcome">
+      <h2 class="text-2xl sm:text-3.5xl font-semibold">Welcome to ElixirConf 2023 Chat!</h2>
+      <p class="mt-2 font-normal text-brand-gray-600">
         To get started, enter the email address you used to register for ElixirConf 2023
       </p>
     </div>
+    """
+  end
+
+  # Allow heroicons to be used
+  def icon(%{name: "hero-" <> _} = assigns) do
+    ~H"""
+    <span class={[@name, @class]} />
     """
   end
 end
