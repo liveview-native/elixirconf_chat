@@ -77,7 +77,7 @@ defmodule ElixirconfChatWeb.ChatLive do
     ~H"""
     <div class="w-full">
       <.room_page {assigns} />
-      <.logo height={48} width={48} native={@native} platform_id={:swiftui} />
+      <.logo height={48} width={48} />
       <.hallway {assigns} />
       <.rooms_list {assigns} />
     </div>
@@ -86,6 +86,7 @@ defmodule ElixirconfChatWeb.ChatLive do
 
   @impl true
   def handle_event("join_room", %{"room-id" => room_id}, socket) do
+    IO.inspect(room_id, label: "CLICK JOIN ROOM" <> room_id)
     # Load Room asynchronously
     Process.send_after(self(), {:get_room, room_id}, 10)
     Chat.join_room(room_id, self())
@@ -106,6 +107,8 @@ defmodule ElixirconfChatWeb.ChatLive do
 
   @impl true
   def handle_event("post_message", %{"body" => body}, socket) do
+    IO.inspect(body, label: "BODY")
+
     case socket.assigns do
       %{room: %{id: room_id}} ->
         Chat.post_message(room_id, %{
@@ -156,6 +159,12 @@ defmodule ElixirconfChatWeb.ChatLive do
     """
   end
 
+  def logo(assigns) do
+    ~H"""
+    LOGO TODO
+    """
+  end
+
   def chat_input(%{platform_id: :swiftui} = assigns) do
     ~SWIFTUI"""
     <LiveForm id="chat" phx-submit="post_message">
@@ -175,7 +184,15 @@ defmodule ElixirconfChatWeb.ChatLive do
 
   def chat_input(assigns) do
     ~H"""
-
+    <form id="chat" phx-submit="post_message">
+      <div class="background:rect">
+        <input type="text" name="body" class="ph-24" placeholder="Enter Message..." />
+        <button type="submit" class="button-style-bordered-prominent tint:elixirpurple">
+          Submit <img system-name="paperplane.fill" />
+        </button>
+        <br class="h-16 w-32" />
+      </div>
+    </form>
     """
   end
 
@@ -251,7 +268,7 @@ defmodule ElixirconfChatWeb.ChatLive do
           Go Back
         </p>
         <br />
-        <.logo height={48} width={48} native={@native} platform_id={:swiftui} />
+        <.logo height={48} width={48} />
       </div>
       <%= if @loading_room do %>
         <br />
@@ -272,7 +289,7 @@ defmodule ElixirconfChatWeb.ChatLive do
               </div>
             </div>
             <br class="h-24" />
-            <p modclass="w-375 align-center">
+            <p class="w-375 align-center">
               No Messages in this room. Be the first one to send a message.
             </p>
             <br />
@@ -280,15 +297,9 @@ defmodule ElixirconfChatWeb.ChatLive do
         <% else %>
           <br />
           <div>
-            <div modclass="refreshable:refresh">
+            <div class="refreshable:refresh">
               <%= for {message, index} <- Enum.with_index(@messages) do %>
-                <.chat_message
-                  current_user_id={@current_user.id}
-                  index={index}
-                  message={message}
-                  native={@native}
-                  platform_id={:swiftui}
-                />
+                <.chat_message current_user_id={@current_user.id} index={index} message={message} />
               <% end %>
             </div>
           </div>
@@ -354,7 +365,7 @@ defmodule ElixirconfChatWeb.ChatLive do
         <% end %>
         <div class="p-12 align-leading">
           <%= if @message.user_id == @current_user_id do %>
-            <div spacing={8} alignment="leading" modclass="fg-color-white">
+            <div spacing={8} alignment="leading" class="fg-color-white">
               <div class="capitalize type-size-x-small">
                 <p>You</p>
                 <br class="w-32" />
@@ -395,7 +406,7 @@ defmodule ElixirconfChatWeb.ChatLive do
     ~H"""
     <%= for timeslot <- @schedule.pinned do %>
       <%= for room <- timeslot.rooms do %>
-        <.hallway_item room={room} native={@native} platform_id={:swiftui} />
+        <.hallway_item room={room} />
       <% end %>
     <% end %>
     """
@@ -414,6 +425,22 @@ defmodule ElixirconfChatWeb.ChatLive do
         <Spacer />
       </HStack>
     </VStack>
+    """
+  end
+
+  def hallway_item(assigns) do
+    ~H"""
+    <div class="background:rect ph-24">
+      <div class="fg-color:lightchrome opacity-0.25" template={:rect} corner-radius="16" />
+      <div spacing={0} phx-click="join_room" phx-value-room-id={"#{@room.id}"}>
+        <br />
+        <div class="h-10 w-10 p-10 fg-color:forestgreen" />
+        <p class="font-subheadline font-weight-semibold h-48 capitalize kerning-3">
+          <%= @room.title %>
+        </p>
+        <br />
+      </div>
+    </div>
     """
   end
 
@@ -451,12 +478,7 @@ defmodule ElixirconfChatWeb.ChatLive do
         <section>
           <div template={:content}>
             <%= for timeslot <- timeslots do %>
-              <.timeslot_item
-                timeslot={timeslot}
-                native={@native}
-                platform_id={:swiftui}
-                track_labels={@track_labels}
-              />
+              <.timeslot_item timeslot={timeslot} track_labels={@track_labels} />
             <% end %>
           </div>
           <div class="background:rect" template={:header}>
@@ -497,7 +519,7 @@ defmodule ElixirconfChatWeb.ChatLive do
 
   def room_page(assigns) do
     ~H"""
-    <div>
+    <div template={:room_page}>
       <.chat_history {assigns} />
       <.chat_input {assigns} />
     </div>
@@ -548,6 +570,57 @@ defmodule ElixirconfChatWeb.ChatLive do
         <% end %>
       </VStack>
     </VStack>
+    """
+  end
+
+  def timeslot_item(assigns) do
+    ~H"""
+    <div class="background:rect ph-24 align-leading image-scale-small">
+      <div class="fg-color:lightchrome opacity-0.25" template={:rect} corner-radius="16" />
+      <div spacing={16} class="p-16">
+        <div>
+          <p class="font-subheadline type-size-x-small font-weight-semibold h-12 capitalize kerning-2 opacity-0.825">
+            <%= @timeslot.formatted_string %>
+          </p>
+          <br />
+        </div>
+        <%= for room <- @timeslot.rooms do %>
+          <div>
+            <div>
+              <%= if room.track > 0 do %>
+                <div class="fg-color-secondary h-24 opacity-0.75 overlay:rect">
+                  <div class="stroke-secondary fg-color-clear" template={:rect} corner-radius="8" />
+                  <p class="capitalize p-8 kerning-4 font-subheadline type-size-x-small font-weight-semibold offset-x-2">
+                    Track <%= Map.get(@track_labels, room.track, "?") %>
+                  </p>
+                </div>
+                <br />
+              <% end %>
+            </div>
+            <div phx-click="join_room" phx-value-room-id={"#{room.id}"} spacing={8}>
+              <div spacing={8}>
+                <div>
+                  <p class="font-headline font-weight-semibold"><%= room.title %></p>
+                  <br />
+                </div>
+                <%= if room.presenters != [] do %>
+                  <div>
+                    <p class="font-subheadline opacity-0.825">
+                      <%= Enum.join(room.presenters, ", ") %>
+                    </p>
+                    <br />
+                  </div>
+                <% end %>
+              </div>
+              <div class="opacity-0.75 type-size-x-small">
+                <img system-name="person.2" />
+                <p>0</p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
     """
   end
 
