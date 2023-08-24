@@ -26,12 +26,18 @@ struct AppRegistries: AggregateRegistry {
 
 struct ContentView: View {
     @StateObject private var coordinator = LiveSessionCoordinator<AppRegistries>(
-        .localhost(path: {
+        {
+            #if DEBUG
+            let baseURL = URL(string: "http://localhost:4000/")!
+            #else
+            let baseURL = URL(string: "https://elixirconf-chat.fly.dev/")!
+            #endif
+
             if let token = UserDefaults.standard.value(forKey: "token") {
-                return "/chat/\(token)"
+                return baseURL.appending(path: "/chat/\(token)")
             }
-            return "/"
-        }()),
+            return baseURL
+        }(),
         config: LiveSessionConfiguration(navigationMode: .replaceOnly)
     )
     
