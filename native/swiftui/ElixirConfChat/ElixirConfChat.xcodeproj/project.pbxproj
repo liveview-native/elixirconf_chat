@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		2F0AC6E62A95201C00F60947 /* LiveViewNative in Frameworks */ = {isa = PBXBuildFile; productRef = 2F0AC6E52A95201C00F60947 /* LiveViewNative */; };
-		2F0AC6E82A95201C00F60947 /* BuiltinRegistryGenerator in Frameworks */ = {isa = PBXBuildFile; productRef = 2F0AC6E72A95201C00F60947 /* BuiltinRegistryGenerator */; };
 		2F0AC6EB2A95204E00F60947 /* LiveViewNativeLiveForm in Frameworks */ = {isa = PBXBuildFile; productRef = 2F0AC6EA2A95204E00F60947 /* LiveViewNativeLiveForm */; };
 		2F9983042A60800400F76113 /* ElixirConfChatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9983032A60800400F76113 /* ElixirConfChatApp.swift */; };
 		2F9983062A60800400F76113 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9983052A60800400F76113 /* ContentView.swift */; };
@@ -40,7 +39,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2F0AC6E62A95201C00F60947 /* LiveViewNative in Frameworks */,
-				2F0AC6E82A95201C00F60947 /* BuiltinRegistryGenerator in Frameworks */,
 				2F0AC6EB2A95204E00F60947 /* LiveViewNativeLiveForm in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -146,7 +144,6 @@
 			name = ElixirConfChat;
 			packageProductDependencies = (
 				2F0AC6E52A95201C00F60947 /* LiveViewNative */,
-				2F0AC6E72A95201C00F60947 /* BuiltinRegistryGenerator */,
 				2F0AC6EA2A95204E00F60947 /* LiveViewNativeLiveForm */,
 			);
 			productName = ElixirConfChat;
@@ -541,11 +538,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2F0AC6E42A95201C00F60947 /* XCRemoteSwiftPackageReference "liveview-client-swiftui" */;
 			productName = LiveViewNative;
-		};
-		2F0AC6E72A95201C00F60947 /* BuiltinRegistryGenerator */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 2F0AC6E42A95201C00F60947 /* XCRemoteSwiftPackageReference "liveview-client-swiftui" */;
-			productName = BuiltinRegistryGenerator;
 		};
 		2F0AC6EA2A95204E00F60947 /* LiveViewNativeLiveForm */ = {
 			isa = XCSwiftPackageProductDependency;
