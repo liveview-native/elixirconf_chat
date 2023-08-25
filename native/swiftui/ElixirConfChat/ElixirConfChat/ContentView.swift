@@ -44,8 +44,6 @@ struct ContentView: View {
     var body: some View {
         LiveView(session: coordinator)
             .onReceive(coordinator.receiveEvent("persist_token"), perform: { coordinator, payload in
-                print("persisting token...")
-
                 UserDefaults.standard.setValue(payload["token"], forKey: "token")
             })
     }
