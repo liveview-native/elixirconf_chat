@@ -19,6 +19,7 @@ defmodule ElixirconfChatWeb.Router do
 
     live("/chat/:token", ChatLive)
     live("/chat", ChatLive)
+    live("privacy", PrivacyPolicyLive)
     live("/", AuthLive)
   end
 
