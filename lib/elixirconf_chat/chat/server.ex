@@ -18,7 +18,7 @@ defmodule ElixirconfChat.Chat.Server do
       |> Keyword.merge(params)
       |> Enum.into(%{})
 
-    Logger.debug("Start Chat.Server with initial state: #{inspect initial_state}")
+    Logger.debug("Start Chat.Server with initial state: #{inspect(initial_state)}")
 
     GenServer.start_link(Server, initial_state, name: :"chat_server_#{initial_state.room_id}")
   end
@@ -88,7 +88,10 @@ defmodule ElixirconfChat.Chat.Server do
     {:reply, :ok, %{state | subscribers: updated_subscribers}}
   end
 
-  def handle_info({:DOWN, _ref, :process, pid, _reason}, %{subscribers: %{} = subscribers} = state) do
+  def handle_info(
+        {:DOWN, _ref, :process, pid, _reason},
+        %{subscribers: %{} = subscribers} = state
+      ) do
     updated_subscribers = Map.delete(subscribers, pid)
 
     {:noreply, %{state | subscribers: updated_subscribers}}
