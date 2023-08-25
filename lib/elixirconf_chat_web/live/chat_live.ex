@@ -171,7 +171,7 @@ defmodule ElixirconfChatWeb.ChatLive do
 
   def logo(assigns) do
     ~H"""
-    <img class="my-5 min-[448px]:mt-8 min-[448px]:mb-7 mx-auto h-10 w-auto" src="/images/elixir-logo.png" width="75" height="60" alt="" />
+    <img class="my-5 md:mt-8 md:mb-7 mx-auto h-10 w-auto" src="/images/elixir-logo.png" width="75" height="60" alt="" />
     """
   end
 
@@ -195,12 +195,11 @@ defmodule ElixirconfChatWeb.ChatLive do
   def chat_input(assigns) do
     ~H"""
     <form id="chat" phx-submit="post_message">
-      <div class="background:rect">
-        <input type="text" name="body" class="ph-24" placeholder="Enter Message..." />
+      <div>
+        <input class="h-14 py-3 px-4 text-xl text-brand-gray-400" type="text" name="body" class="ph-24" placeholder="Enter Message..." />
         <button type="submit" class="button-style-bordered-prominent tint:elixirpurple">
           Submit <img system-name="paperplane.fill" />
         </button>
-        <br class="h-16 w-32" />
       </div>
     </form>
     """
@@ -277,8 +276,6 @@ defmodule ElixirconfChatWeb.ChatLive do
         <p phx-click="leave_room">
           Go Back
         </p>
-        <br />
-        <.logo height={48} width={48} />
       </div>
       <%= if @loading_room do %>
         <br />
@@ -306,8 +303,8 @@ defmodule ElixirconfChatWeb.ChatLive do
           </div>
         <% else %>
           <br />
-          <div>
-            <div class="refreshable:refresh">
+          <div class="space-y-3">
+            <div class="space-y-3 refreshable:refresh">
               <%= for {message, index} <- Enum.with_index(@messages) do %>
                 <.chat_message current_user_id={@current_user.id} index={index} message={message} />
               <% end %>
@@ -364,40 +361,25 @@ defmodule ElixirconfChatWeb.ChatLive do
   def chat_message(assigns) do
     ~H"""
     <div id={"message_#{@index}"}>
-      <%= if @message.user_id == @current_user_id do %>
-        <br />
-      <% end %>
-      <div class="background:rect ph-10 pv-2">
+      <div class="flex flex-col">
         <%= if @message.user_id == @current_user_id do %>
-          <div class="fg-color:elixirpurple" template={:rect} corner-radius="16" />
+          <div class="self-end max-w-[292px] p-3 bg-brand-purple text-brand-gray-50 rounded-2xl rounded-br-none">
+            <div class="mb-1 flex items-center justify-between gap-x-7 text-[13px]/[18px] text-brand-gray-100 uppercase">
+              <p class="font-semibold tracking-[3px]">You</p>
+              <p class="font-medium"><%= Utils.time_formatted(@message.posted_at) %></p>
+            </div>
+            <p class="font-medium"><%= @message.body %></p>
+          </div>
         <% else %>
-          <div class="fg-color:lightchrome opacity-0.25" template={:rect} corner-radius="16" />
+          <div class="self-start max-w-[292px] p-3 bg-brand-gray-50 text-brand-gray-900 rounded-2xl rounded-bl-none">
+            <div class="mb-1 flex items-center justify-between gap-x-7 text-[13px]/[18px] uppercase">
+              <p class="font-semibold text-brand-gray-500 tracking-[3px]"><%= @message.posted_by %></p>
+              <p class="font-medium text-brand-gray-500"><%= Utils.time_formatted(@message.posted_at) %></p>
+            </div>
+            <p class="font-medium"><%= @message.body %></p>
+          </div>
         <% end %>
-        <div class="p-12 align-leading">
-          <%= if @message.user_id == @current_user_id do %>
-            <div spacing={8} alignment="leading" class="fg-color-white">
-              <div class="capitalize type-size-x-small">
-                <p>You</p>
-                <br class="w-32" />
-                <p><%= Utils.time_formatted(@message.posted_at) %></p>
-              </div>
-              <p><%= @message.body %></p>
-            </div>
-          <% else %>
-            <div spacing={8} alignment="leading">
-              <div class="capitalize type-size-x-small">
-                <p><%= @message.posted_by %></p>
-                <br class="w-32" />
-                <p><%= Utils.time_formatted(@message.posted_at) %></p>
-              </div>
-              <p><%= @message.body %></p>
-            </div>
-          <% end %>
-        </div>
       </div>
-      <%= if @message.user_id != @current_user_id do %>
-        <br />
-      <% end %>
     </div>
     """
   end
@@ -483,7 +465,7 @@ defmodule ElixirconfChatWeb.ChatLive do
     <%= for {day, timeslots} <- @sorted_days do %>
       <div>
         <section class="mt-6" aria-labelledby="schedule-day">
-          <h2 class="text-xl min-[448px]:text-2xl text-brand-gray-800" id="schedule-day"><%= day %></h2>
+          <h2 class="text-xl md:text-2xl text-brand-gray-800" id="schedule-day"><%= day %></h2>
           <div class="mt-3 space-y-3">
             <%= for timeslot <- timeslots do %>
               <.timeslot_item timeslot={timeslot} track_labels={@track_labels} />
@@ -522,9 +504,11 @@ defmodule ElixirconfChatWeb.ChatLive do
 
   def room_page(assigns) do
     ~H"""
-    <div template={:room_page}>
+    <div>
       <.chat_history {assigns} />
-      <.chat_input {assigns} />
+      <div class="absolute bottom-3 left-4">
+        <.chat_input {assigns} />
+      </div>
     </div>
     """
   end
