@@ -78,12 +78,12 @@ defmodule ElixirconfChatWeb.ChatLive do
     <div class="px-4">
       <.logo />
       <div class="mx-auto w-full max-w-[1200px] md:grid md:grid-cols-12 border border-brand-gray-200 rounded-t-[32px]">
-        <div class="max-h-[33vh] md:max-h-[calc(100vh-2.5rem)] overflow-y-scroll border-b border-brand-gray-200 md:col-span-6 md:border-b-0 md:border-r md:border-brand-gray-200 lg:col-span-4 p-4 min-[448px]:p-6">
+        <div class="max-h-[33vh] md:max-h-[calc(100vh-2.5rem)] overflow-y-scroll border-b border-brand-gray-200 md:col-span-6 md:border-b-0 md:border-r md:border-brand-gray-200 lg:col-span-5 xl:col-span-4 p-4 min-[448px]:p-6">
           <h1 class="font-medium text-2xl min-[448px]:text-3.5xl text-brand-gray-700">Schedule</h1>
           <.hallway {assigns} />
           <.rooms_list {assigns} />
         </div>
-        <div class="md:col-span-6 lg:col-span-8">
+        <div class="md:col-span-6 lg:col-span-7 xl:col-span-8">
           <%= if @room_page do %>
             <.room_page {assigns} />
           <% end %>
