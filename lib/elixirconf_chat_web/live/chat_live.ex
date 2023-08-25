@@ -77,13 +77,13 @@ defmodule ElixirconfChatWeb.ChatLive do
     ~H"""
     <div class="px-4">
       <.logo />
-      <div class="mx-auto w-full max-w-[1200px] md:grid md:grid-cols-6 border border-brand-gray-200 rounded-t-[32px]">
-        <div class="md:col-span-3 md:border-r md:border-brand-gray-200 lg:col-span-2 p-4 min-[448px]:p-6">
+      <div class="mx-auto w-full max-w-[1200px] md:grid md:grid-cols-12 border border-brand-gray-200 rounded-t-[32px]">
+        <div class="max-h-[calc(100vh-2.5rem)] overflow-y-scroll md:col-span-6 md:border-r md:border-brand-gray-200 lg:col-span-4 p-4 min-[448px]:p-6">
           <h1 class="font-medium text-2xl min-[448px]:text-3.5xl text-brand-gray-700">Schedule</h1>
           <.hallway {assigns} />
           <.rooms_list {assigns} />
         </div>
-        <div class="md:col-span-3 lg:col-span-4">
+        <div class="md:col-span-6 lg:col-span-8">
           <%= if @room_page do %>
             <.room_page {assigns} />
           <% end %>
@@ -441,9 +441,9 @@ defmodule ElixirconfChatWeb.ChatLive do
   def hallway_item(assigns) do
     ~H"""
     <article class="mt-5 p-3 bg-brand-gray-50 rounded-2xl">
-      <div spacing={0} phx-click="join_room" phx-value-room-id={"#{@room.id}"}>
-        <h2 class="uppercase font-semibold text-sm text-brand-gray-700 tracking-[3px] text-center">
-          <%= @room.title %>
+      <div class="cursor-pointer group" phx-click="join_room" phx-value-room-id={"#{@room.id}"}>
+        <h2 class="uppercase font-semibold text-sm text-brand-gray-700 tracking-[3px] text-center group-hover:text-brand-purple group-hover:underline">
+          <span class="inline-block mr-3 w-2.5 h-2.5 bg-[#049372] rounded-full"></span><%= @room.title %> <span>(0 Online)</span>
         </h2>
       </div>
     </article>
@@ -579,9 +579,13 @@ defmodule ElixirconfChatWeb.ChatLive do
     ~H"""
     <article class="p-3 bg-brand-gray-50 rounded-2xl">
       <div>
-        <h3 class="mb-3 uppercase font-semibold text-sm text-brand-gray-700 tracking-[3px]">
-          <%= @timeslot.formatted_string %>
-        </h3>
+        <div class="mb-3 flex items-center justify-between uppercase font-semibold text-sm text-brand-gray-700 tracking-[3px]">
+          <h3>
+            <%= @timeslot.formatted_string %>
+          </h3>
+          <!-- Doors open or not -->
+          <span>Doors Open</span>
+        </div>
         <%= for room <- @timeslot.rooms do %>
           <div>
             <%= if room.track > 0 do %>
@@ -589,27 +593,27 @@ defmodule ElixirconfChatWeb.ChatLive do
                 Track <%= Map.get(@track_labels, room.track, "?") %>
               </span>
             <% end %>
-            <div class="cursor-pointer" phx-click="join_room" phx-value-room-id={"#{room.id}"}>
+            <div class="cursor-pointer group" phx-click="join_room" phx-value-room-id={"#{room.id}"}>
               <%= if room.presenters != [] do %>
-                <div class="flex gap-x-2 items-start">
+                <div class="flex max-w-full gap-x-2 items-start">
                   <div class="shrink-0 h-10 w-10 flex items-center justify-center rounded-full bg-white">
                     <svg class="fill-brand-purple" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32"><path d="M4 22C4 17.5817 7.58172 14 12 14C16.4183 14 20 17.5817 20 22H18C18 18.6863 15.3137 16 12 16C8.68629 16 6 18.6863 6 22H4ZM12 13C8.685 13 6 10.315 6 7C6 3.685 8.685 1 12 1C15.315 1 18 3.685 18 7C18 10.315 15.315 13 12 13ZM12 11C14.21 11 16 9.21 16 7C16 4.79 14.21 3 12 3C9.79 3 8 4.79 8 7C8 9.21 9.79 11 12 11Z"></path></svg>
                   </div>
                   <div class="grow">
-                    <p class="font-medium text-xl/6 text-brand-gray-800"><%= room.title %></p>
+                    <p class="font-medium text-xl/6 text-brand-gray-800 group-hover:text-brand-purple group-hover:underline break-words"><%= room.title %></p>
                     <div class="mt-1 mb-4 flex items-center justify-between">
-                      <p class="leading-5 text-brand-gray-600">
+                      <p class="leading-5 text-brand-gray-600 group-hover:text-brand-purple">
                         <%= Enum.join(room.presenters, ", ") %>
                       </p>
                       <div class="flex items-center gap-x-2">
-                        <svg class="w-4 h-4 fill-brand-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path d="M2 22C2 17.5817 5.58172 14 10 14C14.4183 14 18 17.5817 18 22H16C16 18.6863 13.3137 16 10 16C6.68629 16 4 18.6863 4 22H2ZM10 13C6.685 13 4 10.315 4 7C4 3.685 6.685 1 10 1C13.315 1 16 3.685 16 7C16 10.315 13.315 13 10 13ZM10 11C12.21 11 14 9.21 14 7C14 4.79 12.21 3 10 3C7.79 3 6 4.79 6 7C6 9.21 7.79 11 10 11ZM18.2837 14.7028C21.0644 15.9561 23 18.752 23 22H21C21 19.564 19.5483 17.4671 17.4628 16.5271L18.2837 14.7028ZM17.5962 3.41321C19.5944 4.23703 21 6.20361 21 8.5C21 11.3702 18.8042 13.7252 16 13.9776V11.9646C17.6967 11.7222 19 10.264 19 8.5C19 7.11935 18.2016 5.92603 17.041 5.35635L17.5962 3.41321Z"></path></svg>
-                        <p class="leading-5 text-brand-gray-600">0</p>
+                        <svg class="w-4 h-4 fill-brand-gray-500 group-hover:fill-brand-purple" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path d="M2 22C2 17.5817 5.58172 14 10 14C14.4183 14 18 17.5817 18 22H16C16 18.6863 13.3137 16 10 16C6.68629 16 4 18.6863 4 22H2ZM10 13C6.685 13 4 10.315 4 7C4 3.685 6.685 1 10 1C13.315 1 16 3.685 16 7C16 10.315 13.315 13 10 13ZM10 11C12.21 11 14 9.21 14 7C14 4.79 12.21 3 10 3C7.79 3 6 4.79 6 7C6 9.21 7.79 11 10 11ZM18.2837 14.7028C21.0644 15.9561 23 18.752 23 22H21C21 19.564 19.5483 17.4671 17.4628 16.5271L18.2837 14.7028ZM17.5962 3.41321C19.5944 4.23703 21 6.20361 21 8.5C21 11.3702 18.8042 13.7252 16 13.9776V11.9646C17.6967 11.7222 19 10.264 19 8.5C19 7.11935 18.2016 5.92603 17.041 5.35635L17.5962 3.41321Z"></path></svg>
+                        <p class="leading-5 text-brand-gray-600 group-hover:text-brand-purple">0</p>
                       </div>
                     </div>
                   </div>
                 </div>
               <% else %>
-                <p class="font-medium text-xl/6 text-brand-gray-800"><%= room.title %></p>
+                <p class="font-medium text-xl/6 text-brand-gray-800 group-hover:text-brand-purple group-hover:underline"><%= room.title %></p>
               <% end %>
             </div>
           </div>
