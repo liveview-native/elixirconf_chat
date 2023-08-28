@@ -11,6 +11,8 @@ defmodule ElixirconfChat.Chat.Message do
     field :posted_at, :naive_datetime
     field :posted_by, :string
 
+    timestamps()
+
     belongs_to :room, Room
     belongs_to :user, User
   end

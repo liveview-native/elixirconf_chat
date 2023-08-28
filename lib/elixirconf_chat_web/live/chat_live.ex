@@ -76,7 +76,9 @@ defmodule ElixirconfChatWeb.ChatLive do
   def render(assigns) do
     ~H"""
     <div class="w-full">
-      <.room_page {assigns} />
+      <%= if @room_page do %>
+        <.room_page {assigns} />
+      <% end %>
       <.logo height={48} width={48} />
       <.hallway {assigns} />
       <.rooms_list {assigns} />
@@ -134,7 +136,8 @@ defmodule ElixirconfChatWeb.ChatLive do
   @impl true
   def handle_info({:get_room, room_id}, socket) do
     case Chat.get_room(room_id) do
-      %Room{server_state: %{messages: messages}} = room ->
+      %Room{messages: messages, server_state: %{messages: unsaved_messages}} = room ->
+        messages = messages ++ unsaved_messages
         {:noreply, assign(socket, loading_room: false, messages: messages, room: room)}
 
       _ ->

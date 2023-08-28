@@ -68,8 +68,14 @@ config :live_view_native,
 # Use Oban for background job processing
 config :elixirconf_chat, Oban,
   repo: ElixirconfChat.Repo,
-  plugins: [Oban.Plugins.Pruner],
-  queues: [default: 10]
+  plugins: [
+    Oban.Plugins.Pruner,
+    {Oban.Plugins.Cron,
+     crontab: [
+       {"* * * * *", ElixirconfChat.Jobs.SaveMessages}
+     ]}
+  ],
+  queues: [events: 10, default: 10]
 
 # Use Tzdata time zone database
 config :elixir, :time_zone_database, Tz.TimeZoneDatabase

@@ -35,7 +35,10 @@ defmodule ElixirconfChat.Chat do
   Fetches a Room by ID.
   """
   def get_room(room_id) do
-    room = Repo.get(Room, room_id)
+    room =
+      Room
+      |> Repo.get(room_id)
+      |> Repo.preload(:messages)
 
     if room do
       %Room{room | server_state: Server.get_state(room_id)}
