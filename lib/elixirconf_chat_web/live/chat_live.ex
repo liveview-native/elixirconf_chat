@@ -75,15 +75,15 @@ defmodule ElixirconfChatWeb.ChatLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="px-4 min-h-[496px] overflow-y-auto">
+    <div class="px-4 min-h-[496px] md:min-h-[600px] overflow-y-auto">
       <.logo />
       <div class="mx-auto w-full max-w-[1200px] md:grid md:grid-cols-12 border border-brand-gray-200 rounded-t-[32px]">
-        <div class="min-h-[208px] max-h-[calc(33vh-5rem)] md:max-h-full md:h-[calc(100vh-6.25rem)] overflow-y-auto border-b-4 border-brand-purple md:col-span-6 md:border-b-0 md:border-r md:border-brand-gray-200 lg:col-span-5 xl:col-span-4 p-4 md:p-6">
+        <div class="min-h-[208px] max-h-[calc(33vh-5rem)] md:max-h-full md:h-[calc(100vh-6.25rem)] md:min-h-[600px] overflow-y-auto border-b-4 border-brand-purple md:col-span-6 md:border-b-0 md:border-r md:border-brand-gray-200 lg:col-span-5 xl:col-span-4 p-4 md:p-6">
           <h1 class="font-medium text-2xl md:text-3.5xl text-brand-gray-700">Schedule</h1>
           <.hallway {assigns} />
           <.rooms_list {assigns} />
         </div>
-        <div class="relative min-h-[208px] h-[calc(67vh-2rem)] md:max-h-full md:h-[calc(100vh-6.25rem)] md:col-span-6 lg:col-span-7 xl:col-span-8">
+        <div class="relative min-h-[208px] h-[calc(67vh-2rem)] md:max-h-full md:h-[calc(100vh-6.25rem)] md:min-h-[600px] md:col-span-6 lg:col-span-7 xl:col-span-8">
           <%= if @room_page do %>
             <.room_page {assigns} />
           <% else %>
@@ -316,7 +316,7 @@ defmodule ElixirconfChatWeb.ChatLive do
             </div>
           </div>
         <% else %>
-          <div class="h-[calc(67vh-11.5rem)] md:h-[calc(100vh-17.5rem)] overflow-y-scroll space-y-3 px-4 md:px-6">
+          <div class="h-[calc(67vh-11.5rem)] md:h-[calc(100vh-17.5rem)] md:min-h-[400px] overflow-y-scroll space-y-3 px-4 md:px-6">
             <!-- TODO: needs to always scroll to bottom to view latest message -->
             <div class="space-y-3">
               <%= for {message, index} <- Enum.with_index(@messages) do %>
