@@ -36,7 +36,8 @@ defmodule ElixirconfChat.Chat do
   """
   def get_room(room_id) do
     room =
-      Repo.get(Room, room_id)
+      Room
+      |> Repo.get(room_id)
       |> Repo.preload(:messages)
 
     if room do
