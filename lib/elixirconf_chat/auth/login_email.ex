@@ -10,7 +10,7 @@ defmodule ElixirconfChat.Auth.LoginEmail do
 
     new()
     |> to({name, user.email})
-    |> from({"DockYard", "noreply@dockyard.com"})
+    |> from({"ElixirConf Chat", "noreply@dockyard.com"})
     |> subject("Your six digit code is #{user.login_code}")
     |> html_body(email_html)
     |> text_body(email_text)

@@ -31,7 +31,11 @@ config :elixirconf_chat, ElixirconfChat.Mailer,
   adapter: Swoosh.Adapters.Sendgrid,
   api_key: System.get_env("ELIXIRCONF_CHAT_SENDGRID_API_KEY", "SG.x.x")
 
-config :swoosh, :api_client, Swoosh.ApiClient.Hackney
+if System.get_env("ELIXIRCONF_CHAT_SENDGRID_API_KEY") do
+  config :swoosh, :api_client, Swoosh.ApiClient.Hackney
+else
+  config :swoosh, :api_client, Swoosh.ApiClient.Local
+end
 
 # Configure esbuild (the version is required)
 config :esbuild,

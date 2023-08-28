@@ -46,7 +46,9 @@ defmodule ElixirconfChatWeb.AuthLive do
   def handle_event("check_email", %{"email" => email}, socket) do
     with {:user, %User{} = user} <- {:user, Users.get_user_by_email(email)},
          {:user_with_code, {:ok, %User{} = user_with_code}} <-
-           {:user_with_code, Auth.randomize_user_login_code(user)} do
+           {:user_with_code, Auth.randomize_user_login_code(user)},
+         {:ok, _result} <- deliver_login_email(user_with_code)
+    do
       {:noreply, assign(socket, error: nil, user: user_with_code)}
     else
       {:user, nil} ->
@@ -257,6 +259,12 @@ defmodule ElixirconfChatWeb.AuthLive do
     ~H"""
     <span class={[@name, @class]} />
     """
+  end
+
+  defp deliver_login_email(user) do
+    user
+    |> ElixirconfChat.Auth.LoginEmail.login_email()
+    |> ElixirconfChat.Mailer.deliver()
   end
 
   defp parse_login_code(login_code) do
