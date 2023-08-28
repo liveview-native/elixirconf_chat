@@ -83,16 +83,16 @@ defmodule ElixirconfChatWeb.ChatLive do
           <.hallway {assigns} />
           <.rooms_list {assigns} />
         </div>
-        <div class="relative min-h-[208px] md:max-h-full h-[calc(67vh-5rem)] md:h-[calc(100vh-6.25rem)] md:col-span-6 lg:col-span-7 xl:col-span-8">
-          <!--  p-4 md:p-6 -->
+        <div class="relative min-h-[208px] h-[calc(67vh-2rem)] md:max-h-full md:h-[calc(100vh-6.25rem)] md:col-span-6 lg:col-span-7 xl:col-span-8">
           <%= if @room_page do %>
             <.room_page {assigns} />
           <% else %>
-            <div class="h-full mt-8 max-w-[260px] mx-auto flex items-center justify-center text-lg text-center text-brand-gray-600">
+            <div class="h-full max-w-[260px] mx-auto flex items-center justify-center text-lg text-center text-brand-gray-600">
               <div>
-                <span>👈</span>
+                <span class="md:hidden" aria-hidden="true">👆</span>
+                <span class="hidden md:block" aria-hidden="true">👈</span>
                 <p class="mt-3">
-                  Select a schedule from the list to enter its chatroom.
+                  Select a panel from the list to enter its chatroom.
                 </p>
               </div>
             </div>
@@ -207,7 +207,7 @@ defmodule ElixirconfChatWeb.ChatLive do
     <form class="p-4 md:p-6" id="chat" phx-submit="post_message">
       <div class="px-2 py-[5px] flex items-center justify-between gap-x-2 border border-brand-gray-200 rounded-lg">
         <label class="sr-only" for="chat-input"></label>
-        <input class="w-[calc(100%-1rem)] py-2 px-2 text-lg md:text-xl text-brand-gray-400 border-none transition duration-200 focus:rounded-sm focus:ring-2 focus:ring-brand-purple" type="text" name="body" class="ph-24" placeholder="Enter Message..." id="chat-input" />
+        <input class="w-[calc(100%-1rem)] py-2 px-2 text-lg md:text-xl text-brand-gray-400 border-none transition duration-200 focus:rounded-sm focus:ring-2 focus:ring-brand-purple" type="text" name="body" class="ph-24" placeholder="Enter Message..." id="chat-input" required />
         <button type="submit" class="w-10 h-10 flex items-center justify-center bg-brand-purple rounded-xl border-2 border-transparent group transition duration-200 hover:bg-white hover:border-brand-purple outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-purple">
           <span class="sr-only">Submit</span>
           <svg class="fill-white group-hover:fill-brand-purple" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M3 13.0001H9V11.0001H3V1.8457C3 1.56956 3.22386 1.3457 3.5 1.3457C3.58425 1.3457 3.66714 1.36699 3.74096 1.4076L22.2034 11.562C22.4454 11.695 22.5337 11.9991 22.4006 12.241C22.3549 12.3241 22.2865 12.3925 22.2034 12.4382L3.74096 22.5925C3.499 22.7256 3.19497 22.6374 3.06189 22.3954C3.02129 22.3216 3 22.2387 3 22.1544V13.0001Z"></path></svg>
@@ -283,14 +283,19 @@ defmodule ElixirconfChatWeb.ChatLive do
   def chat_history(assigns) do
     ~H"""
     <div>
-      <div class="p-4 md:p-6">
-        <button class="flex items-center gap-x-1 font-medium text-xl text-brand-purple transition duration-200 outline-none focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-brand-purple focus-visible:ring-offset-4" phx-click="leave_room">
-        <svg class="fill-brand-purple" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M6.26247 11.9C6.26247 11.4858 6.59827 11.15 7.01247 11.15L17.0125 11.15C17.4267 11.15 17.7625 11.4858 17.7625 11.9C17.7625 12.3142 17.4267 12.65 17.0125 12.65L7.01247 12.65C6.59827 12.65 6.26247 12.3142 6.26247 11.9Z" />
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M7.74166 12.0681L11.5283 15.6555C11.829 15.9404 11.8418 16.4151 11.557 16.7158C11.2721 17.0165 10.7974 17.0293 10.4967 16.7444L6.68926 13.1374L6.68216 13.1302C6.08926 12.5373 6.08926 11.5625 6.68216 10.9696L6.68916 10.9625L10.4893 7.26255C10.786 6.97365 11.2609 6.97995 11.5498 7.27675C11.8388 7.57355 11.8325 8.04835 11.5357 8.33735L7.74226 12.0308C7.74086 12.0326 7.73746 12.0381 7.73746 12.0499C7.73746 12.0602 7.74006 12.0657 7.74166 12.0681Z" />
-        </svg>
+      <div class="p-4 md:p-6 flex items-center justify-between">
+        <button class="flex items-center gap-x-1 font-medium text-xl text-brand-purple transition duration-200 outline-none hover:text-brand-gray-800 hover:underline focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-brand-purple focus-visible:ring-offset-4 group" phx-click="leave_room">
+          <svg class="fill-brand-purple group-hover:fill-brand-gray-800" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M6.26247 11.9C6.26247 11.4858 6.59827 11.15 7.01247 11.15L17.0125 11.15C17.4267 11.15 17.7625 11.4858 17.7625 11.9C17.7625 12.3142 17.4267 12.65 17.0125 12.65L7.01247 12.65C6.59827 12.65 6.26247 12.3142 6.26247 11.9Z" />
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M7.74166 12.0681L11.5283 15.6555C11.829 15.9404 11.8418 16.4151 11.557 16.7158C11.2721 17.0165 10.7974 17.0293 10.4967 16.7444L6.68926 13.1374L6.68216 13.1302C6.08926 12.5373 6.08926 11.5625 6.68216 10.9696L6.68916 10.9625L10.4893 7.26255C10.786 6.97365 11.2609 6.97995 11.5498 7.27675C11.8388 7.57355 11.8325 8.04835 11.5357 8.33735L7.74226 12.0308C7.74086 12.0326 7.73746 12.0381 7.73746 12.0499C7.73746 12.0602 7.74006 12.0657 7.74166 12.0681Z" />
+          </svg>
           Go Back
         </button>
+        <div class="flex items-center gap-x-2">
+          <svg class="w-4 h-4 fill-brand-gray-500 group-hover:fill-brand-purple" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path d="M2 22C2 17.5817 5.58172 14 10 14C14.4183 14 18 17.5817 18 22H16C16 18.6863 13.3137 16 10 16C6.68629 16 4 18.6863 4 22H2ZM10 13C6.685 13 4 10.315 4 7C4 3.685 6.685 1 10 1C13.315 1 16 3.685 16 7C16 10.315 13.315 13 10 13ZM10 11C12.21 11 14 9.21 14 7C14 4.79 12.21 3 10 3C7.79 3 6 4.79 6 7C6 9.21 7.79 11 10 11ZM18.2837 14.7028C21.0644 15.9561 23 18.752 23 22H21C21 19.564 19.5483 17.4671 17.4628 16.5271L18.2837 14.7028ZM17.5962 3.41321C19.5944 4.23703 21 6.20361 21 8.5C21 11.3702 18.8042 13.7252 16 13.9776V11.9646C17.6967 11.7222 19 10.264 19 8.5C19 7.11935 18.2016 5.92603 17.041 5.35635L17.5962 3.41321Z"></path></svg>
+          <!-- TODO: number of users -->
+          <p class="leading-5 text-brand-gray-600 group-hover:text-brand-purple">0</p>
+        </div>
       </div>
       <%= if @loading_room do %>
         <br />
@@ -302,7 +307,7 @@ defmodule ElixirconfChatWeb.ChatLive do
         <br />
       <% else %>
         <%= if @messages == [] do %>
-          <div class="h-[calc(67vh-18.25rem)] md:h-[calc(100vh-19.25rem)] mt-8 max-w-xs mx-auto flex items-center justify-center text-lg text-center text-brand-gray-600">
+          <div class="h-[calc(67vh-11.5rem)] md:h-[calc(100vh-17.5rem)] max-w-xs mx-auto flex items-center justify-center text-lg text-center text-brand-gray-600">
             <div>
               <span>👋</span>
               <p class="mt-3">
@@ -311,8 +316,9 @@ defmodule ElixirconfChatWeb.ChatLive do
             </div>
           </div>
         <% else %>
-          <div class="h-[calc(67vh-14.5rem)] md:h-[calc(100vh-17.5rem)] overflow-y-scroll space-y-3 px-4 md:px-6">
-            <div class="space-y-3 refreshable:refresh">
+          <div class="h-[calc(67vh-11.5rem)] md:h-[calc(100vh-17.5rem)] overflow-y-scroll space-y-3 px-4 md:px-6">
+            <!-- TODO: needs to always scroll to bottom to view latest message -->
+            <div class="space-y-3">
               <%= for {message, index} <- Enum.with_index(@messages) do %>
                 <.chat_message current_user_id={@current_user.id} index={index} message={message} />
               <% end %>
