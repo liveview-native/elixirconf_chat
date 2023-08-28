@@ -68,7 +68,8 @@ defmodule ElixirconfChatWeb.AuthLive do
 
   @impl true
   def handle_event("verify_code", %{"login_code" => login_code}, socket) do
-    with %User{id: user_id, login_code: user_login_code} when is_binary(user_login_code) <-
+    with login_code <- parse_login_code(login_code),
+          %User{id: user_id, login_code: user_login_code} when is_binary(user_login_code) <-
            Map.get(socket.assigns, :user),
          {:login_code_valid?, true} <- {:login_code_valid?, login_code == user_login_code},
          token <- Auth.generate_token(user_id) do
@@ -256,5 +257,11 @@ defmodule ElixirconfChatWeb.AuthLive do
     ~H"""
     <span class={[@name, @class]} />
     """
+  end
+
+  defp parse_login_code(login_code) do
+    login_code
+    |> String.trim()
+    |> String.slice(0..5)
   end
 end
