@@ -75,17 +75,27 @@ defmodule ElixirconfChatWeb.ChatLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="px-4">
+    <div class="px-4 min-h-[496px] overflow-y-auto">
       <.logo />
       <div class="mx-auto w-full max-w-[1200px] md:grid md:grid-cols-12 border border-brand-gray-200 rounded-t-[32px]">
-        <div class="h-[calc(33vh-5rem)] md:h-[calc(100vh-6.25rem)] overflow-y-auto border-b border-brand-gray-200 md:col-span-6 md:border-b-0 md:border-r md:border-brand-gray-200 lg:col-span-5 xl:col-span-4 p-4 md:p-6">
+        <div class="min-h-[208px] max-h-[calc(33vh-5rem)] md:max-h-full md:h-[calc(100vh-6.25rem)] overflow-y-auto border-b-4 border-brand-purple md:col-span-6 md:border-b-0 md:border-r md:border-brand-gray-200 lg:col-span-5 xl:col-span-4 p-4 md:p-6">
           <h1 class="font-medium text-2xl md:text-3.5xl text-brand-gray-700">Schedule</h1>
           <.hallway {assigns} />
           <.rooms_list {assigns} />
         </div>
-        <div class="relative h-[calc(67vh-5rem)] md:h-[calc(100vh-6.25rem)] overflow-y-auto md:col-span-6 lg:col-span-7 xl:col-span-8 p-4 md:p-6">
+        <div class="relative min-h-[208px] md:max-h-full h-[calc(67vh-5rem)] md:h-[calc(100vh-6.25rem)] md:col-span-6 lg:col-span-7 xl:col-span-8">
+          <!--  p-4 md:p-6 -->
           <%= if @room_page do %>
             <.room_page {assigns} />
+          <% else %>
+            <div class="h-full mt-8 max-w-[260px] mx-auto flex items-center justify-center text-lg text-center text-brand-gray-600">
+              <div>
+                <span>👈</span>
+                <p class="mt-3">
+                  Select a schedule from the list to enter its chatroom.
+                </p>
+              </div>
+            </div>
           <% end %>
         </div>
       </div>
@@ -194,7 +204,7 @@ defmodule ElixirconfChatWeb.ChatLive do
 
   def chat_input(assigns) do
     ~H"""
-    <form id="chat" phx-submit="post_message">
+    <form class="p-4 md:p-6" id="chat" phx-submit="post_message">
       <div class="px-2 py-[5px] flex items-center justify-between gap-x-2 border border-brand-gray-200 rounded-lg">
         <label class="sr-only" for="chat-input"></label>
         <input class="w-[calc(100%-1rem)] py-2 px-2 text-lg md:text-xl text-brand-gray-400 border-none transition duration-200 focus:rounded-sm focus:ring-2 focus:ring-brand-purple" type="text" name="body" class="ph-24" placeholder="Enter Message..." id="chat-input" />
@@ -273,11 +283,14 @@ defmodule ElixirconfChatWeb.ChatLive do
   def chat_history(assigns) do
     ~H"""
     <div>
-      <div class="font-weight-semibold fg-color:elixirpurple ph-24">
-        <img system-name="arrow.left" />
-        <p phx-click="leave_room">
+      <div class="p-4 md:p-6">
+        <button class="flex items-center gap-x-1 font-medium text-xl text-brand-purple transition duration-200 outline-none focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-brand-purple focus-visible:ring-offset-4" phx-click="leave_room">
+        <svg class="fill-brand-purple" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M6.26247 11.9C6.26247 11.4858 6.59827 11.15 7.01247 11.15L17.0125 11.15C17.4267 11.15 17.7625 11.4858 17.7625 11.9C17.7625 12.3142 17.4267 12.65 17.0125 12.65L7.01247 12.65C6.59827 12.65 6.26247 12.3142 6.26247 11.9Z" />
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M7.74166 12.0681L11.5283 15.6555C11.829 15.9404 11.8418 16.4151 11.557 16.7158C11.2721 17.0165 10.7974 17.0293 10.4967 16.7444L6.68926 13.1374L6.68216 13.1302C6.08926 12.5373 6.08926 11.5625 6.68216 10.9696L6.68916 10.9625L10.4893 7.26255C10.786 6.97365 11.2609 6.97995 11.5498 7.27675C11.8388 7.57355 11.8325 8.04835 11.5357 8.33735L7.74226 12.0308C7.74086 12.0326 7.73746 12.0381 7.73746 12.0499C7.73746 12.0602 7.74006 12.0657 7.74166 12.0681Z" />
+        </svg>
           Go Back
-        </p>
+        </button>
       </div>
       <%= if @loading_room do %>
         <br />
@@ -289,30 +302,22 @@ defmodule ElixirconfChatWeb.ChatLive do
         <br />
       <% else %>
         <%= if @messages == [] do %>
-          <div>
-            <br />
+          <div class="h-[calc(67vh-18.25rem)] md:h-[calc(100vh-19.25rem)] mt-8 max-w-xs mx-auto flex items-center justify-center text-lg text-center text-brand-gray-600">
             <div>
-              <div modifiers={background(alignment: :center, content: :hero_emoji)}>
-                <span class="w-60 h-60 fg-color:lightchrome opacity-0.325" template={:hero_emoji} />
-                <p class="type-size-accessibility-2">👋</p>
-              </div>
+              <span>👋</span>
+              <p class="mt-3">
+                No Messages in this room. Be the first one to send a message.
+              </p>
             </div>
-            <br class="h-24" />
-            <p class="w-375 align-center">
-              No Messages in this room. Be the first one to send a message.
-            </p>
-            <br />
           </div>
         <% else %>
-          <br />
-          <div class="space-y-3">
+          <div class="h-[calc(67vh-14.5rem)] md:h-[calc(100vh-17.5rem)] overflow-y-scroll space-y-3 px-4 md:px-6">
             <div class="space-y-3 refreshable:refresh">
               <%= for {message, index} <- Enum.with_index(@messages) do %>
                 <.chat_message current_user_id={@current_user.id} index={index} message={message} />
               <% end %>
             </div>
           </div>
-          <br />
         <% end %>
       <% end %>
     </div>
@@ -506,8 +511,8 @@ defmodule ElixirconfChatWeb.ChatLive do
 
   def room_page(assigns) do
     ~H"""
-    <div class="grid grid-rows-[1fr_auto] h-full">
-      <div class="h-[calc(100%-5rem)] overflow-y-scroll">
+    <div class="h-full">
+      <div>
         <.chat_history {assigns} />
       </div>
       <div>
