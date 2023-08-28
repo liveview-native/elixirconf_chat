@@ -20,9 +20,9 @@ defmodule ElixirconfChat.Auth.LoginEmail do
 
   defp email_html(name, login_code) do
     """
-    <h1>Hello #{name},</h1>
+    <p>Hello #{name},</p>
     <p>Thank you for using the ElixirConf chat app.</p>
-    <p>Your six digit code to login is <strong>#{login_code}</strong></p>
+    <p>Your six digit code to login is <strong>#{login_code}</strong></p>.
     """
   end
 
@@ -30,7 +30,7 @@ defmodule ElixirconfChat.Auth.LoginEmail do
     """
     Hello #{name},
     Thank you for using the ElixirConf chat app.
-    Your six digit code to login is <strong>#{login_code}</strong>.
+    Your six digit code to login is #{login_code}.
     """
   end
 end
