@@ -27,13 +27,17 @@ config :elixirconf_chat, ElixirconfChatWeb.Endpoint,
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-config :elixirconf_chat, ElixirconfChat.Mailer,
-  adapter: Swoosh.Adapters.Sendgrid,
-  api_key: System.get_env("ELIXIRCONF_CHAT_SENDGRID_API_KEY", "SG.x.x")
 
 if System.get_env("ELIXIRCONF_CHAT_SENDGRID_API_KEY") do
+  config :elixirconf_chat, ElixirconfChat.Mailer,
+    adapter: Swoosh.Adapters.Sendgrid,
+    api_key: System.get_env("ELIXIRCONF_CHAT_SENDGRID_API_KEY", "SG.x.x")
+
   config :swoosh, :api_client, Swoosh.ApiClient.Hackney
 else
+  config :elixirconf_chat, ElixirconfChat.Mailer,
+    adapter: Swoosh.Adapters.Local
+
   config :swoosh, :api_client, Swoosh.ApiClient.Local
 end
 
