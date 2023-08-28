@@ -45,6 +45,10 @@ defmodule ElixirconfChat.Chat.Server do
     |> GenServer.call(message)
   end
 
+  def clear_message_queue(room_id) do
+    call_room(room_id, :clear_message_queue)
+  end
+
   # Server (callbacks)
 
   def init(initial_state) do
@@ -86,6 +90,10 @@ defmodule ElixirconfChat.Chat.Server do
     end
 
     {:reply, :ok, %{state | subscribers: updated_subscribers}}
+  end
+
+  def handle_call(:clear_message_queue, _from, state) do
+    {:reply, {:ok, []}, %{state | messages: []}}
   end
 
   def handle_info(

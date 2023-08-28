@@ -1,7 +1,9 @@
 defmodule ElixirconfChat.Jobs.SaveMessages do
   use Oban.Worker, queue: :events, max_attempts: 3
   require Logger
-  alias ElixirconfChat.Messages
+
+  alias Ecto.Multi
+  alias ElixirconfChat.Chat.Message
   alias ElixirconfChat.Chat.Room
   alias ElixirconfChat.Repo
 
@@ -12,19 +14,20 @@ defmodule ElixirconfChat.Jobs.SaveMessages do
     Room
     |> Repo.all()
     |> Enum.map(fn room ->
-      messages = ElixirconfChat.Chat.Server.get_state(room.id)[:messages]
+      ElixirconfChat.Chat.Server.get_state(room.id)[:messages]
+      |> Enum.with_index()
+      |> Enum.reduce(Multi.new(), fn {message, i}, multi ->
+        message_params = Map.from_struct(message)
 
-      Enum.map(messages, fn message ->
-        # TODO: prevent duplicates
-        if message.inserted_at == nil do
-          now = DateTime.truncate(DateTime.utc_now(), :second)
+        message_changeset =
+          Message.changeset(%Message{}, message_params)
 
-          message
-          |> Map.merge(%{inserted_at: now, updated_at: now})
-          |> Map.from_struct()
-          |> Messages.create_message()
-        end
+        Multi.insert(multi, "#{i}", message_changeset)
       end)
+      |> Multi.run(:clear_message_queue, fn _repo, _multi ->
+        ElixirconfChat.Chat.Server.clear_message_queue(room.id)
+      end)
+      |> Repo.transaction()
     end)
 
     :ok
