@@ -30,7 +30,7 @@ defmodule ElixirconfChatWeb.AuthLive do
   def render(assigns) do
     ~H"""
     <div class="min-h-screen p-4 bg-brand-purple flex items-center align-center font-system">
-      <div class="mx-auto w-full max-w-[500px] p-4 min-[448px]:p-12 sm:p-15 bg-white rounded-[32px]">
+      <div class="mx-auto w-full max-w-[288px] min-[448px]:max-w-[412px] min-[532px]:max-w-[500px] p-4 min-[448px]:p-12 min-[532px]:p-15 bg-white rounded-[32px]">
       <.logo logo_title={true} {assigns} />
       <%= if assigns[:user] do %>
         <.login_code_form {assigns} />
@@ -143,7 +143,7 @@ defmodule ElixirconfChatWeb.AuthLive do
         <label for="email-input" class="text-lg text-black">Your Email Address</label>
         <input
           name="email"
-          class="mt-2 w-full h-14 p-3 text-xl text-brand-gray-800 border border-brand-gray-200 rounded-lg outline-none transition duration-200 focus:bg-brand-gray-50 focus:ring-2 focus:ring-[#1ff4ff] disable-autocorrect autocapitalize-never"
+          class="mt-2 w-full h-10 min-[448px]:h-14 p-3 text-lg min-[448px]:text-xl text-brand-gray-800 border border-brand-gray-200 rounded-lg outline-none transition duration-200 focus:bg-brand-gray-50 focus:ring-2 focus:ring-brand-purple disable-autocorrect autocapitalize-never"
           id="email-input"
         />
       </div>
@@ -204,12 +204,12 @@ defmodule ElixirconfChatWeb.AuthLive do
     ~H"""
     <form id="login_code" phx-submit="verify_code">
       <div class="mt-8 text-center">
-        <h2 class="text-2xl sm:text-3.5xl font-semibold">Enter Code to access</h2>
-        <p class="max-w-[360px] mt-2 font-normal text-brand-gray-600">
+        <h2 class="text-2xl min-[532px]:text-3.5xl font-semibold">Enter Code to access</h2>
+        <p class="max-w-[360px] mx-auto mt-2 font-normal text-brand-gray-600">
           We’ve sent a unique code to your email address. Please enter it below to continue.
         </p>
       </div>
-      <div class="relative mt-12">
+      <div class="relative mt-12 w-full">
         <%= if assigns[:error] do %>
           <div class="absolute left-0 -top-6 w-full flex items-center justify-center text-brand-red">
             <.icon name="hero-exclamation-circle-solid" class="h-5 w-5" />
@@ -222,9 +222,19 @@ defmodule ElixirconfChatWeb.AuthLive do
         <input
           type="text"
           name="login_code"
-          class="w-full h-14 p-3 text-xl text-brand-gray-800 border border-brand-gray-200 rounded-lg outline-none transition duration-200 focus:bg-brand-gray-50 focus:ring-2 focus:ring-[#1ff4ff] keyboard-type-numbers-and-punctuation"
+          class="absolute top-0 -left-4 min-[448px]:-left-10 min-[532px]:left-[-3.25rem] w-[288px] min-[448px]:w-[398px] min-[532px]:w-[480px] mx-auto h-10 min-[448px]:h-14 py-3 min-[448px]:pl-14 min-[532px]:pl-[4.75rem] text-xl min-[532px]:text-2xl text-brand-gray-800 tracking-[31px] min-[448px]:tracking-[2.5rem] min-[532px]:tracking-[3.125rem] border-0 bg-transparent overflow-x-hidden focus:outline-none focus:ring-0 peer"
           id="login-code-input"
+          maxlength="6"
         />
+        <div class="flex justify-center gap-x-2 peer-focus:[&>div]:ring-2 peer-focus:[&>div]:ring-brand-purple">
+          <div class="w-9 h-10 min-[448px]:w-[46px] min-[532px]:w-14 min-[448px]:h-14 border border-brand-gray-200 rounded-lg"></div>
+          <div class="w-9 h-10 min-[448px]:w-[46px] min-[532px]:w-14 min-[448px]:h-14 border border-brand-gray-200 rounded-lg"></div>
+          <div class="w-9 h-10 min-[448px]:w-[46px] min-[532px]:w-14 min-[448px]:h-14 border border-brand-gray-200 rounded-lg"></div>
+          <div class="w-9 h-10 min-[448px]:w-[46px] min-[532px]:w-14 min-[448px]:h-14 border border-brand-gray-200 rounded-lg"></div>
+          <div class="w-9 h-10 min-[448px]:w-[46px] min-[532px]:w-14 min-[448px]:h-14 border border-brand-gray-200 rounded-lg"></div>
+          <div class="w-9 h-10 min-[448px]:w-[46px] min-[532px]:w-14 min-[448px]:h-14 border border-brand-gray-200 rounded-lg"></div>
+        </div>
+        <div class="absolute -right-10 top-0 w-10 h-full rounded bg-white" aria-hidden="true"></div>
       </div>
       <!-- todo: boxes for code -->
       <button type="submit" class="mt-8 w-full h-14 bg-brand-purple text-xl text-semibold text-white rounded-lg border-2 border-transparent outline-none transition duration-200 hover:text-brand-purple hover:bg-white hover:border-brand-purple focus:ring-2 focus:ring-[#1ff4ff] disabled:bg-brand-gray-200 disabled:text-brand-gray-400 disabled:cursor-not-allowed disabled:border-transparent">
@@ -246,7 +256,7 @@ defmodule ElixirconfChatWeb.AuthLive do
   defp welcome_message(assigns) do
     ~H"""
     <div class="mt-8 text-center" id="welcome">
-      <h2 class="text-2xl sm:text-3.5xl font-semibold">Welcome to ElixirConf 2023 Chat!</h2>
+      <h2 class="text-2xl min-[532px]:text-3.5xl font-semibold">Welcome to ElixirConf 2023 Chat!</h2>
       <p class="mt-2 font-normal text-brand-gray-600">
         To get started, enter the email address you used to register for ElixirConf 2023
       </p>
