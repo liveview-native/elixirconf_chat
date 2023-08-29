@@ -75,9 +75,9 @@ defmodule ElixirconfChatWeb.ChatLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="px-4 min-h-[496px] md:min-h-[600px] overflow-y-auto">
+    <div class="px-4 min-h-[496px] md:min-h-[600px] overflow-y-auto bg-brand-gray-200">
       <.logo />
-      <div class="mx-auto w-full max-w-[1200px] md:grid md:grid-cols-12 border border-brand-gray-200 rounded-t-[32px]">
+      <div class="mx-auto w-full max-w-[1200px] md:grid md:grid-cols-12 border border-brand-gray-200 rounded-t-[32px] bg-white">
         <div class="min-h-[208px] max-h-[calc(33vh-5rem)] md:max-h-full md:h-[calc(100vh-6.25rem)] md:min-h-[600px] overflow-y-auto border-b-4 border-brand-purple md:col-span-6 md:border-b-0 md:border-r md:border-brand-gray-200 lg:col-span-5 xl:col-span-4 p-4 md:p-6">
           <h1 class="font-medium text-2xl md:text-3.5xl text-brand-gray-700">Schedule</h1>
           <.hallway {assigns} />
@@ -181,7 +181,7 @@ defmodule ElixirconfChatWeb.ChatLive do
 
   def logo(assigns) do
     ~H"""
-    <img class="my-5 md:mt-8 md:mb-7 mx-auto h-10 w-auto" src="/images/elixir-logo.png" width="75" height="60" alt="" />
+    <img class="my-5 md:mt-8 md:mb-7 mx-auto h-10 w-auto" src="/images/elixir-logo-clear.png" width="75" height="60" alt="" />
     """
   end
 
@@ -208,6 +208,7 @@ defmodule ElixirconfChatWeb.ChatLive do
       <div class="px-2 py-[5px] flex items-center justify-between gap-x-2 border border-brand-gray-200 rounded-lg">
         <label class="sr-only" for="chat-input"></label>
         <input class="w-[calc(100%-1rem)] py-2 px-2 text-lg md:text-xl text-brand-gray-400 border-none transition duration-200 focus:rounded-sm focus:ring-2 focus:ring-brand-purple" type="text" name="body" class="ph-24" placeholder="Enter Message..." id="chat-input" required />
+        <!-- TODO: clear text input on pressing enter -->
         <button type="submit" class="w-10 h-10 flex items-center justify-center bg-brand-purple rounded-xl border-2 border-transparent group transition duration-200 hover:bg-white hover:border-brand-purple outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-purple">
           <span class="sr-only">Submit</span>
           <svg class="fill-white group-hover:fill-brand-purple" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M3 13.0001H9V11.0001H3V1.8457C3 1.56956 3.22386 1.3457 3.5 1.3457C3.58425 1.3457 3.66714 1.36699 3.74096 1.4076L22.2034 11.562C22.4454 11.695 22.5337 11.9991 22.4006 12.241C22.3549 12.3241 22.2865 12.3925 22.2034 12.4382L3.74096 22.5925C3.499 22.7256 3.19497 22.6374 3.06189 22.3954C3.02129 22.3216 3 22.2387 3 22.1544V13.0001Z"></path></svg>
