@@ -1,6 +1,5 @@
 defmodule ElixirconfChatWeb.Router do
   use ElixirconfChatWeb, :router
-  # import Phoenix.LiveView.Router, only: [fetch_live_flash: 2]
 
   pipeline :browser do
     plug(:accepts, ["html"])
