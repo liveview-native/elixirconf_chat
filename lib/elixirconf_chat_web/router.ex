@@ -1,5 +1,6 @@
 defmodule ElixirconfChatWeb.Router do
   use ElixirconfChatWeb, :router
+  # import Phoenix.LiveView.Router, only: [fetch_live_flash: 2]
 
   pipeline :browser do
     plug(:accepts, ["html"])
@@ -21,6 +22,10 @@ defmodule ElixirconfChatWeb.Router do
     live("/chat", ChatLive)
     live("privacy", PrivacyPolicyLive)
     live("/", AuthLive)
+
+    scope "/admin", Admin do
+      live("/", AdminLive)
+    end
   end
 
   # Other scopes may use custom stacks.

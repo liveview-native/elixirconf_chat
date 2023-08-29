@@ -9,11 +9,13 @@ defmodule ElixirconfChat.Users.User do
     field :login_code, :string
     field :login_code_expires_at, :naive_datetime
     field :randomize_code_on_login, :boolean, default: true
+    field :role, :string, default: "base"
+    field :banned_at, :naive_datetime
 
     timestamps()
   end
 
-  @optional_fields ~w(login_code login_code_expires_at randomize_code_on_login)a
+  @optional_fields ~w(login_code login_code_expires_at randomize_code_on_login banned_at)a
   @required_fields ~w(email first_name last_name)a
   @allowed_fields @optional_fields ++ @required_fields
 

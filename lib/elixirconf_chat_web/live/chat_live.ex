@@ -73,7 +73,7 @@ defmodule ElixirconfChatWeb.ChatLive do
   end
 
   @impl true
-  def render(assigns) do
+  def render(%{current_user: %{banned_at: nil}} = assigns) do
     ~H"""
     <div class="w-full">
       <%= if @room_page do %>
@@ -87,8 +87,14 @@ defmodule ElixirconfChatWeb.ChatLive do
   end
 
   @impl true
+  def render(%{current_user: %{banned_at: _banned_at}} = assigns) do
+    ~H"""
+    You have been banned.
+    """
+  end
+
+  @impl true
   def handle_event("join_room", %{"room-id" => room_id}, socket) do
-    IO.inspect(room_id, label: "CLICK JOIN ROOM" <> room_id)
     # Load Room asynchronously
     Process.send_after(self(), {:get_room, room_id}, 10)
     Chat.join_room(room_id, self())
@@ -109,8 +115,6 @@ defmodule ElixirconfChatWeb.ChatLive do
 
   @impl true
   def handle_event("post_message", %{"body" => body}, socket) do
-    IO.inspect(body, label: "BODY")
-
     case socket.assigns do
       %{room: %{id: room_id}} ->
         Chat.post_message(room_id, %{
