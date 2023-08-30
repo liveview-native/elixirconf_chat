@@ -4,6 +4,7 @@ defmodule ElixirconfChat.Chat.Server do
 
   alias __MODULE__, as: Server
   alias ElixirconfChat.Chat.Message
+  alias ElixirconfChat.Chat.LobbyServer
 
   @initial_state [
     messages: [],
@@ -25,6 +26,10 @@ defmodule ElixirconfChat.Chat.Server do
 
   def get_state(room_id) do
     call_room(room_id, :get_state)
+  end
+
+  def get_user_count(room_id) do
+    call_room(room_id, :get_user_count)
   end
 
   def join(room_id, pid) do
@@ -74,16 +79,24 @@ defmodule ElixirconfChat.Chat.Server do
     {:reply, state, state}
   end
 
-  def handle_call({:join, pid}, _from, %{subscribers: %{} = subscribers} = state) do
+  def handle_call(:get_user_count, _from, %{subscribers: %{} = subscribers} = state) do
+    {:reply, Enum.count(subscribers), state}
+  end
+
+  def handle_call({:join, pid}, _from, %{room_id: room_id, subscribers: %{} = subscribers} = state) do
     monitor_ref = Process.monitor(pid)
     updated_subscribers = Map.put(subscribers, pid, monitor_ref)
+
+    LobbyServer.broadcast({:room_updated, %{room_id: room_id, users_count: Enum.count(updated_subscribers)}})
 
     {:reply, :ok, %{state | subscribers: updated_subscribers}}
   end
 
-  def handle_call({:leave, pid}, _from, %{subscribers: %{} = subscribers} = state) do
+  def handle_call({:leave, pid}, _from, %{room_id: room_id, subscribers: %{} = subscribers} = state) do
     monitor_ref = Map.get(subscribers, pid)
     updated_subscribers = Map.delete(subscribers, pid)
+
+    LobbyServer.broadcast({:room_updated, %{room_id: room_id, users_count: Enum.count(updated_subscribers)}})
 
     if is_reference(monitor_ref) && Process.alive?(pid) do
       Process.demonitor(monitor_ref)
@@ -92,17 +105,19 @@ defmodule ElixirconfChat.Chat.Server do
     {:reply, :ok, %{state | subscribers: updated_subscribers}}
   end
 
-  def handle_call(:clear_message_queue, _from, state) do
-    {:reply, {:ok, []}, %{state | messages: []}}
-  end
-
   def handle_info(
-        {:DOWN, _ref, :process, pid, _reason},
-        %{subscribers: %{} = subscribers} = state
-      ) do
+    {:DOWN, _ref, :process, pid, _reason},
+    %{room_id: room_id, subscribers: %{} = subscribers} = state
+  ) do
     updated_subscribers = Map.delete(subscribers, pid)
 
+    LobbyServer.broadcast({:room_updated, %{room_id: room_id, users_count: Enum.count(updated_subscribers)}})
+
     {:noreply, %{state | subscribers: updated_subscribers}}
+  end
+
+  def handle_call(:clear_message_queue, _from, state) do
+    {:reply, {:ok, []}, %{state | messages: []}}
   end
 
   # Private functions

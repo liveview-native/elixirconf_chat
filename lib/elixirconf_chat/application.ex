@@ -6,6 +6,7 @@ defmodule ElixirconfChat.Application do
   use Application
 
   alias ElixirconfChat.Chat
+  alias ElixirconfChat.Chat.LobbyServer
   alias ElixirconfChat.Chat.RoomSupervisor
 
   @impl true
@@ -26,6 +27,7 @@ defmodule ElixirconfChat.Application do
       # Start a worker by calling: ElixirconfChat.Worker.start_link(arg)
       # {ElixirconfChat.Worker, arg}
       {DynamicSupervisor, strategy: :one_for_one, name: RoomSupervisor},
+      {LobbyServer, name: LobbyServer},
       {Task, &on_start/0}
     ]
 

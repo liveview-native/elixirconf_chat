@@ -5,6 +5,7 @@ defmodule ElixirconfChatWeb.ChatLive do
   alias ElixirconfChat.Chat
   alias ElixirconfChat.Chat.Room
   alias ElixirconfChat.Utils
+  alias ElixirconfChatWeb.UserCountComponent
 
   import ElixirconfChatWeb.Modclasses.SwiftUi, only: [modclass: 3]
 
@@ -13,6 +14,8 @@ defmodule ElixirconfChatWeb.ChatLive do
   @impl true
   def mount(_params, _session, socket) do
     schedule = Chat.schedule()
+
+    if connected?(socket), do: Chat.join_lobby(self())
 
     {:ok,
      assign(socket,
@@ -104,13 +107,20 @@ defmodule ElixirconfChatWeb.ChatLive do
   end
 
   @impl true
-  def handle_event("join_room", %{"room-id" => room_id}, socket) do
-    IO.inspect(room_id, label: "CLICK JOIN ROOM" <> room_id)
-    # Load Room asynchronously
-    Process.send_after(self(), {:get_room, room_id}, 10)
+  def handle_event("join_room", %{"room-id" => room_id}, %{assigns: %{} = assigns} = socket) do
+    old_room_id = Map.get(socket.assigns, :room_id)
+
+    if old_room_id do
+      Chat.leave_room(old_room_id, self())
+    end
+
+
     Chat.join_room(room_id, self())
 
-    {:noreply, assign(socket, loading_room: true, room_page: true)}
+    # Load Room asynchronously
+    Process.send_after(self(), {:get_room, room_id}, 10)
+
+    {:noreply, assign(socket, loading_room: true, room_page: true, room: nil, room_id: nil)}
   end
 
   @impl true
@@ -126,8 +136,6 @@ defmodule ElixirconfChatWeb.ChatLive do
 
   @impl true
   def handle_event("post_message", %{"body" => body}, socket) do
-    IO.inspect(body, label: "BODY")
-
     case socket.assigns do
       %{room: %{id: room_id}} ->
         Chat.post_message(room_id, %{
@@ -155,7 +163,8 @@ defmodule ElixirconfChatWeb.ChatLive do
     case Chat.get_room(room_id) do
       %Room{messages: messages, server_state: %{messages: unsaved_messages}} = room ->
         messages = messages ++ unsaved_messages
-        {:noreply, assign(socket, loading_room: false, messages: messages, room: room)}
+
+        {:noreply, assign(socket, loading_room: false, messages: messages, room: room, room_id: room.id)}
 
       _ ->
         # TODO: Handle error
@@ -169,6 +178,18 @@ defmodule ElixirconfChatWeb.ChatLive do
     updated_messages = messages ++ [new_message]
 
     {:noreply, assign(socket, messages: updated_messages)}
+  end
+
+  @impl true
+  def handle_info({:room_updated, %{room_id: room_id, users_count: users_count}}, socket) do
+    send_update(UserCountComponent, id: "user_count_#{room_id}", count: users_count)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(_message, socket) do
+    {:noreply, socket}
   end
 
   def logo(%{platform_id: :swiftui} = assigns) do
@@ -294,8 +315,9 @@ defmodule ElixirconfChatWeb.ChatLive do
         </button>
         <div class="flex items-center gap-x-2">
           <svg class="w-4 h-4 fill-brand-gray-500 group-hover:fill-brand-purple" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path d="M2 22C2 17.5817 5.58172 14 10 14C14.4183 14 18 17.5817 18 22H16C16 18.6863 13.3137 16 10 16C6.68629 16 4 18.6863 4 22H2ZM10 13C6.685 13 4 10.315 4 7C4 3.685 6.685 1 10 1C13.315 1 16 3.685 16 7C16 10.315 13.315 13 10 13ZM10 11C12.21 11 14 9.21 14 7C14 4.79 12.21 3 10 3C7.79 3 6 4.79 6 7C6 9.21 7.79 11 10 11ZM18.2837 14.7028C21.0644 15.9561 23 18.752 23 22H21C21 19.564 19.5483 17.4671 17.4628 16.5271L18.2837 14.7028ZM17.5962 3.41321C19.5944 4.23703 21 6.20361 21 8.5C21 11.3702 18.8042 13.7252 16 13.9776V11.9646C17.6967 11.7222 19 10.264 19 8.5C19 7.11935 18.2016 5.92603 17.041 5.35635L17.5962 3.41321Z"></path></svg>
-          <!-- TODO: number of users -->
-          <p class="leading-5 text-brand-gray-600 group-hover:text-brand-purple">0</p>
+          <%= if @room do %>
+            <.live_component module={UserCountComponent} id={"user_count_active_room_#{@room.id}"} room_id={@room.id} />
+          <% end %>
         </div>
       </div>
       <%= if @loading_room do %>
@@ -564,10 +586,12 @@ defmodule ElixirconfChatWeb.ChatLive do
                   </HStack>
                 <% end %>
               </VStack>
-              <HStack modclass="opacity-0.75 type-size-x-small">
-                <Image system-name="person.2" />
-                <Text>0</Text>
-              </HStack>
+              <.live_component
+                platform_id={:swiftui}
+                native={@native}
+                module={UserCountComponent}
+                id={"user_count_#{room.id}"}
+                room_id={room.id} />
             </HStack>
           </VStack>
         <% end %>
@@ -604,8 +628,7 @@ defmodule ElixirconfChatWeb.ChatLive do
                     </p>
                     <div class="flex items-center gap-x-2">
                       <svg class="w-4 h-4 fill-brand-gray-500 group-hover:fill-brand-purple" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path d="M2 22C2 17.5817 5.58172 14 10 14C14.4183 14 18 17.5817 18 22H16C16 18.6863 13.3137 16 10 16C6.68629 16 4 18.6863 4 22H2ZM10 13C6.685 13 4 10.315 4 7C4 3.685 6.685 1 10 1C13.315 1 16 3.685 16 7C16 10.315 13.315 13 10 13ZM10 11C12.21 11 14 9.21 14 7C14 4.79 12.21 3 10 3C7.79 3 6 4.79 6 7C6 9.21 7.79 11 10 11ZM18.2837 14.7028C21.0644 15.9561 23 18.752 23 22H21C21 19.564 19.5483 17.4671 17.4628 16.5271L18.2837 14.7028ZM17.5962 3.41321C19.5944 4.23703 21 6.20361 21 8.5C21 11.3702 18.8042 13.7252 16 13.9776V11.9646C17.6967 11.7222 19 10.264 19 8.5C19 7.11935 18.2016 5.92603 17.041 5.35635L17.5962 3.41321Z"></path></svg>
-                      <!-- TODO: number of users -->
-                      <p class="leading-5 text-brand-gray-600 group-hover:text-brand-purple">0</p>
+                      <.live_component module={UserCountComponent} id={"user_count_#{room.id}"} room_id={room.id} />
                     </div>
                   </div>
                 <% end %>
