@@ -35,6 +35,7 @@ module.exports = {
       },
       fontFamily: {
         system: ["-apple-system", "system-ui", "BlinkMacSystemFont", "Helvetica Neue", "Segoe UI", "Roboto", "Ubuntu", "sans-serif"],
+        monospace: ["Monaco", "Courier New", "Courier"],
       },
       fontSize: {
         '3.5xl': ['2rem', '2.5rem'],
