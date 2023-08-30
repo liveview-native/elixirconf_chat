@@ -209,9 +209,9 @@ defmodule ElixirconfChatWeb.AuthLive do
           We’ve sent a unique code to your email address. Please enter it below to continue.
         </p>
       </div>
-      <div class="relative mt-12 w-full">
+      <div class="relative mt-12 mb-[4.25rem] min-[532px]:mb-[4.75rem] w-full">
         <%= if assigns[:error] do %>
-          <div class="absolute left-0 -top-6 w-full flex items-center justify-center text-brand-red">
+          <div class="absolute left-0 -top-7 w-full flex items-center justify-center text-brand-red">
             <.icon name="hero-exclamation-circle-solid" class="h-5 w-5" />
             <p class="ml-[10px] italic" id="login-code-error">
               <%= @error %>
@@ -219,24 +219,41 @@ defmodule ElixirconfChatWeb.AuthLive do
           </div>
         <% end %>
         <label for="login-code-input" class="sr-only">Your login code</label>
-        <input
-          type="text"
-          name="login_code"
-          class="absolute top-0 -left-4 min-[448px]:-left-10 min-[532px]:left-[-3.25rem] w-[288px] min-[448px]:w-[398px] min-[532px]:w-[480px] mx-auto h-10 min-[448px]:h-14 py-3 min-[448px]:pl-14 min-[532px]:pl-[4.75rem] text-xl min-[532px]:text-2xl text-brand-gray-800 tracking-[31px] min-[448px]:tracking-[2.5rem] min-[532px]:tracking-[3.125rem] border-0 bg-transparent overflow-x-hidden focus:outline-none focus:ring-0 peer"
-          id="login-code-input"
-          maxlength="6"
-        />
-        <div class="flex justify-center gap-x-2 peer-focus:[&>div]:ring-2 peer-focus:[&>div]:ring-brand-purple">
-          <div class="w-9 h-10 min-[448px]:w-[46px] min-[532px]:w-14 min-[448px]:h-14 border border-brand-gray-200 rounded-lg"></div>
-          <div class="w-9 h-10 min-[448px]:w-[46px] min-[532px]:w-14 min-[448px]:h-14 border border-brand-gray-200 rounded-lg"></div>
-          <div class="w-9 h-10 min-[448px]:w-[46px] min-[532px]:w-14 min-[448px]:h-14 border border-brand-gray-200 rounded-lg"></div>
-          <div class="w-9 h-10 min-[448px]:w-[46px] min-[532px]:w-14 min-[448px]:h-14 border border-brand-gray-200 rounded-lg"></div>
-          <div class="w-9 h-10 min-[448px]:w-[46px] min-[532px]:w-14 min-[448px]:h-14 border border-brand-gray-200 rounded-lg"></div>
-          <div class="w-9 h-10 min-[448px]:w-[46px] min-[532px]:w-14 min-[448px]:h-14 border border-brand-gray-200 rounded-lg"></div>
-        </div>
-        <div class="absolute -right-10 top-0 w-10 h-full rounded bg-white" aria-hidden="true"></div>
+        <%= if assigns[:error] do %>
+          <input
+            type="text"
+            name="login_code"
+            class="min-[320px]:absolute min-[320px]:top-0 min-[320px]:-left-4 min-[448px]:-left-10 min-[532px]:left-[-3.25rem] w-full min-[320px]:w-[304px] min-[448px]:w-[398px] min-[532px]:w-[480px] mx-auto h-10 min-[448px]:h-14 py-3 min-[320px]:pl-7 min-[320px]:tracking-[1.9375rem] min-[448px]:pl-14 min-[532px]:pl-[4.75rem] font-monospace text-xl min-[532px]:text-2xl text-brand-red min-[448px]:tracking-[2.625rem] min-[532px]:tracking-[3.125rem] text-center min-[320px]:text-left rounded-lg border border-brand-gray-200 min-[320px]:border-0 min-[320px]:bg-transparent min-[320px]:overflow-x-hidden focus:outline-none focus:ring-1 focus:ring-brand-purple min-[320px]:focus:ring-0 peer"
+            id="login-code-input"
+            maxlength="6"
+          />
+          <div class="hidden min-[320px]:flex justify-center gap-x-1.5 min-[448px]:gap-x-2 peer-focus:[&>div]:ring-1 min-[532px]:peer-focus:[&>div]:ring-2 peer-focus:[&>div]:ring-brand-purple [&>div]:border [&>div]:border-brand-red [&>div]:rounded-lg [&>div]:w-9 [&>div]:h-10 [&>div]:min-[448px]:w-[2.8125rem] [&>div]: [&>div]:min-[532px]:w-14 [&>div]:min-[448px]:h-14 [&>div]:bg-[#fef6f3]">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        <% else %>
+          <input
+            type="text"
+            name="login_code"
+            class="min-[320px]:absolute min-[320px]:top-0 min-[320px]:-left-4 min-[448px]:-left-10 min-[532px]:left-[-3.25rem] w-full min-[320px]:w-[304px] min-[448px]:w-[398px] min-[532px]:w-[480px] mx-auto h-10 min-[448px]:h-14 py-3 min-[320px]:pl-7 min-[320px]:tracking-[1.9375rem] min-[448px]:pl-14 min-[532px]:pl-[4.75rem] font-monospace text-xl min-[532px]:text-2xl text-brand-gray-800 min-[448px]:tracking-[2.625rem] min-[532px]:tracking-[3.125rem] text-center min-[320px]:text-left rounded-lg border border-brand-gray-200 min-[320px]:border-0 min-[320px]:bg-transparent min-[320px]:overflow-x-hidden focus:outline-none focus:ring-1 focus:ring-brand-purple min-[320px]:focus:ring-0 peer"
+            id="login-code-input"
+            maxlength="6"
+          />
+          <div class="hidden min-[320px]:flex justify-center gap-x-1.5 min-[448px]:gap-x-2 peer-focus:[&>div]:ring-1 min-[532px]:peer-focus:[&>div]:ring-2 peer-focus:[&>div]:ring-brand-purple [&>div]:border [&>div]:border-brand-gray-200 [&>div]:rounded-lg [&>div]:w-9 [&>div]:h-10 [&>div]:min-[448px]:w-[2.8125rem] [&>div]: [&>div]:min-[532px]:w-14 [&>div]:min-[448px]:h-14">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        <% end %>
+        <div class="hidden min-[448px]:block absolute -right-10 top-0 w-10 h-full rounded bg-white" aria-hidden="true"></div>
       </div>
-      <!-- todo: boxes for code -->
       <button type="submit" class="mt-8 w-full h-14 bg-brand-purple text-xl text-semibold text-white rounded-lg border-2 border-transparent outline-none transition duration-200 hover:text-brand-purple hover:bg-white hover:border-brand-purple focus:ring-2 focus:ring-[#1ff4ff] disabled:bg-brand-gray-200 disabled:text-brand-gray-400 disabled:cursor-not-allowed disabled:border-transparent">
         Verify
       </button>
