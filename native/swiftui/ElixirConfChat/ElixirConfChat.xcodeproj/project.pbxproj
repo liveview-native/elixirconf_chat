@@ -13,10 +13,6 @@
 		2F9983062A60800400F76113 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9983052A60800400F76113 /* ContentView.swift */; };
 		2F9983082A60800500F76113 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F9983072A60800500F76113 /* Assets.xcassets */; };
 		2F99830B2A60800500F76113 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F99830A2A60800500F76113 /* Preview Assets.xcassets */; };
-		2FE23A482A935ADE00D26178 /* ElixirConfChatMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FE23A472A935ADE00D26178 /* ElixirConfChatMacApp.swift */; };
-		2FE23A4A2A935ADE00D26178 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FE23A492A935ADE00D26178 /* ContentView.swift */; };
-		2FE23A4C2A935ADE00D26178 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2FE23A4B2A935ADE00D26178 /* Assets.xcassets */; };
-		2FE23A4F2A935ADE00D26178 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2FE23A4E2A935ADE00D26178 /* Preview Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,7 +21,6 @@
 		2F9983052A60800400F76113 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		2F9983072A60800500F76113 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2F99830A2A60800500F76113 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		2FE23A452A935ADE00D26178 /* ElixirConfChatMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ElixirConfChatMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2FE23A472A935ADE00D26178 /* ElixirConfChatMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElixirConfChatMacApp.swift; sourceTree = "<group>"; };
 		2FE23A492A935ADE00D26178 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		2FE23A4B2A935ADE00D26178 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -40,13 +35,6 @@
 			files = (
 				2F0AC6E62A95201C00F60947 /* LiveViewNative in Frameworks */,
 				2F0AC6EB2A95204E00F60947 /* LiveViewNativeLiveForm in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2FE23A422A935ADE00D26178 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -68,7 +56,6 @@
 			isa = PBXGroup;
 			children = (
 				2F9983002A60800400F76113 /* ElixirConfChat.app */,
-				2FE23A452A935ADE00D26178 /* ElixirConfChatMac.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -150,25 +137,6 @@
 			productReference = 2F9983002A60800400F76113 /* ElixirConfChat.app */;
 			productType = "com.apple.product-type.application";
 		};
-		2FE23A442A935ADE00D26178 /* ElixirConfChatMac */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 2FE23A512A935ADE00D26178 /* Build configuration list for PBXNativeTarget "ElixirConfChatMac" */;
-			buildPhases = (
-				2FE23A412A935ADE00D26178 /* Sources */,
-				2FE23A422A935ADE00D26178 /* Frameworks */,
-				2FE23A432A935ADE00D26178 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = ElixirConfChatMac;
-			packageProductDependencies = (
-			);
-			productName = ElixirConfChatMac;
-			productReference = 2FE23A452A935ADE00D26178 /* ElixirConfChatMac.app */;
-			productType = "com.apple.product-type.application";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -180,9 +148,6 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					2F9982FF2A60800400F76113 = {
-						CreatedOnToolsVersion = 14.3.1;
-					};
-					2FE23A442A935ADE00D26178 = {
 						CreatedOnToolsVersion = 14.3.1;
 					};
 				};
@@ -205,7 +170,6 @@
 			projectRoot = "";
 			targets = (
 				2F9982FF2A60800400F76113 /* ElixirConfChat */,
-				2FE23A442A935ADE00D26178 /* ElixirConfChatMac */,
 			);
 		};
 /* End PBXProject section */
@@ -220,15 +184,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2FE23A432A935ADE00D26178 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				2FE23A4F2A935ADE00D26178 /* Preview Assets.xcassets in Resources */,
-				2FE23A4C2A935ADE00D26178 /* Assets.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -238,15 +193,6 @@
 			files = (
 				2F9983062A60800400F76113 /* ContentView.swift in Sources */,
 				2F9983042A60800400F76113 /* ElixirConfChatApp.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2FE23A412A935ADE00D26178 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				2FE23A4A2A935ADE00D26178 /* ContentView.swift in Sources */,
-				2FE23A482A935ADE00D26178 /* ElixirConfChatMacApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -429,60 +375,6 @@
 			};
 			name = Release;
 		};
-		2FE23A522A935ADE00D26178 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = ElixirConfChatMac/ElixirConfChatMac.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"ElixirConfChatMac/Preview Content\"";
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 13.3;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.dockyard.ElixirConfChatMac;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Debug;
-		};
-		2FE23A532A935ADE00D26178 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = ElixirConfChatMac/ElixirConfChatMac.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"ElixirConfChatMac/Preview Content\"";
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 13.3;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.dockyard.ElixirConfChatMac;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -500,15 +392,6 @@
 			buildConfigurations = (
 				2F99830F2A60800500F76113 /* Debug */,
 				2F9983102A60800500F76113 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		2FE23A512A935ADE00D26178 /* Build configuration list for PBXNativeTarget "ElixirConfChatMac" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				2FE23A522A935ADE00D26178 /* Debug */,
-				2FE23A532A935ADE00D26178 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
