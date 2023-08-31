@@ -266,8 +266,14 @@ defmodule ElixirconfChatWeb.AuthLive do
   defp welcome_message(%{platform_id: :swiftui} = assigns) do
     ~SWIFTUI"""
     <VStack id="welcome">
-      <Text modclass="font-title font-weight-semibold p-16">Welcome to ElixirConf 2023 Chat!</Text>
-      <Text modclass="line-spacing-8 font-weight-light">To get started, enter the email address you used to register for ElixirConf 2023</Text>
+      <VStack modclass="font-title font-weight-semibold p-16">
+        <Text>Welcome to ElixirConf</Text>
+        <Text>2023 Chat</Text>
+      </VStack>
+      <VStack modclass="line-spacing-8 font-weight-light">
+        <Text>To get started, enter the email address</Text>
+        <Text>you used to register for ElixirConf 2023</Text>
+      </VStack>
     </VStack>
     """
   end
