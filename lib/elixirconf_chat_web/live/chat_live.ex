@@ -154,11 +154,6 @@ defmodule ElixirconfChatWeb.ChatLive do
   end
 
   @impl true
-  def handle_event("refresh", _params, socket) do
-    {:noreply, socket}
-  end
-
-  @impl true
   def handle_info({:get_room, room_id}, socket) do
     case Chat.get_room(room_id) do
       %Room{messages: messages, server_state: %{messages: unsaved_messages}} = room ->
@@ -283,7 +278,7 @@ defmodule ElixirconfChatWeb.ChatLive do
         <% else %>
           <Spacer />
           <VStack>
-            <ScrollView modclass="refreshable:refresh">
+            <ScrollView scroll-position={"message_#{Enum.count(@messages) - 1}"}>
               <%= for {message, index} <- Enum.with_index(@messages) do %>
                 <.chat_message
                   current_user_id={@current_user.id}
