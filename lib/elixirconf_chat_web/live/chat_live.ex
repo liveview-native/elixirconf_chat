@@ -108,7 +108,7 @@ defmodule ElixirconfChatWeb.ChatLive do
 
   @impl true
   def handle_event("join_room", %{"room-id" => room_id}, %{assigns: %{} = assigns} = socket) do
-    old_room_id = Map.get(socket.assigns, :room_id)
+    old_room_id = Map.get(assigns, :room_id)
 
     if old_room_id do
       Chat.leave_room(old_room_id, self())
@@ -273,7 +273,7 @@ defmodule ElixirconfChatWeb.ChatLive do
             <Text modclass="w-375 align-center">
               No Messages in this room. Be the first one to send a message.
             </Text>
-            <Spacer />
+          <Spacer />
           </VStack>
         <% else %>
           <Spacer />
@@ -281,7 +281,7 @@ defmodule ElixirconfChatWeb.ChatLive do
             <ScrollView scroll-position={"message_#{Enum.count(@messages) - 1}"}>
               <%= for {message, index} <- Enum.with_index(@messages) do %>
                 <.chat_message
-                  current_user_id={@current_user.id}
+                  current_user_id= {@current_user.id}
                   index={index}
                   message={message}
                   native={@native}

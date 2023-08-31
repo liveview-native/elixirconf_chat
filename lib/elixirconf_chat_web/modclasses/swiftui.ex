@@ -109,7 +109,7 @@ defmodule ElixirconfChatWeb.Modclasses.SwiftUi do
   end
 
   def modclass(native, "disable-autocorrect", _assigns) do
-    autocorrection_disabled(disable: true)
+    autocorrection_disabled(native, disable: true)
   end
 
   def modclass(native, "text-field-" <> style, _assigns) do

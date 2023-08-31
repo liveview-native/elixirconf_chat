@@ -7,7 +7,7 @@ defmodule ElixirconfChatWeb.AssignUser do
 
   alias ElixirconfChat.Auth
 
-  def on_mount(_key, params, session, socket) do
+  def on_mount(_key, params, _session, socket) do
     connect_params = get_connect_params(socket)
 
     with token when is_binary(token) <- Map.get(params, "token", connect_params["token"]),
@@ -21,7 +21,7 @@ defmodule ElixirconfChatWeb.AssignUser do
 
       {:cont, socket}
     else
-      result ->
+      _result ->
         {:halt, push_redirect(socket, to: "/")}
     end
   end

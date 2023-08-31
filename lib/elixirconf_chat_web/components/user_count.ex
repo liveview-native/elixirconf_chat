@@ -34,7 +34,7 @@ defmodule ElixirconfChatWeb.UserCountComponent do
         %{count: count} ->
           Map.put(assigns, :count, count)
 
-        %{count: count} ->
+        _assigns ->
           Map.put(assigns, :count, 0)
       end
     end)

@@ -70,7 +70,7 @@ defmodule ElixirconfChat.Chat.Server do
 
         {:reply, :ok, new_state}
 
-      result ->
+      _result ->
         {:reply, :ok, state}
     end
   end
@@ -105,6 +105,10 @@ defmodule ElixirconfChat.Chat.Server do
     {:reply, :ok, %{state | subscribers: updated_subscribers}}
   end
 
+  def handle_call(:clear_message_queue, _from, state) do
+    {:reply, {:ok, []}, %{state | messages: []}}
+  end
+
   def handle_info(
     {:DOWN, _ref, :process, pid, _reason},
     %{room_id: room_id, subscribers: %{} = subscribers} = state
@@ -114,10 +118,6 @@ defmodule ElixirconfChat.Chat.Server do
     LobbyServer.broadcast({:room_updated, %{room_id: room_id, users_count: Enum.count(updated_subscribers)}})
 
     {:noreply, %{state | subscribers: updated_subscribers}}
-  end
-
-  def handle_call(:clear_message_queue, _from, state) do
-    {:reply, {:ok, []}, %{state | messages: []}}
   end
 
   # Private functions
