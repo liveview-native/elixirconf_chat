@@ -12,6 +12,9 @@ defmodule ElixirconfChatWeb.ChatLive do
 
   on_mount ElixirconfChatWeb.AssignUser
 
+  @max_body_length 1337
+  @max_body_bytes @max_body_length * 4
+
   @impl true
   def mount(_params, _session, socket) do
     schedule = Chat.schedule()
@@ -20,6 +23,7 @@ defmodule ElixirconfChatWeb.ChatLive do
 
     {:ok,
      assign(socket,
+       body: "",
        loading_room: false,
        messages: [],
        room_id: nil,
@@ -147,6 +151,21 @@ defmodule ElixirconfChatWeb.ChatLive do
     {:noreply, assign(socket, messages: [], room: nil, room_id: nil, room_page: false)}
   end
 
+  # Arbitrarily limit body size since we're keeping it in-memory, and because,
+  # well, people will do as people do...
+  # HTML `maxlength` attribute uses UTF-16 characters, which can be 2-4 bytes.
+  # So we'll just limit it to 4 bytes max instead of some O(n) String operation
+  # or measurement on graphemes every time somebody types. Only even necessary
+  # if someone uses their 1337 h4x0r skills to bypass HTML `maxlength` attribute.
+  @impl true
+  def handle_event("typing", %{"body" => body}, socket) when byte_size(body) <= @max_body_bytes do
+    {:noreply, assign(socket, :body, body)}
+  end
+
+  def handle_event("typing", %{"body" => <<body::binary-size(@max_body_bytes), _::binary>>}, socket) do
+    {:noreply, assign(socket, :body, body)}
+  end
+
   @impl true
   def handle_event("post_message", %{"body" => body}, socket) do
     with %{room: %{id: room_id}} <- socket.assigns,
@@ -161,7 +180,7 @@ defmodule ElixirconfChatWeb.ChatLive do
         user_id: socket.assigns.current_user.id
       })
 
-      {:noreply, socket}
+      {:noreply, assign(socket, :body, "")}
     else
       _ ->
         {:noreply, socket}
@@ -254,9 +273,14 @@ defmodule ElixirconfChatWeb.ChatLive do
 
   def chat_input(assigns) do
     ~H"""
-    <form class="p-4 md:p-6" id="chat" phx-submit="post_message">
+    <form class="p-4 md:p-6" id="chat" phx-change="typing" phx-submit="post_message">
       <div class="px-2 py-[5px] flex items-center justify-between gap-x-2 border border-brand-gray-200 rounded-lg">
         <label class="sr-only" for="chat-input"></label>
+        <%#
+          NOTE: If the debounce is too high, the text won't be cleared when
+            pressing "Enter" key. This will happen if you press enter before
+            initial debounce passes. Choose your poison.
+        %>
         <input
           class="w-[calc(100%-1rem)] py-2 px-2 text-lg md:text-xl text-brand-gray-400 border-none transition duration-200 focus:rounded-sm focus:ring-2 focus:ring-brand-purple"
           type="text"
@@ -264,9 +288,11 @@ defmodule ElixirconfChatWeb.ChatLive do
           class="ph-24"
           placeholder="Enter Message..."
           id="chat-input"
+          value={@body}
+          maxlength={max_body_length()}
+          phx-debounce="80"
           required
         />
-        <%!-- TODO: clear text input on pressing enter --%>
         <button
           type="submit"
           class="w-10 h-10 flex items-center justify-center bg-brand-purple rounded-xl border-2 border-transparent group transition duration-200 hover:bg-white hover:border-brand-purple outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-purple"
@@ -828,4 +854,6 @@ defmodule ElixirconfChatWeb.ChatLive do
       {day_of_week_formatted, timeslots}
     end)
   end
+
+  defp max_body_length, do: @max_body_length
 end
