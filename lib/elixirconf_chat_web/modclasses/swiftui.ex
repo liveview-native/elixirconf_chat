@@ -170,10 +170,6 @@ defmodule ElixirconfChatWeb.Modclasses.SwiftUi do
     image_scale(native, modclass_value(image_scale, :atom))
   end
 
-  def modclass(native, "refreshable:" <> event_name, _assigns) do
-    refreshable(native, action: event_name)
-  end
-
   ###
 
   defp modclass_value(value, :atom) do
