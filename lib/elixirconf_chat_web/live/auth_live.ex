@@ -9,6 +9,15 @@ defmodule ElixirconfChatWeb.AuthLive do
   alias ElixirconfChat.Users.User
 
   @impl true
+  def mount(_params, _session, socket) do
+    {:ok, assign(socket,
+      error: nil,
+      login_code_buffer: "",
+      user: nil
+     )}
+  end
+
+  @impl true
   def render(%{platform_id: :swiftui} = assigns) do
     ~SWIFTUI"""
     <VStack modifiers={multiline_text_alignment(alignment: :center) |> text_field_style(style: :rounded_border)}}>
@@ -84,6 +93,10 @@ defmodule ElixirconfChatWeb.AuthLive do
         {:noreply,
          assign(socket, error: "Your login code has expired. Please go back and try again.")}
     end
+  end
+
+  def handle_event("set_login_code_buffer", %{"login_code" => login_code}, socket) do
+    {:noreply, assign(socket, login_code_buffer: login_code)}
   end
 
   ###
@@ -175,19 +188,26 @@ defmodule ElixirconfChatWeb.AuthLive do
         <% end %>
       </HStack>
       <HStack modclass="scroll-disabled">
-        <TextField name="login_code" modclass="text-field-plain overlay:steps align-leading kerning-46 w-300 keyboard-type-numbers-and-punctuation">
-          <HStack template={:steps} modclass="offset-x--6">
-            <%= for _ <- 0..5 do %>
-              <%= if assigns[:error] do %>
-                <RoundedRectangle modclass="stroke:errorcolor h-48 w-48 overlay:step-bg" corner-radius="8">
-                  <RoundedRectangle template={:step_bg} modclass="fg-color:errorcolor opacity-0.125 h-48 w-48" corner-radius="8" />
-                </RoundedRectangle>
-              <% else %>
-                <RoundedRectangle modclass="stroke:lightchrome h-48 w-48" corner-radius="8" />
-              <% end %>
+        <ZStack>
+          <TextField name="login_code" phx-change="set_login_code_buffer" modclass="text-field-plain align-leading kerning-46 w-300 keyboard-type-numbers-and-punctuation fg-color-clear">
+          </TextField>
+          <HStack modclass="offset-x--6">
+            <%= for n <- 0..5 do %>
+              <ZStack modclass="overlay:rect h-48 w-48">
+                <%= if String.at(@login_code_buffer, n) do %>
+                  <Text><%= n %></Text>
+                <% end %>
+                <%= if assigns[:error] do %>
+                  <RoundedRectangle modclass="stroke:errorcolor h-48 w-48 overlay:step-bg" corner-radius="8">
+                    <RoundedRectangle template={:step_bg} modclass="fg-color:errorcolor opacity-0.125 h-48 w-48" corner-radius="8" />
+                  </RoundedRectangle>
+                <% else %>
+                  <RoundedRectangle modclass="stroke:lightchrome h-48 w-48" corner-radius="8" />
+                <% end %>
+              </ZStack>
             <% end %>
           </HStack>
-        </TextField>
+        </ZStack>
       </HStack>
       <Spacer modclass="h-64" />
       <LiveSubmitButton modclass="w-full h-56 background:rect">
@@ -229,12 +249,9 @@ defmodule ElixirconfChatWeb.AuthLive do
             inputmode="numeric"
           />
           <div class="hidden min-[320px]:flex justify-center gap-x-1.5 min-[448px]:gap-x-2 peer-focus:[&>div]:ring-1 min-[532px]:peer-focus:[&>div]:ring-2 peer-focus:[&>div]:ring-brand-purple [&>div]:border [&>div]:border-brand-red [&>div]:rounded-lg [&>div]:w-9 [&>div]:h-10 [&>div]:min-[448px]:w-[2.8125rem] [&>div]: [&>div]:min-[532px]:w-14 [&>div]:min-[448px]:h-14 [&>div]:bg-[#fef6f3]">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
+            <%= for _ <- 0..5 do %>
+              <div></div>
+            <% end %>
           </div>
         <% else %>
           <input

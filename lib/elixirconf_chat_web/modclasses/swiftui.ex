@@ -140,6 +140,14 @@ defmodule ElixirconfChatWeb.Modclasses.SwiftUi do
     tint(native, color: tint)
   end
 
+  def modclass(native, "border-" <> border_color, _assigns) do
+    stroke(native, content: {:color, modclass_value(border_color, :atom)}, width: 1)
+  end
+
+  def modclass(native, "border:" <> border_color, _assigns) do
+    stroke(native, content: {:color, border_color}, width: 1)
+  end
+
   def modclass(native, "stroke-" <> stroke_color, _assigns) do
     stroke(native, content: {:color, modclass_value(stroke_color, :atom)}, style: [line_width: 1])
   end
