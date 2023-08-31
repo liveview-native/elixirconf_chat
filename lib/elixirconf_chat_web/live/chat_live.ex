@@ -2,6 +2,7 @@ defmodule ElixirconfChatWeb.ChatLive do
   use Phoenix.LiveView
   use LiveViewNative.LiveView
 
+  alias ElixirconfChat.RateLimiter
   alias ElixirconfChat.Chat
   alias ElixirconfChat.Chat.Room
   alias ElixirconfChat.Utils
@@ -136,18 +137,20 @@ defmodule ElixirconfChatWeb.ChatLive do
 
   @impl true
   def handle_event("post_message", %{"body" => body}, socket) do
-    case socket.assigns do
-      %{room: %{id: room_id}} ->
-        Chat.post_message(room_id, %{
-          body: body,
-          posted_at: Utils.server_time() |> DateTime.to_naive(),
-          from: self(),
-          room_id: room_id,
-          user_id: socket.assigns.current_user.id
-        })
+    with %{room: %{id: room_id}} <- socket.assigns,
+         false <- RateLimiter.recent_chat?(socket.assigns.current_user.id) do
+      RateLimiter.log_chat(socket.assigns.current_user.id)
 
-        {:noreply, socket}
+      Chat.post_message(room_id, %{
+        body: body,
+        posted_at: Utils.server_time() |> DateTime.to_naive(),
+        from: self(),
+        room_id: room_id,
+        user_id: socket.assigns.current_user.id
+      })
 
+      {:noreply, socket}
+    else
       _ ->
         {:noreply, socket}
     end

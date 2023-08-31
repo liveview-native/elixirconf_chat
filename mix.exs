@@ -54,7 +54,8 @@ defmodule ElixirconfChat.MixProject do
       {:live_view_native, "~> 0.0.9"},
       {:live_view_native_swift_ui, "~> 0.0.10"},
       {:oban, "~> 2.14"},
-      {:hackney, "~> 1.18.0"}
+      {:hackney, "~> 1.18.0"},
+      {:ets, "~> 0.9.0"}
     ]
   end
 

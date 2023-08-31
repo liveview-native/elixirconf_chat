@@ -16,6 +16,7 @@ defmodule ElixirconfChat.Application do
       ElixirconfChatWeb.Telemetry,
       # Start the Ecto repository
       ElixirconfChat.Repo,
+      ElixirconfChat.RateLimiter,
       # Start the PubSub system
       {Phoenix.PubSub, name: ElixirconfChat.PubSub},
       # Start Finch
