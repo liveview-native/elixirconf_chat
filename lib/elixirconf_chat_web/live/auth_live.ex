@@ -38,7 +38,7 @@ defmodule ElixirconfChatWeb.AuthLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="min-h-screen p-4 bg-brand-purple flex items-center align-center font-system">
+    <div id="main"class="min-h-screen p-4 bg-brand-purple flex items-center align-center font-system" phx-hook="ValidateAuthToken">
       <div class="mx-auto w-full max-w-[288px] min-[448px]:max-w-[412px] min-[532px]:max-w-[500px] p-4 min-[448px]:p-12 min-[532px]:p-15 bg-white rounded-[32px]">
       <.logo logo_title={true} {assigns} />
       <%= if assigns[:user] do %>
@@ -93,10 +93,6 @@ defmodule ElixirconfChatWeb.AuthLive do
         {:noreply,
          assign(socket, error: "Your login code has expired. Please go back and try again.")}
     end
-  end
-
-  def handle_event("set_login_code_buffer", %{"login_code" => login_code}, socket) do
-    {:noreply, assign(socket, login_code_buffer: login_code)}
   end
 
   ###
