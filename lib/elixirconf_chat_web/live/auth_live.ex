@@ -195,7 +195,7 @@ defmodule ElixirconfChatWeb.AuthLive do
             <%= for n <- 0..5 do %>
               <ZStack modclass="overlay:rect h-48 w-48">
                 <%= if String.at(@login_code_buffer, n) do %>
-                  <Text><%= n %></Text>
+                  <Text><%= String.at(@login_code_buffer, n) %></Text>
                 <% end %>
                 <%= if assigns[:error] do %>
                   <RoundedRectangle modclass="stroke:errorcolor h-48 w-48 overlay:step-bg" corner-radius="8">
