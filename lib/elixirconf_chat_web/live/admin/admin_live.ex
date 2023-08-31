@@ -12,9 +12,9 @@ defmodule ElixirconfChatWeb.Admin.AdminLive do
   # [x] list of users
   # [x] ability to ban per user
   # [x] banned_at migration
-  # [ ] banning a user deletes all user's messages - WIP Users L#59
+  # [x] banning a user deletes all user's messages
   # [x] deleted_at migration
-  # [ ] set deleted_at on messages, - WIP Messages L#9
+  # [x] set deleted_at on messages,
   # [ ] in ui, show "deleted" instead of message in chat
 
   @impl true

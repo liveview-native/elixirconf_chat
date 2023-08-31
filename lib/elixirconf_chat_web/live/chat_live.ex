@@ -358,7 +358,7 @@ defmodule ElixirconfChatWeb.ChatLive do
     """
   end
 
-  def chat_message(assigns) do
+  def chat_message(%{deleted_at: nil} = assigns) do
     ~H"""
     <div id={"message_#{@index}"}>
       <%= if @message.user_id == @current_user_id do %>
@@ -396,6 +396,12 @@ defmodule ElixirconfChatWeb.ChatLive do
         <br />
       <% end %>
     </div>
+    """
+  end
+
+  def chat_message(%{deleted_at: _deleted_at} = assigns) do
+    ~H"""
+
     """
   end
 

@@ -1,13 +1,13 @@
 defmodule ElixirconfChat.Chat.Messages do
   import Ecto.Query
   alias ElixirconfChat.Repo
-  alias ElixirconfChat.Message
+  alias ElixirconfChat.Chat.Message
 
   @doc """
   Sets deleted_at for all Messages belonging to a user.
   """
   def delete_messages_for_user(user_id) do
-    now = DateTime.now()
+    now = DateTime.utc_now()
 
     query =
       from m in Message,
