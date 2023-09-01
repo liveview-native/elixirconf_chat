@@ -95,6 +95,10 @@ defmodule ElixirconfChatWeb.AuthLive do
     end
   end
 
+  def handle_event("set_login_code_buffer", %{"login_code" => login_code}, socket) do
+    {:noreply, assign(socket, login_code_buffer: login_code)}
+  end
+
   ###
 
   def logo(%{platform_id: :swiftui} = assigns) do
