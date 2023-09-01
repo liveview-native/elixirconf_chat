@@ -53,8 +53,6 @@ defmodule ElixirconfChatWeb.Admin.AdminLive do
 
   @impl true
   def handle_event("ban_user", %{"user-id" => user_id}, socket) do
-    IO.inspect(user_id, label: "USER ID")
-
     case Users.ban_user!(user_id) do
       {:ok, _user} ->
         {:noreply, socket}
