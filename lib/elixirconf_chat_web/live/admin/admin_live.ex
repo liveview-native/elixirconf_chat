@@ -15,7 +15,8 @@ defmodule ElixirconfChatWeb.Admin.AdminLive do
   # [x] banning a user deletes all user's messages
   # [x] deleted_at migration
   # [x] set deleted_at on messages,
-  # [ ] in ui, show "deleted" instead of message in chat
+  # [x] in ui, show "deleted" instead of message in chat
+  # [ ] update genserver to set deleted_at on unsaved messages and refresh LV
 
   @impl true
   def mount(_params, _session, socket) do
@@ -33,6 +34,12 @@ defmodule ElixirconfChatWeb.Admin.AdminLive do
   def render(assigns) do
     ~H"""
     <table>
+      <tr>
+        <td><a href={"/chat?token=#{@token}"}>Go back</a></td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+      </tr>
       <tr>
         <td>Name</td>
         <td>Email</td>

@@ -75,13 +75,31 @@ defmodule ElixirconfChatWeb.ChatLive do
   @impl true
   def render(%{current_user: %{banned_at: nil}} = assigns) do
     ~H"""
-    <div class="w-full">
-      <%= if @room_page do %>
-        <.room_page {assigns} />
-      <% end %>
-      <.logo height={48} width={48} />
-      <.hallway {assigns} />
-      <.rooms_list {assigns} />
+    <div class="px-4 min-h-[496px] md:min-h-[600px] overflow-y-auto bg-brand-gray-200">
+      <.logo />
+      <div class="mx-auto w-full max-w-[1200px] md:grid md:grid-cols-12 border border-brand-gray-200 rounded-t-[32px] bg-white">
+        <div class="min-h-[208px] max-h-[calc(33vh-5rem)] md:max-h-full md:h-[calc(100vh-6.25rem)] md:min-h-[600px] overflow-y-auto border-b-4 border-brand-purple md:col-span-6 md:border-b-0 md:border-r md:border-brand-gray-200 lg:col-span-5 xl:col-span-4 p-4 md:p-6">
+          <h1 class="font-medium text-2xl md:text-3.5xl text-brand-gray-700">Schedule</h1>
+          <.admin {assigns} />
+          <.hallway {assigns} />
+          <.rooms_list {assigns} />
+        </div>
+        <div class="relative min-h-[208px] h-[calc(67vh-2rem)] md:max-h-full md:h-[calc(100vh-6.25rem)] md:min-h-[600px] md:col-span-6 lg:col-span-7 xl:col-span-8">
+          <%= if @room_page do %>
+            <.room_page {assigns} />
+          <% else %>
+            <div class="h-full max-w-[260px] mx-auto flex items-center justify-center text-lg text-center text-brand-gray-600">
+              <div>
+                <span class="md:hidden" aria-hidden="true">👆</span>
+                <span class="hidden md:block" aria-hidden="true">👈</span>
+                <p class="mt-3">
+                  Select a panel from the list to enter its chatroom.
+                </p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
     </div>
     """
   end
@@ -141,8 +159,12 @@ defmodule ElixirconfChatWeb.ChatLive do
   def handle_info({:get_room, room_id}, socket) do
     case Chat.get_room(room_id) do
       %Room{messages: messages, server_state: %{messages: unsaved_messages}} = room ->
-        messages = messages ++ unsaved_messages
-        {:noreply, assign(socket, loading_room: false, messages: messages, room: room)}
+        messages =
+          (messages ++ unsaved_messages)
+          |> Enum.sort_by(& &1.posted_at, NaiveDateTime)
+
+        {:noreply,
+         assign(socket, loading_room: false, messages: messages, room: room, room_id: room.id)}
 
       _ ->
         # TODO: Handle error
@@ -358,7 +380,7 @@ defmodule ElixirconfChatWeb.ChatLive do
     """
   end
 
-  def chat_message(%{deleted_at: nil} = assigns) do
+  def chat_message(%{message: %{deleted_at: nil}} = assigns) do
     ~H"""
     <div id={"message_#{@index}"}>
       <%= if @message.user_id == @current_user_id do %>
@@ -399,9 +421,33 @@ defmodule ElixirconfChatWeb.ChatLive do
     """
   end
 
-  def chat_message(%{deleted_at: _deleted_at} = assigns) do
+  def chat_message(%{message: %{deleted_at: _deleted_at}} = assigns) do
     ~H"""
-
+    <div id={"message_#{@index}"}>
+      <div class="flex flex-col">
+        <%= if @message.user_id == @current_user_id do %>
+          <div class="self-end max-w-[292px] p-3 bg-brand-purple text-brand-gray-50 rounded-2xl rounded-br-none">
+            <div class="mb-1 flex items-center justify-between gap-x-7 text-[13px]/[18px] text-brand-gray-100 uppercase">
+              <p class="font-semibold tracking-[3px]">You</p>
+              <p class="font-medium"><%= Utils.time_formatted(@message.posted_at) %></p>
+            </div>
+            <p class="font-medium"><i>This message was deleted.</i></p>
+          </div>
+        <% else %>
+          <div class="self-start max-w-[292px] p-3 bg-brand-gray-50 text-brand-gray-900 rounded-2xl rounded-bl-none">
+            <div class="mb-1 flex items-center justify-between gap-x-7 text-[13px]/[18px] uppercase">
+              <p class="font-semibold text-brand-gray-500 tracking-[3px]">
+                <%= @message.posted_by %>
+              </p>
+              <p class="font-medium text-brand-gray-500">
+                <%= Utils.time_formatted(@message.posted_at) %>
+              </p>
+            </div>
+            <p class="font-medium"><i>This message was deleted.</i></p>
+          </div>
+        <% end %>
+      </div>
+    </div>
     """
   end
 
@@ -634,6 +680,22 @@ defmodule ElixirconfChatWeb.ChatLive do
         <% end %>
       </div>
     </div>
+    """
+  end
+
+  def admin(%{current_user: %{role: "admin"}} = assigns) do
+    ~H"""
+    <div class="mt-5 p-3 bg-brand-gray-50 rounded-2xl">
+      <div class="flex items-center gap-2">
+        <a href={"/admin?token=#{@token}"}>Go to Admin</a>
+      </div>
+    </div>
+    """
+  end
+
+  def admin(assigns) do
+    ~H"""
+
     """
   end
 

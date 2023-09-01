@@ -1,7 +1,8 @@
 defmodule ElixirconfChat.Chat.Messages do
   import Ecto.Query
-  alias ElixirconfChat.Repo
   alias ElixirconfChat.Chat.Message
+  alias ElixirconfChat.Repo
+  alias ElixirconfChat.Chat.Room
 
   @doc """
   Sets deleted_at for all Messages belonging to a user.
@@ -16,6 +17,16 @@ defmodule ElixirconfChat.Chat.Messages do
 
     Ecto.Multi.new()
     |> Ecto.Multi.update_all(:messages, query, [])
+    |> Ecto.Multi.run({:delete_banned_messages, user_id}, fn _repo, _multi ->
+      results =
+        Room
+        |> Repo.all()
+        |> Enum.map(fn room ->
+          ElixirconfChat.Chat.Server.delete_banned_messages(room.id, user_id)
+        end)
+
+      {:ok, results}
+    end)
     |> Repo.transaction()
   end
 end

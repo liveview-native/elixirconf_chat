@@ -49,6 +49,10 @@ defmodule ElixirconfChat.Chat.Server do
     call_room(room_id, :clear_message_queue)
   end
 
+  def delete_banned_messages(room_id, user_id) do
+    call_room(room_id, {:delete_banned_messages, user_id})
+  end
+
   # Server (callbacks)
 
   def init(initial_state) do
@@ -74,16 +78,36 @@ defmodule ElixirconfChat.Chat.Server do
     {:reply, state, state}
   end
 
-  def handle_call({:join, pid}, _from, %{subscribers: %{} = subscribers} = state) do
+  def handle_call(:get_user_count, _from, %{subscribers: %{} = subscribers} = state) do
+    {:reply, Enum.count(subscribers), state}
+  end
+
+  def handle_call(
+        {:join, pid},
+        _from,
+        %{room_id: room_id, subscribers: %{} = subscribers} = state
+      ) do
     monitor_ref = Process.monitor(pid)
     updated_subscribers = Map.put(subscribers, pid, monitor_ref)
+
+    LobbyServer.broadcast(
+      {:room_updated, %{room_id: room_id, users_count: Enum.count(updated_subscribers)}}
+    )
 
     {:reply, :ok, %{state | subscribers: updated_subscribers}}
   end
 
-  def handle_call({:leave, pid}, _from, %{subscribers: %{} = subscribers} = state) do
+  def handle_call(
+        {:leave, pid},
+        _from,
+        %{room_id: room_id, subscribers: %{} = subscribers} = state
+      ) do
     monitor_ref = Map.get(subscribers, pid)
     updated_subscribers = Map.delete(subscribers, pid)
+
+    LobbyServer.broadcast(
+      {:room_updated, %{room_id: room_id, users_count: Enum.count(updated_subscribers)}}
+    )
 
     if is_reference(monitor_ref) && Process.alive?(pid) do
       Process.demonitor(monitor_ref)
@@ -96,11 +120,42 @@ defmodule ElixirconfChat.Chat.Server do
     {:reply, {:ok, []}, %{state | messages: []}}
   end
 
+  def handle_call(
+        {:delete_banned_messages, user_id},
+        _from,
+        %{messages: messages, subscribers: %{} = subscribers} = state
+      ) do
+    # Get IDs for banned messages
+    banned_message_ids =
+      messages
+      |> Enum.filter(&(&1.user_id == user_id))
+      |> Enum.map(& &1.id)
+
+    # Set `deleted_at` for all banned messages
+    updated_messages =
+      Enum.map(messages, fn message ->
+        if message.id in banned_message_ids do
+          Map.put(message, :deleted_at, DateTime.utc_now())
+        else
+          message
+        end
+      end)
+
+    # Let users already in the room know to update all deleted messages
+    notify_subscribers(subscribers, {:messages_deleted, banned_message_ids})
+
+    {:reply, :ok, %{state | messages: updated_messages}}
+  end
+
   def handle_info(
         {:DOWN, _ref, :process, pid, _reason},
-        %{subscribers: %{} = subscribers} = state
+        %{room_id: room_id, subscribers: %{} = subscribers} = state
       ) do
     updated_subscribers = Map.delete(subscribers, pid)
+
+    LobbyServer.broadcast(
+      {:room_updated, %{room_id: room_id, users_count: Enum.count(updated_subscribers)}}
+    )
 
     {:noreply, %{state | subscribers: updated_subscribers}}
   end
