@@ -23,10 +23,12 @@ import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 import { ChatAutoscroll } from "./hooks/ChatAutoscroll"
 import { ValidateAuthToken } from "./hooks/ValidateAuthToken"
+import { TextareaEnterSubmit } from "./hooks/TextareaEnterSubmit"
 
 const Hooks = {
   ChatAutoscroll,
-  ValidateAuthToken
+  ValidateAuthToken,
+  TextareaEnterSubmit,
 };
 
 window.addEventListener(`phx:persist_token`, (e) => {
