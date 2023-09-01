@@ -30,7 +30,7 @@ struct ContentView: View {
             #if DEBUG
             let baseURL = URL(string: "http://localhost:4000/")!
             #else
-            let baseURL = URL(string: "https://elixirconf-chat.fly.dev/")!
+            let baseURL = URL(string: "https://chat.elixirconf.com/")!
             #endif
 
             if let token = UserDefaults.standard.value(forKey: "token") {

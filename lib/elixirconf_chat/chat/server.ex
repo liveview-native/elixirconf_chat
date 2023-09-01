@@ -4,6 +4,7 @@ defmodule ElixirconfChat.Chat.Server do
 
   alias __MODULE__, as: Server
   alias ElixirconfChat.Chat.Message
+  alias ElixirconfChat.Chat.LobbyServer
 
   @initial_state [
     messages: [],
@@ -25,6 +26,10 @@ defmodule ElixirconfChat.Chat.Server do
 
   def get_state(room_id) do
     call_room(room_id, :get_state)
+  end
+
+  def get_user_count(room_id) do
+    call_room(room_id, :get_user_count)
   end
 
   def join(room_id, pid) do
@@ -69,7 +74,7 @@ defmodule ElixirconfChat.Chat.Server do
 
         {:reply, :ok, new_state}
 
-      result ->
+      _result ->
         {:reply, :ok, state}
     end
   end

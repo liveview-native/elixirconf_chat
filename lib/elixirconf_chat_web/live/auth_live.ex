@@ -9,6 +9,15 @@ defmodule ElixirconfChatWeb.AuthLive do
   alias ElixirconfChat.Users.User
 
   @impl true
+  def mount(_params, _session, socket) do
+    {:ok, assign(socket,
+      error: nil,
+      login_code_buffer: "",
+      user: nil
+     )}
+  end
+
+  @impl true
   def render(%{platform_id: :swiftui} = assigns) do
     ~SWIFTUI"""
     <VStack modifiers={multiline_text_alignment(alignment: :center) |> text_field_style(style: :rounded_border)}}>
@@ -29,8 +38,8 @@ defmodule ElixirconfChatWeb.AuthLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="min-h-screen p-4 bg-brand-purple flex items-center align-center font-system">
-      <div class="mx-auto w-full max-w-[500px] p-4 min-[448px]:p-12 sm:p-15 bg-white rounded-[32px]">
+    <div id="main"class="min-h-screen p-4 bg-brand-purple flex items-center align-center font-system" phx-hook="ValidateAuthToken">
+      <div class="mx-auto w-full max-w-[288px] min-[448px]:max-w-[412px] min-[532px]:max-w-[500px] p-4 min-[448px]:p-12 min-[532px]:p-15 bg-white rounded-[32px]">
       <.logo logo_title={true} {assigns} />
       <%= if assigns[:user] do %>
         <.login_code_form {assigns} />
@@ -46,7 +55,9 @@ defmodule ElixirconfChatWeb.AuthLive do
   def handle_event("check_email", %{"email" => email}, socket) do
     with {:user, %User{} = user} <- {:user, Users.get_user_by_email(email)},
          {:user_with_code, {:ok, %User{} = user_with_code}} <-
-           {:user_with_code, Auth.randomize_user_login_code(user)} do
+           {:user_with_code, Auth.randomize_user_login_code(user)},
+         {:ok, _result} <- deliver_login_email(user_with_code)
+    do
       {:noreply, assign(socket, error: nil, user: user_with_code)}
     else
       {:user, nil} ->
@@ -141,7 +152,7 @@ defmodule ElixirconfChatWeb.AuthLive do
         <label for="email-input" class="text-lg text-black">Your Email Address</label>
         <input
           name="email"
-          class="mt-2 w-full h-14 p-3 text-xl text-brand-gray-800 border border-brand-gray-200 rounded-lg outline-none transition duration-200 focus:bg-brand-gray-50 focus:ring-2 focus:ring-[#1ff4ff] disable-autocorrect autocapitalize-never"
+          class="mt-2 w-full h-10 min-[448px]:h-14 p-3 text-lg min-[448px]:text-xl text-brand-gray-800 border border-brand-gray-200 rounded-lg outline-none transition duration-200 focus:bg-brand-gray-50 focus:ring-2 focus:ring-brand-purple disable-autocorrect autocapitalize-never"
           id="email-input"
         />
       </div>
@@ -173,19 +184,26 @@ defmodule ElixirconfChatWeb.AuthLive do
         <% end %>
       </HStack>
       <HStack modclass="scroll-disabled">
-        <TextField name="login_code" modclass="text-field-plain overlay:steps align-leading kerning-46 w-300 keyboard-type-numbers-and-punctuation">
-          <HStack template={:steps} modclass="offset-x--6">
-            <%= for _ <- 0..5 do %>
-              <%= if assigns[:error] do %>
-                <RoundedRectangle modclass="stroke:errorcolor h-48 w-48 overlay:step-bg" corner-radius="8">
-                  <RoundedRectangle template={:step_bg} modclass="fg-color:errorcolor opacity-0.125 h-48 w-48" corner-radius="8" />
-                </RoundedRectangle>
-              <% else %>
-                <RoundedRectangle modclass="stroke:lightchrome h-48 w-48" corner-radius="8" />
-              <% end %>
+        <ZStack>
+          <TextField name="login_code" phx-change="set_login_code_buffer" modclass="text-field-plain align-leading kerning-46 w-300 keyboard-type-numbers-and-punctuation fg-color-clear">
+          </TextField>
+          <HStack modclass="offset-x--6">
+            <%= for n <- 0..5 do %>
+              <ZStack modclass="overlay:rect h-48 w-48">
+                <%= if String.at(@login_code_buffer, n) do %>
+                  <Text><%= String.at(@login_code_buffer, n) %></Text>
+                <% end %>
+                <%= if assigns[:error] do %>
+                  <RoundedRectangle modclass="stroke:errorcolor h-48 w-48 overlay:step-bg" corner-radius="8">
+                    <RoundedRectangle template={:step_bg} modclass="fg-color:errorcolor opacity-0.125 h-48 w-48" corner-radius="8" />
+                  </RoundedRectangle>
+                <% else %>
+                  <RoundedRectangle modclass="stroke:lightchrome h-48 w-48" corner-radius="8" />
+                <% end %>
+              </ZStack>
             <% end %>
           </HStack>
-        </TextField>
+        </ZStack>
       </HStack>
       <Spacer modclass="h-64" />
       <LiveSubmitButton modclass="w-full h-56 background:rect">
@@ -202,14 +220,14 @@ defmodule ElixirconfChatWeb.AuthLive do
     ~H"""
     <form id="login_code" phx-submit="verify_code">
       <div class="mt-8 text-center">
-        <h2 class="text-2xl sm:text-3.5xl font-semibold">Enter Code to access</h2>
-        <p class="max-w-[360px] mt-2 font-normal text-brand-gray-600">
+        <h2 class="text-2xl min-[532px]:text-3.5xl font-semibold">Enter Code to access</h2>
+        <p class="max-w-[360px] mx-auto mt-2 font-normal text-brand-gray-600">
           We’ve sent a unique code to your email address. Please enter it below to continue.
         </p>
       </div>
-      <div class="relative mt-12">
+      <div class="relative mt-12 mb-[4.25rem] min-[532px]:mb-[4.75rem] w-full">
         <%= if assigns[:error] do %>
-          <div class="absolute left-0 -top-6 w-full flex items-center justify-center text-brand-red">
+          <div class="absolute left-0 -top-7 w-full flex items-center justify-center text-brand-red">
             <.icon name="hero-exclamation-circle-solid" class="h-5 w-5" />
             <p class="ml-[10px] italic" id="login-code-error">
               <%= @error %>
@@ -217,14 +235,40 @@ defmodule ElixirconfChatWeb.AuthLive do
           </div>
         <% end %>
         <label for="login-code-input" class="sr-only">Your login code</label>
-        <input
-          type="text"
-          name="login_code"
-          class="w-full h-14 p-3 text-xl text-brand-gray-800 border border-brand-gray-200 rounded-lg outline-none transition duration-200 focus:bg-brand-gray-50 focus:ring-2 focus:ring-[#1ff4ff] keyboard-type-numbers-and-punctuation"
-          id="login-code-input"
-        />
+        <%= if assigns[:error] do %>
+          <input
+            type="text"
+            name="login_code"
+            class="min-[320px]:absolute min-[320px]:top-0 min-[320px]:-left-4 min-[448px]:-left-10 min-[532px]:left-[-3.25rem] w-full min-[320px]:w-[304px] min-[448px]:w-[398px] min-[532px]:w-[480px] mx-auto h-10 min-[448px]:h-14 py-3 min-[320px]:pl-7 min-[320px]:tracking-[1.9375rem] min-[448px]:pl-14 min-[532px]:pl-[4.75rem] font-monospace text-xl min-[532px]:text-2xl text-brand-red min-[448px]:tracking-[2.625rem] min-[532px]:tracking-[3.125rem] text-center min-[320px]:text-left rounded-lg border border-brand-gray-200 min-[320px]:border-0 min-[320px]:bg-transparent min-[320px]:overflow-x-hidden focus:outline-none focus:ring-1 focus:ring-brand-purple min-[320px]:focus:ring-0 peer"
+            id="login-code-input"
+            maxlength="6"
+            inputmode="numeric"
+          />
+          <div class="hidden min-[320px]:flex justify-center gap-x-1.5 min-[448px]:gap-x-2 peer-focus:[&>div]:ring-1 min-[532px]:peer-focus:[&>div]:ring-2 peer-focus:[&>div]:ring-brand-purple [&>div]:border [&>div]:border-brand-red [&>div]:rounded-lg [&>div]:w-9 [&>div]:h-10 [&>div]:min-[448px]:w-[2.8125rem] [&>div]: [&>div]:min-[532px]:w-14 [&>div]:min-[448px]:h-14 [&>div]:bg-[#fef6f3]">
+            <%= for _ <- 0..5 do %>
+              <div></div>
+            <% end %>
+          </div>
+        <% else %>
+          <input
+            type="text"
+            name="login_code"
+            class="min-[320px]:absolute min-[320px]:top-0 min-[320px]:-left-4 min-[448px]:-left-10 min-[532px]:left-[-3.25rem] w-full min-[320px]:w-[304px] min-[448px]:w-[398px] min-[532px]:w-[480px] mx-auto h-10 min-[448px]:h-14 py-3 min-[320px]:pl-7 min-[320px]:tracking-[1.9375rem] min-[448px]:pl-14 min-[532px]:pl-[4.75rem] font-monospace text-xl min-[532px]:text-2xl text-brand-gray-800 min-[448px]:tracking-[2.625rem] min-[532px]:tracking-[3.125rem] text-center min-[320px]:text-left rounded-lg border border-brand-gray-200 min-[320px]:border-0 min-[320px]:bg-transparent min-[320px]:overflow-x-hidden focus:outline-none focus:ring-1 focus:ring-brand-purple min-[320px]:focus:ring-0 peer"
+            id="login-code-input"
+            maxlength="6"
+            inputmode="numeric"
+          />
+          <div class="hidden min-[320px]:flex justify-center gap-x-1.5 min-[448px]:gap-x-2 peer-focus:[&>div]:ring-1 min-[532px]:peer-focus:[&>div]:ring-2 peer-focus:[&>div]:ring-brand-purple [&>div]:border [&>div]:border-brand-gray-200 [&>div]:rounded-lg [&>div]:w-9 [&>div]:h-10 [&>div]:min-[448px]:w-[2.8125rem] [&>div]: [&>div]:min-[532px]:w-14 [&>div]:min-[448px]:h-14">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        <% end %>
+        <div class="hidden min-[448px]:block absolute -right-10 top-0 w-10 h-full rounded bg-white" aria-hidden="true"></div>
       </div>
-      <!-- todo: boxes for code -->
       <button type="submit" class="mt-8 w-full h-14 bg-brand-purple text-xl text-semibold text-white rounded-lg border-2 border-transparent outline-none transition duration-200 hover:text-brand-purple hover:bg-white hover:border-brand-purple focus:ring-2 focus:ring-[#1ff4ff] disabled:bg-brand-gray-200 disabled:text-brand-gray-400 disabled:cursor-not-allowed disabled:border-transparent">
         Verify
       </button>
@@ -235,8 +279,14 @@ defmodule ElixirconfChatWeb.AuthLive do
   defp welcome_message(%{platform_id: :swiftui} = assigns) do
     ~SWIFTUI"""
     <VStack id="welcome">
-      <Text modclass="font-title font-weight-semibold p-16">Welcome to ElixirConf 2023 Chat!</Text>
-      <Text modclass="line-spacing-8 font-weight-light">To get started, enter the email address you used to register for ElixirConf 2023</Text>
+      <VStack modclass="font-title font-weight-semibold p-16">
+        <Text>Welcome to ElixirConf</Text>
+        <Text>2023 Chat</Text>
+      </VStack>
+      <VStack modclass="line-spacing-8 font-weight-light">
+        <Text>To get started, enter the email address</Text>
+        <Text>you used to register for ElixirConf 2023</Text>
+      </VStack>
     </VStack>
     """
   end
@@ -244,7 +294,7 @@ defmodule ElixirconfChatWeb.AuthLive do
   defp welcome_message(assigns) do
     ~H"""
     <div class="mt-8 text-center" id="welcome">
-      <h2 class="text-2xl sm:text-3.5xl font-semibold">Welcome to ElixirConf 2023 Chat!</h2>
+      <h2 class="text-2xl min-[532px]:text-3.5xl font-semibold">Welcome to ElixirConf 2023 Chat!</h2>
       <p class="mt-2 font-normal text-brand-gray-600">
         To get started, enter the email address you used to register for ElixirConf 2023
       </p>
@@ -257,6 +307,12 @@ defmodule ElixirconfChatWeb.AuthLive do
     ~H"""
     <span class={[@name, @class]} />
     """
+  end
+
+  defp deliver_login_email(user) do
+    user
+    |> ElixirconfChat.Auth.LoginEmail.login_email()
+    |> ElixirconfChat.Mailer.deliver()
   end
 
   defp parse_login_code(login_code) do

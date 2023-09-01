@@ -3,6 +3,7 @@ defmodule ElixirconfChat.Chat do
   alias ElixirconfChat.Chat.Room
   alias ElixirconfChat.Chat.Timeslot
   alias ElixirconfChat.Chat.Server
+  alias ElixirconfChat.Chat.LobbyServer
 
   import Ecto.Query, only: [from: 2]
 
@@ -48,6 +49,20 @@ defmodule ElixirconfChat.Chat do
   end
 
   @doc """
+  Joins the lobby.
+  """
+  def join_lobby(pid) do
+    LobbyServer.join(pid)
+  end
+
+  @doc """
+  Leaves the lobby.
+  """
+  def leave_lobby(pid) do
+    LobbyServer.leave(pid)
+  end
+
+  @doc """
   Joins a Room by ID.
   """
   def join_room(room_id, pid) do
@@ -58,7 +73,7 @@ defmodule ElixirconfChat.Chat do
   Leaves a Room by ID.
   """
   def leave_room(room_id, pid) do
-    Server.join(room_id, pid)
+    Server.leave(room_id, pid)
   end
 
   @doc """

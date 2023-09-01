@@ -109,7 +109,7 @@ defmodule ElixirconfChatWeb.Modclasses.SwiftUi do
   end
 
   def modclass(native, "disable-autocorrect", _assigns) do
-    autocorrection_disabled(disable: true)
+    autocorrection_disabled(native, disable: true)
   end
 
   def modclass(native, "text-field-" <> style, _assigns) do
@@ -140,6 +140,14 @@ defmodule ElixirconfChatWeb.Modclasses.SwiftUi do
     tint(native, color: tint)
   end
 
+  def modclass(native, "border-" <> border_color, _assigns) do
+    stroke(native, content: {:color, modclass_value(border_color, :atom)}, width: 1)
+  end
+
+  def modclass(native, "border:" <> border_color, _assigns) do
+    stroke(native, content: {:color, border_color}, width: 1)
+  end
+
   def modclass(native, "stroke-" <> stroke_color, _assigns) do
     stroke(native, content: {:color, modclass_value(stroke_color, :atom)}, style: [line_width: 1])
   end
@@ -168,10 +176,6 @@ defmodule ElixirconfChatWeb.Modclasses.SwiftUi do
 
   def modclass(native, "image-scale-" <> image_scale, _assigns) do
     image_scale(native, modclass_value(image_scale, :atom))
-  end
-
-  def modclass(native, "refreshable:" <> event_name, _assigns) do
-    refreshable(native, action: event_name)
   end
 
   ###
