@@ -21,10 +21,12 @@ import "phoenix_html"
 import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
+import { ChatAutoscroll } from "./hooks/ChatAutoscroll"
 import { ValidateAuthToken } from "./hooks/ValidateAuthToken"
 
 const Hooks = {
-  ValidateAuthToken,
+  ChatAutoscroll,
+  ValidateAuthToken
 };
 
 window.addEventListener(`phx:persist_token`, (e) => {
