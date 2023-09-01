@@ -7,17 +7,6 @@ defmodule ElixirconfChatWeb.Admin.AdminLive do
 
   on_mount ElixirconfChatWeb.AssignUser
 
-  # [x] redirect if not admin
-  # [x] user role migration
-  # [x] list of users
-  # [x] ability to ban per user
-  # [x] banned_at migration
-  # [x] banning a user deletes all user's messages
-  # [x] deleted_at migration
-  # [x] set deleted_at on messages,
-  # [x] in ui, show "deleted" instead of message in chat
-  # [ ] update genserver to set deleted_at on unsaved messages and refresh LV
-
   @impl true
   def mount(_params, _session, socket) do
     case socket.assigns.current_user.role do
