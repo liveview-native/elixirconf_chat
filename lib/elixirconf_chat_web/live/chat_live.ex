@@ -334,8 +334,7 @@ defmodule ElixirconfChatWeb.ChatLive do
             </div>
           </div>
         <% else %>
-          <div class="h-[calc(67vh-11.5rem)] md:h-[calc(100vh-17.5rem)] md:min-h-[400px] overflow-y-scroll space-y-3 px-4 md:px-6">
-            <!-- TODO: needs to always scroll to bottom to view latest message -->
+          <div id={"chat_history_#{@room.id}"} phx-hook="ChatAutoscroll" class="h-[calc(67vh-11.5rem)] md:h-[calc(100vh-17.5rem)] md:min-h-[400px] overflow-y-scroll space-y-3 px-4 md:px-6">
             <div class="space-y-3">
               <%= for {message, index} <- Enum.with_index(@messages) do %>
                 <.chat_message current_user_id={@current_user.id} index={index} message={message} />
@@ -498,7 +497,7 @@ defmodule ElixirconfChatWeb.ChatLive do
     <%= for {day, timeslots} <- @sorted_days do %>
       <div>
         <section class="mt-6" aria-labelledby="schedule-day">
-          <h2 class="text-xl md:text-2xl text-brand-gray-800" id="schedule-day"><%= day %></h2>
+          <h2 class="text-xl md:text-2xl text-brand-gray-800" id={"schedule-day-#{day}"}><%= day %></h2>
           <div class="mt-3 space-y-3">
             <%= for timeslot <- timeslots do %>
               <.timeslot_item timeslot={timeslot} track_labels={@track_labels} />
