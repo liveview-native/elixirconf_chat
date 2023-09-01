@@ -275,24 +275,23 @@ defmodule ElixirconfChatWeb.ChatLive do
     ~H"""
     <form class="p-4 md:p-6" id="chat" phx-change="typing" phx-submit="post_message">
       <div class="px-2 py-[5px] flex items-center justify-between gap-x-2 border border-brand-gray-200 rounded-lg">
-        <label class="sr-only" for="chat-input"></label>
+        <label class="sr-only" for="chat-input">Enter Message</label>
         <%#
           NOTE: If the debounce is too high, the text won't be cleared when
             pressing "Enter" key. This will happen if you press enter before
             initial debounce passes. Choose your poison.
         %>
-        <input
-          class="w-[calc(100%-1rem)] py-2 px-2 text-lg md:text-xl text-brand-gray-400 border-none transition duration-200 focus:rounded-sm focus:ring-2 focus:ring-brand-purple"
-          type="text"
+        <textarea
+          class="w-[calc(100%-1rem)] h-11 py-2 px-2 text-lg md:text-xl text-brand-gray-400 border-none resize-none transition duration-200 focus:rounded-sm focus:ring-2 focus:ring-brand-purple"
           name="body"
-          class="ph-24"
           placeholder="Enter Message..."
           id="chat-input"
           value={@body}
           maxlength={max_body_length()}
           phx-debounce="80"
+          phx-hook="TextareaEnterSubmit"
           required
-        />
+        ></textarea>
         <button
           type="submit"
           class="w-10 h-10 flex items-center justify-center bg-brand-purple rounded-xl border-2 border-transparent group transition duration-200 hover:bg-white hover:border-brand-purple outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-purple"
