@@ -19,9 +19,9 @@ defmodule ElixirconfChatWeb.UserCountComponent do
 
   def render(assigns) do
     ~H"""
-    <p class="leading-5 text-brand-gray-600 group-hover:text-brand-purple">
+    <span class="leading-5 text-brand-gray-600 group-hover:text-brand-gray-100">
       <%= assigns[:count] %>
-    </p>
+    </span>
     """
   end
 
