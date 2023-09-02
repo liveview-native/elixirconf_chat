@@ -60,7 +60,7 @@ defmodule ElixirconfChatWeb.AuthLive do
            {:user_with_code, Auth.randomize_user_login_code(user)},
          {:ok, _result} <- deliver_login_email(user_with_code)
     do
-      {:noreply, push_navigate(socket, to: "/?email=#{email}")}
+      {:noreply, push_navigate(socket, to: "/?email=#{email}", replace: true)}
     else
       {:user, nil} ->
         {:noreply,
