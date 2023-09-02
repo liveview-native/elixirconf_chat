@@ -115,11 +115,10 @@ defmodule ElixirconfChatWeb.ChatLive do
       Chat.leave_room(old_room_id, self())
     end
 
-
     Chat.join_room(room_id, self())
 
     # Load Room asynchronously
-    Process.send_after(self(), {:get_room, room_id}, 10)
+    Process.send_after(self(), {:get_room, room_id}, 250)
 
     {:noreply, assign(socket, loading_room: true, room_page: true, room: nil, room_id: nil)}
   end
