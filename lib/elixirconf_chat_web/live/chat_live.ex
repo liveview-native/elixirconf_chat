@@ -115,10 +115,8 @@ defmodule ElixirconfChatWeb.ChatLive do
       Chat.leave_room(old_room_id, self())
     end
 
-    Chat.join_room(room_id, self())
-
     # Load Room asynchronously
-    Process.send_after(self(), {:get_room, room_id}, 250)
+    Process.send_after(self(), {:join_room, room_id}, 150)
 
     {:noreply, assign(socket, loading_room: true, room_page: true, room: nil, room_id: nil)}
   end
@@ -156,7 +154,9 @@ defmodule ElixirconfChatWeb.ChatLive do
   end
 
   @impl true
-  def handle_info({:get_room, room_id}, socket) do
+  def handle_info({:join_room, room_id}, socket) do
+    Chat.join_room(room_id, self())
+
     case Chat.get_room(room_id) do
       %Room{messages: messages, server_state: %{messages: unsaved_messages}} = room ->
         messages = messages ++ unsaved_messages
