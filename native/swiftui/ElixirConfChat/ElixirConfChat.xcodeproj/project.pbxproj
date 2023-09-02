@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2F0AC6E62A95201C00F60947 /* LiveViewNative in Frameworks */ = {isa = PBXBuildFile; productRef = 2F0AC6E52A95201C00F60947 /* LiveViewNative */; };
-		2F0AC6EB2A95204E00F60947 /* LiveViewNativeLiveForm in Frameworks */ = {isa = PBXBuildFile; productRef = 2F0AC6EA2A95204E00F60947 /* LiveViewNativeLiveForm */; };
+		2F426ECF2AA2B91800EA7556 /* LiveViewNative in Frameworks */ = {isa = PBXBuildFile; productRef = 2F426ECE2AA2B91800EA7556 /* LiveViewNative */; };
+		2F426ED42AA2B9DA00EA7556 /* LiveViewNativeLiveForm in Frameworks */ = {isa = PBXBuildFile; productRef = 2F426ED32AA2B9DA00EA7556 /* LiveViewNativeLiveForm */; };
 		2F9983042A60800400F76113 /* ElixirConfChatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9983032A60800400F76113 /* ElixirConfChatApp.swift */; };
 		2F9983062A60800400F76113 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9983052A60800400F76113 /* ContentView.swift */; };
 		2F9983082A60800500F76113 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F9983072A60800500F76113 /* Assets.xcassets */; };
@@ -33,8 +33,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2F0AC6E62A95201C00F60947 /* LiveViewNative in Frameworks */,
-				2F0AC6EB2A95204E00F60947 /* LiveViewNativeLiveForm in Frameworks */,
+				2F426ED42AA2B9DA00EA7556 /* LiveViewNativeLiveForm in Frameworks */,
+				2F426ECF2AA2B91800EA7556 /* LiveViewNative in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,8 +130,8 @@
 			);
 			name = ElixirConfChat;
 			packageProductDependencies = (
-				2F0AC6E52A95201C00F60947 /* LiveViewNative */,
-				2F0AC6EA2A95204E00F60947 /* LiveViewNativeLiveForm */,
+				2F426ECE2AA2B91800EA7556 /* LiveViewNative */,
+				2F426ED32AA2B9DA00EA7556 /* LiveViewNativeLiveForm */,
 			);
 			productName = ElixirConfChat;
 			productReference = 2F9983002A60800400F76113 /* ElixirConfChat.app */;
@@ -162,8 +162,8 @@
 			);
 			mainGroup = 2F9982F72A60800400F76113;
 			packageReferences = (
-				2F0AC6E42A95201C00F60947 /* XCRemoteSwiftPackageReference "liveview-client-swiftui" */,
-				2F0AC6E92A95204E00F60947 /* XCRemoteSwiftPackageReference "liveview-native-live-form" */,
+				2F426ECD2AA2B91800EA7556 /* XCRemoteSwiftPackageReference "liveview-client-swiftui" */,
+				2F426ED22AA2B9DA00EA7556 /* XCRemoteSwiftPackageReference "liveview-native-live-form" */,
 			);
 			productRefGroup = 2F9983012A60800400F76113 /* Products */;
 			projectDirPath = "";
@@ -399,33 +399,33 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		2F0AC6E42A95201C00F60947 /* XCRemoteSwiftPackageReference "liveview-client-swiftui" */ = {
+		2F426ECD2AA2B91800EA7556 /* XCRemoteSwiftPackageReference "liveview-client-swiftui" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/liveview-native/liveview-client-swiftui";
 			requirement = {
-				branch = main;
+				branch = "revert-navigation-page-clear";
 				kind = branch;
 			};
 		};
-		2F0AC6E92A95204E00F60947 /* XCRemoteSwiftPackageReference "liveview-native-live-form" */ = {
+		2F426ED22AA2B9DA00EA7556 /* XCRemoteSwiftPackageReference "liveview-native-live-form" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/liveview-native/liveview-native-live-form";
 			requirement = {
-				branch = main;
+				branch = "revert-navigation-page-clear";
 				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		2F0AC6E52A95201C00F60947 /* LiveViewNative */ = {
+		2F426ECE2AA2B91800EA7556 /* LiveViewNative */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 2F0AC6E42A95201C00F60947 /* XCRemoteSwiftPackageReference "liveview-client-swiftui" */;
+			package = 2F426ECD2AA2B91800EA7556 /* XCRemoteSwiftPackageReference "liveview-client-swiftui" */;
 			productName = LiveViewNative;
 		};
-		2F0AC6EA2A95204E00F60947 /* LiveViewNativeLiveForm */ = {
+		2F426ED32AA2B9DA00EA7556 /* LiveViewNativeLiveForm */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 2F0AC6E92A95204E00F60947 /* XCRemoteSwiftPackageReference "liveview-native-live-form" */;
+			package = 2F426ED22AA2B9DA00EA7556 /* XCRemoteSwiftPackageReference "liveview-native-live-form" */;
 			productName = LiveViewNativeLiveForm;
 		};
 /* End XCSwiftPackageProductDependency section */
