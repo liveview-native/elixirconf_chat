@@ -148,7 +148,7 @@ defmodule ElixirconfChatWeb.ChatLive do
       Chat.leave_room(room_id, self())
     end
 
-    {:noreply, assign(socket, messages: [], room: nil, room_id: nil, room_page: false)}
+    {:noreply, assign(socket, body: "", messages: [], room: nil, room_id: nil, room_page: false)}
   end
 
   # Arbitrarily limit body size since we're keeping it in-memory, and because,
@@ -826,7 +826,7 @@ defmodule ElixirconfChatWeb.ChatLive do
           |> Enum.sort_by(& &1.posted_at, NaiveDateTime)
 
         {:noreply,
-         assign(socket, loading_room: false, room_page: true, messages: messages, room: room, room_id: room.id)}
+         assign(socket, body: "", loading_room: false, room_page: true, messages: messages, room: room, room_id: room.id)}
 
       _ ->
         # TODO: Handle error
