@@ -120,7 +120,7 @@ defmodule ElixirconfChatWeb.ChatLive do
     Chat.join_room(room_id, user.id, self())
 
     # Load Room asynchronously
-    Process.send_after(self(), {:join_room, room_id}, 150)
+    Process.send_after(self(), {:join_room, room_id, user.id}, 150)
 
     {:noreply, assign(socket, loading_room: true, room_page: true, room: nil, room_id: nil)}
   end
@@ -173,8 +173,8 @@ defmodule ElixirconfChatWeb.ChatLive do
     {:noreply, socket}
   end
 
-  def handle_info({:join_room, room_id}, socket) do
-    Chat.join_room(room_id, self())
+  def handle_info({:join_room, room_id, user_id}, socket) do
+    Chat.join_room(room_id, user_id, self())
 
     case Chat.get_room(room_id) do
       %Room{messages: messages, server_state: %{messages: unsaved_messages}} = room ->
@@ -542,7 +542,7 @@ defmodule ElixirconfChatWeb.ChatLive do
           phx-click="join_room"
           phx-value-room-id={"#{@room.id}"}
         >
-        <span class="inline-block mr-3 w-2.5 h-2.5 bg-[#049372] rounded-full"></span><%= @room.title %>
+          <span class="inline-block mr-3 w-2.5 h-2.5 bg-[#049372] rounded-full"></span><%= @room.title %>
         </button>
         <.live_component
           module={ActiveUserComponent}
