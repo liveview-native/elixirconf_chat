@@ -266,7 +266,7 @@ defmodule ElixirconfChatWeb.ChatLive do
           id="chat-input"
           required
         />
-        <!-- TODO: clear text input on pressing enter -->
+        <%!-- TODO: clear text input on pressing enter --%>
         <button
           type="submit"
           class="w-10 h-10 flex items-center justify-center bg-brand-purple rounded-xl border-2 border-transparent group transition duration-200 hover:bg-white hover:border-brand-purple outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-purple"
@@ -541,8 +541,7 @@ defmodule ElixirconfChatWeb.ChatLive do
           phx-click="join_room"
           phx-value-room-id={"#{@room.id}"}
         >
-          <!-- TODO: Number of users online in Hallway -->
-          <span class="inline-block mr-3 w-2.5 h-2.5 bg-[#049372] rounded-full"></span><%= @room.title %>
+        <span class="inline-block mr-3 w-2.5 h-2.5 bg-[#049372] rounded-full"></span><%= @room.title %>
         </button>
         <.live_component
           module={ActiveUserComponent}
@@ -701,8 +700,8 @@ defmodule ElixirconfChatWeb.ChatLive do
           <h3>
             <%= @timeslot.formatted_string %>
           </h3>
-          <!-- TODO: Doors open or not -->
-          <span>Doors Open</span>
+          <%!-- TODO: Doors open or not --%>
+          <span></span>
         </div>
         <%= for room <- @timeslot.rooms do %>
           <div>
