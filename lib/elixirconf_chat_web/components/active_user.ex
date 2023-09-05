@@ -17,29 +17,41 @@ defmodule ElixirconfChatWeb.ActiveUserComponent do
     """
   end
 
-  def render(assigns) do
-    IO.inspect(assigns[:count], label: "COMPONENT RENDER")
-
+  def render(%{sidebar: false} = assigns) do
     ~H"""
     <div>
       <p class="leading-5 text-brand-gray-600 group-hover:text-brand-purple">
-        <button phx-click="display_users"><%= assigns[:count] %></button>
+        <button phx-click="show_display_users_modal"><%= assigns[:count] %></button>
       </p>
 
-      <%= if assigns[:show_users_panel] do %>
-        <ol>
-          <%= Enum.map(assigns[:users], fn user -> %>
-            <li><%= user.first_name %> <%= user.last_name %></li>
-          <% end) %>
-        </ol>
+      <%= if assigns[:show_display_users_modal] and assigns[:count] > 0 do %>
+        <div
+          style="display: absolute; z-index: 1000, padding: 5px"
+          id={"room_#{assigns[:room_id]}_attendees"}
+        >
+          <span phx-click="close_display_users_modal" style="cursor: pointer">x</span>
+          <ol>
+            <%= Enum.map(assigns[:users], fn {_pid, {_ref, user}} -> %>
+              <li><%= user.first_name %> <%= user.last_name %></li>
+            <% end) %>
+          </ol>
+        </div>
       <% end %>
     </div>
     """
   end
 
-  def preload(list_of_assigns) do
-    IO.inspect(list_of_assigns, label: "COMPONENT ASSIGNS")
+  def render(%{sidebar: true} = assigns) do
+    ~H"""
+    <div>
+      <p class="leading-5 text-brand-gray-600 group-hover:text-brand-purple">
+        <%= assigns[:count] %>
+      </p>
+    </div>
+    """
+  end
 
+  def preload(list_of_assigns) do
     Enum.map(list_of_assigns, fn assigns ->
       case assigns do
         %{room_id: room_id} ->

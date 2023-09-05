@@ -5,6 +5,7 @@ defmodule ElixirconfChat.Chat.Server do
   alias __MODULE__, as: Server
   alias ElixirconfChat.Chat.Message
   alias ElixirconfChat.Chat.LobbyServer
+  alias ElixirconfChat.Users
 
   @initial_state [
     messages: [],
@@ -36,8 +37,8 @@ defmodule ElixirconfChat.Chat.Server do
     call_room(room_id, :get_users)
   end
 
-  def join(room_id, pid) do
-    call_room(room_id, {:join, pid})
+  def join(room_id, user_id, pid) do
+    call_room(room_id, {:join, user_id, pid})
   end
 
   def leave(room_id, pid) do
@@ -88,24 +89,24 @@ defmodule ElixirconfChat.Chat.Server do
   end
 
   def handle_call(:get_users, _from, %{subscribers: %{} = subscribers} = state) do
-    IO.inspect(subscribers, label: "SERVER SUBSCRIBERS")
     {:reply, subscribers, state}
   end
 
   def handle_call(
-        {:join, pid},
+        {:join, user_id, pid},
         _from,
         %{room_id: room_id, subscribers: %{} = subscribers} = state
       ) do
     monitor_ref = Process.monitor(pid)
-    updated_subscribers = Map.put(subscribers, pid, monitor_ref)
+    user = Users.get_user(user_id)
+    updated_subscribers = Map.put(subscribers, pid, {monitor_ref, user})
 
     LobbyServer.broadcast(
       {:room_updated,
        %{
          room_id: room_id,
          users_count: Enum.count(updated_subscribers),
-         user: updated_subscribers
+         users: updated_subscribers
        }}
     )
 

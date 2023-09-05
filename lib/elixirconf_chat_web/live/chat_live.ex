@@ -26,7 +26,7 @@ defmodule ElixirconfChatWeb.ChatLive do
        room_page: false,
        room: nil,
        schedule: schedule,
-       show_users_panel: false,
+       show_display_users_modal: false,
        sorted_days: sorted_days(schedule),
        track_labels: %{1 => "A", 2 => "B", 3 => "C"}
      )}
@@ -111,12 +111,13 @@ defmodule ElixirconfChatWeb.ChatLive do
   @impl true
   def handle_event("join_room", %{"room-id" => room_id}, %{assigns: %{} = assigns} = socket) do
     old_room_id = Map.get(assigns, :room_id)
+    user = Map.get(assigns, :current_user)
 
     if old_room_id do
       Chat.leave_room(old_room_id, self())
     end
 
-    Chat.join_room(room_id, self())
+    Chat.join_room(room_id, user.id, self())
 
     # Load Room asynchronously
     Process.send_after(self(), {:get_room, room_id}, 10)
@@ -157,11 +158,17 @@ defmodule ElixirconfChatWeb.ChatLive do
   end
 
   @impl true
-  def handle_event("display_users", _params, socket) do
-    IO.inspect("DISPLAY USERS")
-
+  def handle_event("show_display_users_modal", _params, socket) do
     socket =
-      assign(socket, show_users_panel: true)
+      assign(socket, show_display_users_modal: true)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("close_display_users_modal", _params, socket) do
+    socket =
+      assign(socket, show_display_users_modal: false)
 
     {:noreply, socket}
   end
@@ -388,7 +395,8 @@ defmodule ElixirconfChatWeb.ChatLive do
               module={ActiveUserComponent}
               id={"user_count_active_room_#{@room.id}"}
               room_id={@room.id}
-              show_users_panel={@show_users_panel}
+              show_display_users_modal={@show_display_users_modal}
+              sidebar={false}
             />
           <% end %>
         </div>
@@ -514,7 +522,7 @@ defmodule ElixirconfChatWeb.ChatLive do
     ~H"""
     <%= for timeslot <- @schedule.pinned do %>
       <%= for room <- timeslot.rooms do %>
-        <.hallway_item room={room} show_users_panel={@show_users_panel} />
+        <.hallway_item room={room} show_display_users_modal={false} />
       <% end %>
     <% end %>
     """
@@ -537,8 +545,6 @@ defmodule ElixirconfChatWeb.ChatLive do
   end
 
   def hallway_item(assigns) do
-    IO.inspect(assigns, label: "HALLWAY ITEM")
-
     ~H"""
     <div class="mt-5 p-3 bg-brand-gray-50 rounded-2xl">
       <div class="flex items-center gap-2">
@@ -564,7 +570,8 @@ defmodule ElixirconfChatWeb.ChatLive do
           module={ActiveUserComponent}
           id={"user_count_active_room_#{@room.id}-b"}
           room_id={@room.id}
-          show_users_panel={@show_users_panel}
+          show_display_users_modal={false}
+          sidebar={true}
         />
       </div>
     </div>
@@ -611,7 +618,7 @@ defmodule ElixirconfChatWeb.ChatLive do
               <.timeslot_item
                 timeslot={timeslot}
                 track_labels={@track_labels}
-                show_users_panel={@show_users_panel}
+                show_display_users_modal={@show_display_users_modal}
               />
             <% end %>
           </div>
@@ -755,7 +762,8 @@ defmodule ElixirconfChatWeb.ChatLive do
                         module={ActiveUserComponent}
                         id={"user_count_#{room.id}"}
                         room_id={room.id}
-                        show_users_panel={@show_users_panel}
+                        show_display_users_modal={false}
+                        sidebar={true}
                       />
                     </div>
                   </div>
