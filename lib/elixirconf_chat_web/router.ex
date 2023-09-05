@@ -21,6 +21,10 @@ defmodule ElixirconfChatWeb.Router do
     live("/chat", ChatLive)
     live("/privacy", PrivacyPolicyLive)
     live("/", AuthLive)
+
+    scope "/admin", Admin do
+      live("/", AdminLive)
+    end
   end
 
   # Other scopes may use custom stacks.

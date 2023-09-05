@@ -59,6 +59,10 @@ defmodule ElixirconfChat.Chat.Server do
     call_room(room_id, :clear_message_queue)
   end
 
+  def delete_banned_messages(room_id, user_id) do
+    call_room(room_id, {:delete_banned_messages, user_id})
+  end
+
   # Server (callbacks)
 
   def init(initial_state) do
@@ -139,6 +143,33 @@ defmodule ElixirconfChat.Chat.Server do
 
   def handle_call(:clear_message_queue, _from, state) do
     {:reply, {:ok, []}, %{state | messages: []}}
+  end
+
+  def handle_call(
+        {:delete_banned_messages, user_id},
+        _from,
+        %{messages: messages, subscribers: %{} = subscribers} = state
+      ) do
+    # Get IDs for banned messages
+    banned_message_ids =
+      messages
+      |> Enum.filter(&(&1.user_id == user_id))
+      |> Enum.map(& &1.id)
+
+    # Set `deleted_at` for all banned messages
+    updated_messages =
+      Enum.map(messages, fn message ->
+        if message.id in banned_message_ids do
+          Map.put(message, :deleted_at, DateTime.utc_now())
+        else
+          message
+        end
+      end)
+
+    # Let users already in the room know to update all deleted messages
+    notify_subscribers(subscribers, {:messages_deleted, banned_message_ids})
+
+    {:reply, :ok, %{state | messages: updated_messages}}
   end
 
   def handle_info(

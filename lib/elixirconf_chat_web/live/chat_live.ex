@@ -78,13 +78,14 @@ defmodule ElixirconfChatWeb.ChatLive do
   end
 
   @impl true
-  def render(assigns) do
+  def render(%{current_user: %{banned_at: nil}} = assigns) do
     ~H"""
     <div class="px-4 min-h-[496px] md:min-h-[600px] overflow-y-auto bg-brand-gray-200 font-system">
       <.logo />
       <div class="mx-auto w-full max-w-[1200px] md:grid md:grid-cols-12 border border-brand-gray-200 rounded-t-[32px] bg-white">
         <div class="min-h-[208px] max-h-[calc(33vh-5rem)] md:max-h-full md:h-[calc(100vh-6.25rem)] md:min-h-[600px] overflow-y-auto border-b-4 border-brand-purple md:col-span-6 md:border-b-0 md:border-r md:border-brand-gray-200 lg:col-span-5 xl:col-span-4 p-4 md:p-6">
           <h1 class="font-medium text-2xl md:text-3.5xl text-brand-gray-700">Schedule</h1>
+          <.admin {assigns} />
           <.hallway {assigns} />
           <.rooms_list {assigns} />
         </div>
@@ -109,6 +110,12 @@ defmodule ElixirconfChatWeb.ChatLive do
   end
 
   @impl true
+  def render(%{current_user: %{banned_at: _banned_at}} = assigns) do
+    ~H"""
+    You have been banned.
+    """
+  end
+
   def handle_event("join_room", %{"room-id" => room_id}, %{assigns: %{} = assigns} = socket) do
     old_room_id = Map.get(assigns, :room_id)
     user = Map.get(assigns, :current_user)
@@ -178,7 +185,9 @@ defmodule ElixirconfChatWeb.ChatLive do
 
     case Chat.get_room(room_id) do
       %Room{messages: messages, server_state: %{messages: unsaved_messages}} = room ->
-        messages = messages ++ unsaved_messages
+        messages =
+          (messages ++ unsaved_messages)
+          |> Enum.sort_by(& &1.posted_at, NaiveDateTime)
 
         {:noreply,
          assign(socket, loading_room: false, messages: messages, room: room, room_id: room.id)}
@@ -467,7 +476,7 @@ defmodule ElixirconfChatWeb.ChatLive do
     """
   end
 
-  def chat_message(assigns) do
+  def chat_message(%{message: %{deleted_at: nil}} = assigns) do
     ~H"""
     <div id={"message_#{@index}"}>
       <div class="flex flex-col">
@@ -490,6 +499,36 @@ defmodule ElixirconfChatWeb.ChatLive do
               </p>
             </div>
             <p class="font-medium"><%= @message.body %></p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    """
+  end
+
+  def chat_message(%{message: %{deleted_at: _deleted_at}} = assigns) do
+    ~H"""
+    <div id={"message_#{@index}"}>
+      <div class="flex flex-col">
+        <%= if @message.user_id == @current_user_id do %>
+          <div class="self-end max-w-[292px] p-3 bg-brand-purple text-brand-gray-50 rounded-2xl rounded-br-none">
+            <div class="mb-1 flex items-center justify-between gap-x-7 text-[13px]/[18px] text-brand-gray-100 uppercase">
+              <p class="font-semibold tracking-[3px]">You</p>
+              <p class="font-medium"><%= Utils.time_formatted(@message.posted_at) %></p>
+            </div>
+            <p class="font-medium"><i>This message was deleted.</i></p>
+          </div>
+        <% else %>
+          <div class="self-start max-w-[292px] p-3 bg-brand-gray-50 text-brand-gray-900 rounded-2xl rounded-bl-none">
+            <div class="mb-1 flex items-center justify-between gap-x-7 text-[13px]/[18px] uppercase">
+              <p class="font-semibold text-brand-gray-500 tracking-[3px]">
+                <%= @message.posted_by %>
+              </p>
+              <p class="font-medium text-brand-gray-500">
+                <%= Utils.time_formatted(@message.posted_at) %>
+              </p>
+            </div>
+            <p class="font-medium"><i>This message was deleted.</i></p>
           </div>
         <% end %>
       </div>
@@ -740,6 +779,22 @@ defmodule ElixirconfChatWeb.ChatLive do
         <% end %>
       </div>
     </div>
+    """
+  end
+
+  def admin(%{current_user: %{role: "admin"}} = assigns) do
+    ~H"""
+    <div class="mt-5 p-3 bg-brand-gray-50 rounded-2xl">
+      <div class="flex items-center gap-2">
+        <a href={"/admin?token=#{@token}"}>Go to Admin</a>
+      </div>
+    </div>
+    """
+  end
+
+  def admin(assigns) do
+    ~H"""
+
     """
   end
 

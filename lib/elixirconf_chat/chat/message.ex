@@ -10,6 +10,7 @@ defmodule ElixirconfChat.Chat.Message do
     field :body, :string
     field :posted_at, :naive_datetime
     field :posted_by, :string
+    field :deleted_at, :naive_datetime
 
     timestamps()
 
