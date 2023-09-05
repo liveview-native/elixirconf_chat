@@ -7,7 +7,7 @@ defmodule ElixirconfChat.Utils do
     time = time |> DateTime.from_naive!("Etc/UTC") |> DateTime.shift_zone!(timezone)
     today = DateTime.utc_now() |> DateTime.shift_zone!("EST") |> DateTime.truncate(:second)
 
-    if DateTime.compare(time, today) == :eq do
+    if DateTime.diff(time, today) > -86400 do
       strftime(time)
     else
       strftime_with_day(time)
