@@ -5,6 +5,7 @@ defmodule ElixirconfChat.Chat.Server do
   alias __MODULE__, as: Server
   alias ElixirconfChat.Chat.Message
   alias ElixirconfChat.Chat.LobbyServer
+  alias ElixirconfChat.Users
 
   @initial_state [
     messages: [],
@@ -32,8 +33,12 @@ defmodule ElixirconfChat.Chat.Server do
     call_room(room_id, :get_user_count)
   end
 
-  def join(room_id, pid) do
-    call_room(room_id, {:join, pid})
+  def get_users(room_id) do
+    call_room(room_id, :get_users)
+  end
+
+  def join(room_id, user_id, pid) do
+    call_room(room_id, {:join, user_id, pid})
   end
 
   def leave(room_id, pid) do
@@ -83,20 +88,47 @@ defmodule ElixirconfChat.Chat.Server do
     {:reply, Enum.count(subscribers), state}
   end
 
-  def handle_call({:join, pid}, _from, %{room_id: room_id, subscribers: %{} = subscribers} = state) do
-    monitor_ref = Process.monitor(pid)
-    updated_subscribers = Map.put(subscribers, pid, monitor_ref)
+  def handle_call(:get_users, _from, %{subscribers: %{} = subscribers} = state) do
+    {:reply, subscribers, state}
+  end
 
-    LobbyServer.broadcast({:room_updated, %{room_id: room_id, users_count: Enum.count(updated_subscribers)}})
+  def handle_call(
+        {:join, user_id, pid},
+        _from,
+        %{room_id: room_id, subscribers: %{} = subscribers} = state
+      ) do
+    monitor_ref = Process.monitor(pid)
+    user = Users.get_user(user_id)
+    updated_subscribers = Map.put(subscribers, pid, {monitor_ref, user})
+
+    LobbyServer.broadcast(
+      {:room_updated,
+       %{
+         room_id: room_id,
+         users_count: Enum.count(updated_subscribers),
+         users: updated_subscribers
+       }}
+    )
 
     {:reply, :ok, %{state | subscribers: updated_subscribers}}
   end
 
-  def handle_call({:leave, pid}, _from, %{room_id: room_id, subscribers: %{} = subscribers} = state) do
+  def handle_call(
+        {:leave, pid},
+        _from,
+        %{room_id: room_id, subscribers: %{} = subscribers} = state
+      ) do
     monitor_ref = Map.get(subscribers, pid)
     updated_subscribers = Map.delete(subscribers, pid)
 
-    LobbyServer.broadcast({:room_updated, %{room_id: room_id, users_count: Enum.count(updated_subscribers)}})
+    LobbyServer.broadcast(
+      {:room_updated,
+       %{
+         room_id: room_id,
+         users_count: Enum.count(updated_subscribers),
+         users: updated_subscribers
+       }}
+    )
 
     if is_reference(monitor_ref) && Process.alive?(pid) do
       Process.demonitor(monitor_ref)
@@ -110,12 +142,14 @@ defmodule ElixirconfChat.Chat.Server do
   end
 
   def handle_info(
-    {:DOWN, _ref, :process, pid, _reason},
-    %{room_id: room_id, subscribers: %{} = subscribers} = state
-  ) do
+        {:DOWN, _ref, :process, pid, _reason},
+        %{room_id: room_id, subscribers: %{} = subscribers} = state
+      ) do
     updated_subscribers = Map.delete(subscribers, pid)
 
-    LobbyServer.broadcast({:room_updated, %{room_id: room_id, users_count: Enum.count(updated_subscribers)}})
+    LobbyServer.broadcast(
+      {:room_updated, %{room_id: room_id, users_count: Enum.count(updated_subscribers)}}
+    )
 
     {:noreply, %{state | subscribers: updated_subscribers}}
   end

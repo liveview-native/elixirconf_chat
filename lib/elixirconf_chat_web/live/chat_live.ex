@@ -6,7 +6,7 @@ defmodule ElixirconfChatWeb.ChatLive do
   alias ElixirconfChat.Chat
   alias ElixirconfChat.Chat.Room
   alias ElixirconfChat.Utils
-  alias ElixirconfChatWeb.UserCountComponent
+  alias ElixirconfChatWeb.ActiveUserComponent
 
   import ElixirconfChatWeb.Modclasses.SwiftUi, only: [modclass: 3]
 
@@ -26,6 +26,7 @@ defmodule ElixirconfChatWeb.ChatLive do
        room_page: false,
        room: nil,
        schedule: schedule,
+       show_display_users_modal: false,
        sorted_days: sorted_days(schedule),
        track_labels: %{1 => "A", 2 => "B", 3 => "C"}
      )}
@@ -79,7 +80,7 @@ defmodule ElixirconfChatWeb.ChatLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="px-4 min-h-[496px] md:min-h-[600px] overflow-y-auto bg-brand-gray-200">
+    <div class="px-4 min-h-[496px] md:min-h-[600px] overflow-y-auto bg-brand-gray-200 font-system">
       <.logo />
       <div class="mx-auto w-full max-w-[1200px] md:grid md:grid-cols-12 border border-brand-gray-200 rounded-t-[32px] bg-white">
         <div class="min-h-[208px] max-h-[calc(33vh-5rem)] md:max-h-full md:h-[calc(100vh-6.25rem)] md:min-h-[600px] overflow-y-auto border-b-4 border-brand-purple md:col-span-6 md:border-b-0 md:border-r md:border-brand-gray-200 lg:col-span-5 xl:col-span-4 p-4 md:p-6">
@@ -110,13 +111,16 @@ defmodule ElixirconfChatWeb.ChatLive do
   @impl true
   def handle_event("join_room", %{"room-id" => room_id}, %{assigns: %{} = assigns} = socket) do
     old_room_id = Map.get(assigns, :room_id)
+    user = Map.get(assigns, :current_user)
 
     if old_room_id do
       Chat.leave_room(old_room_id, self())
     end
 
+    Chat.join_room(room_id, user.id, self())
+
     # Load Room asynchronously
-    Process.send_after(self(), {:join_room, room_id}, 150)
+    Process.send_after(self(), {:join_room, room_id, user.id}, 150)
 
     {:noreply, assign(socket, loading_room: true, room_page: true, room: nil, room_id: nil)}
   end
@@ -154,14 +158,30 @@ defmodule ElixirconfChatWeb.ChatLive do
   end
 
   @impl true
-  def handle_info({:join_room, room_id}, socket) do
-    Chat.join_room(room_id, self())
+  def handle_event("show_display_users_modal", _params, socket) do
+    socket =
+      assign(socket, show_display_users_modal: true)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("close_display_users_modal", _params, socket) do
+    socket =
+      assign(socket, show_display_users_modal: false)
+
+    {:noreply, socket}
+  end
+
+  def handle_info({:join_room, room_id, user_id}, socket) do
+    Chat.join_room(room_id, user_id, self())
 
     case Chat.get_room(room_id) do
       %Room{messages: messages, server_state: %{messages: unsaved_messages}} = room ->
         messages = messages ++ unsaved_messages
 
-        {:noreply, assign(socket, loading_room: false, messages: messages, room: room, room_id: room.id)}
+        {:noreply,
+         assign(socket, loading_room: false, messages: messages, room: room, room_id: room.id)}
 
       _ ->
         # TODO: Handle error
@@ -178,8 +198,15 @@ defmodule ElixirconfChatWeb.ChatLive do
   end
 
   @impl true
-  def handle_info({:room_updated, %{room_id: room_id, users_count: users_count}}, socket) do
-    send_update(UserCountComponent, id: "user_count_#{room_id}", count: users_count)
+  def handle_info(
+        {:room_updated, %{room_id: room_id, users_count: users_count, users: users}},
+        socket
+      ) do
+    send_update(ActiveUserComponent,
+      id: "user_count_#{room_id}",
+      count: users_count,
+      users: users
+    )
 
     {:noreply, socket}
   end
@@ -199,7 +226,13 @@ defmodule ElixirconfChatWeb.ChatLive do
 
   def logo(assigns) do
     ~H"""
-    <img class="my-5 md:mt-8 md:mb-7 mx-auto h-10 w-auto" src="/images/elixir-logo-clear.png" width="75" height="60" alt="" />
+    <img
+      class="my-5 md:mt-8 md:mb-7 mx-auto h-10 w-auto"
+      src="/images/elixir-logo-clear.png"
+      width="75"
+      height="60"
+      alt=""
+    />
     """
   end
 
@@ -225,11 +258,31 @@ defmodule ElixirconfChatWeb.ChatLive do
     <form class="p-4 md:p-6" id="chat" phx-submit="post_message">
       <div class="px-2 py-[5px] flex items-center justify-between gap-x-2 border border-brand-gray-200 rounded-lg">
         <label class="sr-only" for="chat-input"></label>
-        <input class="w-[calc(100%-1rem)] py-2 px-2 text-lg md:text-xl text-brand-gray-400 border-none transition duration-200 focus:rounded-sm focus:ring-2 focus:ring-brand-purple" type="text" name="body" class="ph-24" placeholder="Enter Message..." id="chat-input" required />
-        <!-- TODO: clear text input on pressing enter -->
-        <button type="submit" class="w-10 h-10 flex items-center justify-center bg-brand-purple rounded-xl border-2 border-transparent group transition duration-200 hover:bg-white hover:border-brand-purple outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-purple">
+        <input
+          class="w-[calc(100%-1rem)] py-2 px-2 text-lg md:text-xl text-brand-gray-400 border-none transition duration-200 focus:rounded-sm focus:ring-2 focus:ring-brand-purple"
+          type="text"
+          name="body"
+          class="ph-24"
+          placeholder="Enter Message..."
+          id="chat-input"
+          required
+        />
+        <%!-- TODO: clear text input on pressing enter --%>
+        <button
+          type="submit"
+          class="w-10 h-10 flex items-center justify-center bg-brand-purple rounded-xl border-2 border-transparent group transition duration-200 hover:bg-white hover:border-brand-purple outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-purple"
+        >
           <span class="sr-only">Submit</span>
-          <svg class="fill-white group-hover:fill-brand-purple" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M3 13.0001H9V11.0001H3V1.8457C3 1.56956 3.22386 1.3457 3.5 1.3457C3.58425 1.3457 3.66714 1.36699 3.74096 1.4076L22.2034 11.562C22.4454 11.695 22.5337 11.9991 22.4006 12.241C22.3549 12.3241 22.2865 12.3925 22.2034 12.4382L3.74096 22.5925C3.499 22.7256 3.19497 22.6374 3.06189 22.3954C3.02129 22.3216 3 22.2387 3 22.1544V13.0001Z"></path></svg>
+          <svg
+            class="fill-white group-hover:fill-brand-purple"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="24"
+            height="24"
+          >
+            <path d="M3 13.0001H9V11.0001H3V1.8457C3 1.56956 3.22386 1.3457 3.5 1.3457C3.58425 1.3457 3.66714 1.36699 3.74096 1.4076L22.2034 11.562C22.4454 11.695 22.5337 11.9991 22.4006 12.241C22.3549 12.3241 22.2865 12.3925 22.2034 12.4382L3.74096 22.5925C3.499 22.7256 3.19497 22.6374 3.06189 22.3954C3.02129 22.3216 3 22.2387 3 22.1544V13.0001Z">
+            </path>
+          </svg>
         </button>
       </div>
     </form>
@@ -303,19 +356,39 @@ defmodule ElixirconfChatWeb.ChatLive do
     ~H"""
     <div>
       <div class="p-4 md:p-6 flex items-center justify-between">
-        <button class="flex items-center gap-x-1 font-medium text-xl text-brand-purple transition duration-200 outline-none hover:text-brand-gray-800 hover:underline focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-brand-purple focus-visible:ring-offset-4 group" phx-click="leave_room">
-          <svg class="fill-brand-purple group-hover:fill-brand-gray-800" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M6.26247 11.9C6.26247 11.4858 6.59827 11.15 7.01247 11.15L17.0125 11.15C17.4267 11.15 17.7625 11.4858 17.7625 11.9C17.7625 12.3142 17.4267 12.65 17.0125 12.65L7.01247 12.65C6.59827 12.65 6.26247 12.3142 6.26247 11.9Z" />
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M7.74166 12.0681L11.5283 15.6555C11.829 15.9404 11.8418 16.4151 11.557 16.7158C11.2721 17.0165 10.7974 17.0293 10.4967 16.7444L6.68926 13.1374L6.68216 13.1302C6.08926 12.5373 6.08926 11.5625 6.68216 10.9696L6.68916 10.9625L10.4893 7.26255C10.786 6.97365 11.2609 6.97995 11.5498 7.27675C11.8388 7.57355 11.8325 8.04835 11.5357 8.33735L7.74226 12.0308C7.74086 12.0326 7.73746 12.0381 7.73746 12.0499C7.73746 12.0602 7.74006 12.0657 7.74166 12.0681Z" />
+        <button
+          class="flex items-center gap-x-1 font-medium text-xl text-brand-purple transition duration-200 outline-none hover:text-brand-gray-800 hover:underline focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-brand-purple focus-visible:ring-offset-4 group"
+          phx-click="leave_room"
+        >
+          <svg
+            class="fill-brand-purple group-hover:fill-brand-gray-800"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M6.26247 11.9C6.26247 11.4858 6.59827 11.15 7.01247 11.15L17.0125 11.15C17.4267 11.15 17.7625 11.4858 17.7625 11.9C17.7625 12.3142 17.4267 12.65 17.0125 12.65L7.01247 12.65C6.59827 12.65 6.26247 12.3142 6.26247 11.9Z"
+            />
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M7.74166 12.0681L11.5283 15.6555C11.829 15.9404 11.8418 16.4151 11.557 16.7158C11.2721 17.0165 10.7974 17.0293 10.4967 16.7444L6.68926 13.1374L6.68216 13.1302C6.08926 12.5373 6.08926 11.5625 6.68216 10.9696L6.68916 10.9625L10.4893 7.26255C10.786 6.97365 11.2609 6.97995 11.5498 7.27675C11.8388 7.57355 11.8325 8.04835 11.5357 8.33735L7.74226 12.0308C7.74086 12.0326 7.73746 12.0381 7.73746 12.0499C7.73746 12.0602 7.74006 12.0657 7.74166 12.0681Z"
+            />
           </svg>
           Go Back
         </button>
-        <div class="flex items-center gap-x-2">
-          <svg class="w-4 h-4 fill-brand-gray-500 group-hover:fill-brand-purple" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path d="M2 22C2 17.5817 5.58172 14 10 14C14.4183 14 18 17.5817 18 22H16C16 18.6863 13.3137 16 10 16C6.68629 16 4 18.6863 4 22H2ZM10 13C6.685 13 4 10.315 4 7C4 3.685 6.685 1 10 1C13.315 1 16 3.685 16 7C16 10.315 13.315 13 10 13ZM10 11C12.21 11 14 9.21 14 7C14 4.79 12.21 3 10 3C7.79 3 6 4.79 6 7C6 9.21 7.79 11 10 11ZM18.2837 14.7028C21.0644 15.9561 23 18.752 23 22H21C21 19.564 19.5483 17.4671 17.4628 16.5271L18.2837 14.7028ZM17.5962 3.41321C19.5944 4.23703 21 6.20361 21 8.5C21 11.3702 18.8042 13.7252 16 13.9776V11.9646C17.6967 11.7222 19 10.264 19 8.5C19 7.11935 18.2016 5.92603 17.041 5.35635L17.5962 3.41321Z"></path></svg>
-          <%= if @room do %>
-            <.live_component module={UserCountComponent} id={"user_count_active_room_#{@room.id}"} room_id={@room.id} />
-          <% end %>
-        </div>
+        <%= if @room do %>
+          <.live_component
+            module={ActiveUserComponent}
+            id={"user_count_active_room_#{@room.id}"}
+            room_id={@room.id}
+            show_display_users_modal={@show_display_users_modal}
+            sidebar={false}
+          />
+        <% end %>
       </div>
       <%= if @loading_room do %>
         <br />
@@ -336,7 +409,11 @@ defmodule ElixirconfChatWeb.ChatLive do
             </div>
           </div>
         <% else %>
-          <div id={"chat_history_#{@room.id}"} phx-hook="ChatAutoscroll" class="h-[calc(67vh-11.5rem)] md:h-[calc(100vh-17.5rem)] md:min-h-[400px] overflow-y-scroll space-y-3 px-4 md:px-6">
+          <div
+            id={"chat_history_#{@room.id}"}
+            phx-hook="ChatAutoscroll"
+            class="h-[calc(67vh-11.5rem)] md:h-[calc(100vh-17.5rem)] md:min-h-[400px] overflow-y-scroll space-y-3 px-4 md:px-6"
+          >
             <div class="space-y-3">
               <%= for {message, index} <- Enum.with_index(@messages) do %>
                 <.chat_message current_user_id={@current_user.id} index={index} message={message} />
@@ -405,8 +482,12 @@ defmodule ElixirconfChatWeb.ChatLive do
         <% else %>
           <div class="self-start max-w-[292px] p-3 bg-brand-gray-50 text-brand-gray-900 rounded-2xl rounded-bl-none">
             <div class="mb-1 flex items-center justify-between gap-x-7 text-[13px]/[18px] uppercase">
-              <p class="font-semibold text-brand-gray-500 tracking-[3px]"><%= @message.posted_by %></p>
-              <p class="font-medium text-brand-gray-500"><%= Utils.time_formatted(@message.posted_at) %></p>
+              <p class="font-semibold text-brand-gray-500 tracking-[3px]">
+                <%= @message.posted_by %>
+              </p>
+              <p class="font-medium text-brand-gray-500">
+                <%= Utils.time_formatted(@message.posted_at) %>
+              </p>
             </div>
             <p class="font-medium"><%= @message.body %></p>
           </div>
@@ -430,7 +511,7 @@ defmodule ElixirconfChatWeb.ChatLive do
     ~H"""
     <%= for timeslot <- @schedule.pinned do %>
       <%= for room <- timeslot.rooms do %>
-        <.hallway_item room={room} />
+        <.hallway_item room={room} show_display_users_modal={false} />
       <% end %>
     <% end %>
     """
@@ -456,12 +537,20 @@ defmodule ElixirconfChatWeb.ChatLive do
     ~H"""
     <div class="mt-5 p-3 bg-brand-gray-50 rounded-2xl">
       <div class="flex items-center gap-2">
-        <button class="w-full uppercase font-semibold text-sm text-brand-gray-700 tracking-[3px] text-center cursor-pointer hover:text-brand-purple hover:underline outline-none focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-brand-purple focus-visible:rounded-lg" phx-click="join_room" phx-value-room-id={"#{@room.id}"}>
-          <!-- TODO: Number of users online in Hallway -->
+        <button
+          class="w-full uppercase font-semibold text-sm text-brand-gray-700 tracking-[3px] text-center cursor-pointer hover:text-brand-purple hover:underline outline-none focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-brand-purple focus-visible:rounded-lg"
+          phx-click="join_room"
+          phx-value-room-id={"#{@room.id}"}
+        >
           <span class="inline-block mr-3 w-2.5 h-2.5 bg-[#049372] rounded-full"></span><%= @room.title %>
         </button>
-        <svg class="w-4 h-4 fill-brand-gray-500 group-hover:fill-brand-purple" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path d="M2 22C2 17.5817 5.58172 14 10 14C14.4183 14 18 17.5817 18 22H16C16 18.6863 13.3137 16 10 16C6.68629 16 4 18.6863 4 22H2ZM10 13C6.685 13 4 10.315 4 7C4 3.685 6.685 1 10 1C13.315 1 16 3.685 16 7C16 10.315 13.315 13 10 13ZM10 11C12.21 11 14 9.21 14 7C14 4.79 12.21 3 10 3C7.79 3 6 4.79 6 7C6 9.21 7.79 11 10 11ZM18.2837 14.7028C21.0644 15.9561 23 18.752 23 22H21C21 19.564 19.5483 17.4671 17.4628 16.5271L18.2837 14.7028ZM17.5962 3.41321C19.5944 4.23703 21 6.20361 21 8.5C21 11.3702 18.8042 13.7252 16 13.9776V11.9646C17.6967 11.7222 19 10.264 19 8.5C19 7.11935 18.2016 5.92603 17.041 5.35635L17.5962 3.41321Z"></path></svg>
-        <.live_component module={UserCountComponent} id={"user_count_active_room_#{@room.id}-b"} room_id={@room.id} />
+        <.live_component
+          module={ActiveUserComponent}
+          id={"user_count_active_room_#{@room.id}-b"}
+          room_id={@room.id}
+          show_display_users_modal={false}
+          sidebar={true}
+        />
       </div>
     </div>
     """
@@ -499,10 +588,16 @@ defmodule ElixirconfChatWeb.ChatLive do
     <%= for {day, timeslots} <- @sorted_days do %>
       <div>
         <section class="mt-6" aria-labelledby="schedule-day">
-          <h2 class="text-xl md:text-2xl text-brand-gray-800" id={"schedule-day-#{day}"}><%= day %></h2>
+          <h2 class="text-xl md:text-2xl text-brand-gray-800" id={"schedule-day-#{day}"}>
+            <%= day %>
+          </h2>
           <div class="mt-3 space-y-3">
             <%= for timeslot <- timeslots do %>
-              <.timeslot_item timeslot={timeslot} track_labels={@track_labels} />
+              <.timeslot_item
+                timeslot={timeslot}
+                track_labels={@track_labels}
+                show_display_users_modal={@show_display_users_modal}
+              />
             <% end %>
           </div>
         </section>
@@ -587,7 +682,7 @@ defmodule ElixirconfChatWeb.ChatLive do
               <.live_component
                 platform_id={:swiftui}
                 native={@native}
-                module={UserCountComponent}
+                module={ActiveUserComponent}
                 id={"user_count_#{room.id}"}
                 room_id={room.id} />
             </HStack>
@@ -606,8 +701,8 @@ defmodule ElixirconfChatWeb.ChatLive do
           <h3>
             <%= @timeslot.formatted_string %>
           </h3>
-          <!-- TODO: Doors open or not -->
-          <span>Doors Open</span>
+          <%!-- TODO: Doors open or not --%>
+          <span></span>
         </div>
         <%= for room <- @timeslot.rooms do %>
           <div>
@@ -618,16 +713,25 @@ defmodule ElixirconfChatWeb.ChatLive do
             <% end %>
             <div>
               <div>
-                <button class="w-full text-left font-medium text-xl/6 text-brand-gray-800 break-words cursor-pointer hover:text-brand-purple hover:underline outline-none focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-brand-purple focus-visible:rounded-lg" phx-click="join_room" phx-value-room-id={"#{room.id}"}><%= room.title %></button>
+                <button
+                  class="w-full text-left font-medium text-xl/6 text-brand-gray-800 break-words cursor-pointer hover:text-brand-purple hover:underline outline-none focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-brand-purple focus-visible:rounded-lg"
+                  phx-click="join_room"
+                  phx-value-room-id={"#{room.id}"}
+                >
+                  <%= room.title %>
+                </button>
                 <%= if room.presenters != [] do %>
                   <div class="mt-1 mb-4 flex items-center justify-between">
                     <p class="leading-5 text-brand-gray-600 group-hover:text-brand-purple">
                       <%= Enum.join(room.presenters, ", ") %>
                     </p>
-                    <div class="flex items-center gap-x-2">
-                      <svg class="w-4 h-4 fill-brand-gray-500 group-hover:fill-brand-purple" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path d="M2 22C2 17.5817 5.58172 14 10 14C14.4183 14 18 17.5817 18 22H16C16 18.6863 13.3137 16 10 16C6.68629 16 4 18.6863 4 22H2ZM10 13C6.685 13 4 10.315 4 7C4 3.685 6.685 1 10 1C13.315 1 16 3.685 16 7C16 10.315 13.315 13 10 13ZM10 11C12.21 11 14 9.21 14 7C14 4.79 12.21 3 10 3C7.79 3 6 4.79 6 7C6 9.21 7.79 11 10 11ZM18.2837 14.7028C21.0644 15.9561 23 18.752 23 22H21C21 19.564 19.5483 17.4671 17.4628 16.5271L18.2837 14.7028ZM17.5962 3.41321C19.5944 4.23703 21 6.20361 21 8.5C21 11.3702 18.8042 13.7252 16 13.9776V11.9646C17.6967 11.7222 19 10.264 19 8.5C19 7.11935 18.2016 5.92603 17.041 5.35635L17.5962 3.41321Z"></path></svg>
-                      <.live_component module={UserCountComponent} id={"user_count_#{room.id}"} room_id={room.id} />
-                    </div>
+                    <.live_component
+                      module={ActiveUserComponent}
+                      id={"user_count_#{room.id}"}
+                      room_id={room.id}
+                      show_display_users_modal={false}
+                      sidebar={true}
+                    />
                   </div>
                 <% end %>
               </div>
