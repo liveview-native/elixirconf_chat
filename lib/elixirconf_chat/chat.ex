@@ -65,8 +65,8 @@ defmodule ElixirconfChat.Chat do
   @doc """
   Joins a Room by ID.
   """
-  def join_room(room_id, pid) do
-    Server.join(room_id, pid)
+  def join_room(room_id, user_id, pid) do
+    Server.join(room_id, user_id, pid)
   end
 
   @doc """

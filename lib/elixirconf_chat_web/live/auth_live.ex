@@ -9,12 +9,14 @@ defmodule ElixirconfChatWeb.AuthLive do
   alias ElixirconfChat.Users.User
 
   @impl true
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket,
-      error: nil,
-      login_code_buffer: "",
-      user: nil
-     )}
+  def mount(params, _session, socket) do
+    case params["email"] do
+      nil ->
+        {:ok, assign(socket, error: nil, login_code_buffer: "", user: nil)}
+
+      email ->
+        {:ok, assign(socket, error: nil, login_code_buffer: "", user: Users.get_user_by_email(email))}
+    end
   end
 
   @impl true
@@ -58,7 +60,7 @@ defmodule ElixirconfChatWeb.AuthLive do
            {:user_with_code, Auth.randomize_user_login_code(user)},
          {:ok, _result} <- deliver_login_email(user_with_code)
     do
-      {:noreply, assign(socket, error: nil, user: user_with_code)}
+      {:noreply, push_navigate(socket, to: "/?email=#{email}", replace: true)}
     else
       {:user, nil} ->
         {:noreply,
@@ -93,6 +95,10 @@ defmodule ElixirconfChatWeb.AuthLive do
         {:noreply,
          assign(socket, error: "Your login code has expired. Please go back and try again.")}
     end
+  end
+
+  def handle_event("set_login_code_buffer", %{"login_code" => login_code}, socket) do
+    {:noreply, assign(socket, login_code_buffer: login_code)}
   end
 
   ###
