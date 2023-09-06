@@ -124,10 +124,16 @@ defmodule ElixirconfChatWeb.ChatLive do
       Chat.leave_room(old_room_id, self())
     end
 
-    # Load Room asynchronously
-    Process.send_after(self(), {:join_room, room_id, user.id}, 150)
+    case assigns do
+      %{platform_id: :swiftui} ->
+        # Load Room asynchronously on iOS to avoid potential large renders
+        Process.send_after(self(), {:join_room, room_id, user.id}, 100)
 
-    {:noreply, assign(socket, loading_room: true, room_page: true, room: nil, room_id: nil)}
+        {:noreply, assign(socket, loading_room: true, room_page: true, room: nil, room_id: nil)}
+
+      _ ->
+        join_room(room_id, user.id, socket)
+    end
   end
 
   @impl true
@@ -179,21 +185,7 @@ defmodule ElixirconfChatWeb.ChatLive do
   end
 
   def handle_info({:join_room, room_id, user_id}, socket) do
-    Chat.join_room(room_id, user_id, self())
-
-    case Chat.get_room(room_id) do
-      %Room{messages: messages, server_state: %{messages: unsaved_messages}} = room ->
-        messages =
-          (messages ++ unsaved_messages)
-          |> Enum.sort_by(& &1.posted_at, NaiveDateTime)
-
-        {:noreply,
-         assign(socket, loading_room: false, messages: messages, room: room, room_id: room.id)}
-
-      _ ->
-        # TODO: Handle error
-        {:noreply, socket}
-    end
+    join_room(room_id, user_id, socket)
   end
 
   @impl true
@@ -797,6 +789,24 @@ defmodule ElixirconfChatWeb.ChatLive do
   end
 
   ###
+
+  defp join_room(room_id, user_id, socket) do
+    Chat.join_room(room_id, user_id, self())
+
+    case Chat.get_room(room_id) do
+      %Room{messages: messages, server_state: %{messages: unsaved_messages}} = room ->
+        messages =
+          (messages ++ unsaved_messages)
+          |> Enum.sort_by(& &1.posted_at, NaiveDateTime)
+
+        {:noreply,
+         assign(socket, loading_room: false, room_page: true, messages: messages, room: room, room_id: room.id)}
+
+      _ ->
+        # TODO: Handle error
+        {:noreply, socket}
+    end
+  end
 
   @days_of_week %{
     1 => "Monday",
