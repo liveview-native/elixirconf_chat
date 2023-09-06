@@ -640,7 +640,7 @@ defmodule ElixirconfChatWeb.ChatLive do
     ~H"""
     <%= for {day, timeslots} <- @sorted_days do %>
       <div>
-        <section class="mt-6" aria-labelledby="schedule-day">
+        <section class="mt-6" aria-labelledby={"schedule-day-#{day}"}>
           <h2 class="text-xl md:text-2xl text-brand-gray-800" id={"schedule-day-#{day}"}>
             <%= day %>
           </h2>
