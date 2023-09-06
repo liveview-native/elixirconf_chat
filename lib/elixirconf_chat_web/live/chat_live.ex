@@ -590,23 +590,21 @@ defmodule ElixirconfChatWeb.ChatLive do
 
   def hallway_item(assigns) do
     ~H"""
-    <div class="mt-5 p-3 bg-brand-gray-50 rounded-2xl">
-      <div class="flex items-center gap-2">
-        <button
-          class="w-full uppercase font-semibold text-sm text-brand-gray-700 tracking-[3px] text-center cursor-pointer hover:text-brand-purple hover:underline outline-none focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-brand-purple focus-visible:rounded-lg"
-          phx-click="join_room"
-          phx-value-room-id={"#{@room.id}"}
-        >
-          <span class="inline-block mr-3 w-2.5 h-2.5 bg-[#049372] rounded-full"></span><%= @room.title %>
-        </button>
-        <.live_component
-          module={ActiveUserComponent}
-          id={"user_count_active_room_#{@room.id}-b"}
-          room_id={@room.id}
-          show_display_users_modal={false}
-          sidebar={true}
-        />
-      </div>
+    <div class="mt-5 bg-brand-gray-50 rounded-2xl">
+      <a class="block p-3 rounded-2xl outline-none transition duration-200 focus-visible:outline-2 focus-visible:outline-offset-1 hover:bg-brand-purple focus-visible:outline-brand-purple group" href="#" phx-click="join_room" phx-value-room-id={"#{@room.id}"} aria-label={"#{@room.title}"}>
+        <div class="flex items-center gap-2">
+          <div class="w-full uppercase font-semibold text-sm text-brand-gray-700 tracking-[3px] text-center group-hover:text-white" >
+            <span class="inline-block mr-3 w-2.5 h-2.5 bg-[#049372] rounded-full"></span><%= @room.title %>
+          </div>
+          <.live_component
+            module={ActiveUserComponent}
+            id={"user_count_active_room_#{@room.id}-b"}
+            room_id={@room.id}
+            show_display_users_modal={false}
+            sidebar={true}
+          />
+        </div>
+      </a>
     </div>
     """
   end
@@ -642,7 +640,7 @@ defmodule ElixirconfChatWeb.ChatLive do
     ~H"""
     <%= for {day, timeslots} <- @sorted_days do %>
       <div>
-        <section class="mt-6" aria-labelledby="schedule-day">
+        <section class="mt-6" aria-labelledby={"schedule-day-#{day}"}>
           <h2 class="text-xl md:text-2xl text-brand-gray-800" id={"schedule-day-#{day}"}>
             <%= day %>
           </h2>
@@ -750,9 +748,9 @@ defmodule ElixirconfChatWeb.ChatLive do
 
   def timeslot_item(assigns) do
     ~H"""
-    <div class="p-3 bg-brand-gray-50 rounded-2xl">
+    <div class="bg-brand-gray-50 rounded-2xl">
       <div>
-        <div class="mb-3 flex flex-wrap items-center justify-between uppercase font-semibold text-sm text-brand-gray-700 tracking-[3px]">
+        <div class="p-3 pb-2 flex flex-wrap items-center justify-between uppercase font-semibold text-sm text-brand-gray-700 tracking-[3px]">
           <h3>
             <%= @timeslot.formatted_string %>
           </h3>
@@ -760,37 +758,29 @@ defmodule ElixirconfChatWeb.ChatLive do
           <span></span>
         </div>
         <%= for room <- @timeslot.rooms do %>
-          <div>
+          <div class="p-1">
             <%= if room.track > 0 do %>
-              <span class="inline-block mb-2 px-3 py-1.5 rounded-lg border border-brand-gray-300 font-semibold text-brand-gray-500 text-xs uppercase tracking-[3px]">
+              <span class="inline-block mx-2 mb-0.5 px-2 py-1.5 rounded-lg border border-brand-gray-300 font-semibold text-brand-gray-500 text-xs uppercase tracking-[3px]">
                 Track <%= Map.get(@track_labels, room.track, "?") %>
               </span>
             <% end %>
-            <div>
-              <div>
-                <button
-                  class="w-full text-left font-medium text-xl/6 text-brand-gray-800 break-words cursor-pointer hover:text-brand-purple hover:underline outline-none focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-brand-purple focus-visible:rounded-lg"
-                  phx-click="join_room"
-                  phx-value-room-id={"#{room.id}"}
-                >
-                  <%= room.title %>
-                </button>
-                <%= if room.presenters != [] do %>
-                  <div class="mt-1 mb-4 flex items-center justify-between">
-                    <p class="leading-5 text-brand-gray-600 group-hover:text-brand-purple">
-                      <%= Enum.join(room.presenters, ", ") %>
-                    </p>
-                    <.live_component
-                      module={ActiveUserComponent}
-                      id={"user_count_#{room.id}"}
-                      room_id={room.id}
-                      show_display_users_modal={false}
-                      sidebar={true}
-                    />
-                  </div>
-                <% end %>
-              </div>
-            </div>
+            <a class="block px-2 py-1.5 rounded-2xl outline-none transition duration-200 focus-visible:outline-2 focus-visible:outline-offset-1 hover:bg-brand-purple focus-visible:outline-brand-purple focus-visible:rounded-lg group" href="#" phx-click="join_room" phx-value-room-id={"#{room.id}"} aria-label={room.title}>
+              <span class="w-full text-left font-medium text-xl/6 text-brand-gray-800 break-words group-hover:text-white"><%= room.title %></span>
+              <%= if room.presenters != [] do %>
+                <div class="mt-1 mb-4 flex items-center justify-between">
+                  <p class="leading-5 text-brand-gray-600 group-hover:text-brand-gray-100">
+                    <%= Enum.join(room.presenters, ", ") %>
+                  </p>
+                  <.live_component
+                    module={ActiveUserComponent}
+                    id={"user_count_#{room.id}"}
+                    room_id={room.id}
+                    show_display_users_modal={false}
+                    sidebar={true}
+                  />
+                </div>
+              <% end %>
+            </a>
           </div>
         <% end %>
       </div>
