@@ -590,23 +590,21 @@ defmodule ElixirconfChatWeb.ChatLive do
 
   def hallway_item(assigns) do
     ~H"""
-    <div class="mt-5 p-3 bg-brand-gray-50 rounded-2xl">
-      <div class="flex items-center gap-2">
-        <button
-          class="w-full uppercase font-semibold text-sm text-brand-gray-700 tracking-[3px] text-center cursor-pointer hover:text-brand-purple hover:underline outline-none focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-brand-purple focus-visible:rounded-lg"
-          phx-click="join_room"
-          phx-value-room-id={"#{@room.id}"}
-        >
-          <span class="inline-block mr-3 w-2.5 h-2.5 bg-[#049372] rounded-full"></span><%= @room.title %>
-        </button>
-        <.live_component
-          module={ActiveUserComponent}
-          id={"user_count_active_room_#{@room.id}-b"}
-          room_id={@room.id}
-          show_display_users_modal={false}
-          sidebar={true}
-        />
-      </div>
+    <div class="mt-5 bg-brand-gray-50 rounded-2xl">
+      <a class="block p-3 rounded-2xl outline-none transition duration-200 focus-visible:outline-2 focus-visible:outline-offset-1 hover:bg-brand-purple focus-visible:outline-brand-purple group" href="#" phx-click="join_room" phx-value-room-id={"#{@room.id}"} aria-label={"#{@room.title}"}>
+        <div class="flex items-center gap-2">
+          <div class="w-full uppercase font-semibold text-sm text-brand-gray-700 tracking-[3px] text-center group-hover:text-white" >
+            <span class="inline-block mr-3 w-2.5 h-2.5 bg-[#049372] rounded-full"></span><%= @room.title %>
+          </div>
+          <.live_component
+            module={ActiveUserComponent}
+            id={"user_count_active_room_#{@room.id}-b"}
+            room_id={@room.id}
+            show_display_users_modal={false}
+            sidebar={true}
+          />
+        </div>
+      </a>
     </div>
     """
   end
