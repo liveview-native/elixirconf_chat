@@ -127,7 +127,7 @@ defmodule ElixirconfChatWeb.ChatLive do
     case assigns do
       %{platform_id: :swiftui} ->
         # Load Room asynchronously on iOS to avoid potential large renders
-        Process.send_after(self(), {:join_room, room_id, user.id}, 100)
+        Process.send_after(self(), {:join_room, room_id, user.id}, 200)
 
         {:noreply, assign(socket, loading_room: true, room_page: true, room: nil, room_id: nil)}
 
