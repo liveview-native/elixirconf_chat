@@ -84,16 +84,16 @@ defmodule ElixirconfChatWeb.ChatLive do
   @impl true
   def render(%{current_user: %{banned_at: nil}} = assigns) do
     ~H"""
-    <div class="px-4 min-h-[496px] md:min-h-[600px] overflow-y-auto bg-brand-gray-200 font-system">
+    <div class="px-4 md:min-h-[600px] overflow-y-auto bg-brand-gray-200 font-system">
       <.logo />
-      <div class="mx-auto w-full max-w-[1200px] md:grid md:grid-cols-12 border border-brand-gray-200 rounded-t-[32px] bg-white">
-        <div class="min-h-[208px] max-h-[calc(33vh-5rem)] md:max-h-full md:h-[calc(100vh-6.25rem)] md:min-h-[600px] overflow-y-auto border-b-4 border-brand-purple md:col-span-6 md:border-b-0 md:border-r md:border-brand-gray-200 lg:col-span-5 xl:col-span-4 p-4 md:p-6">
+      <div class="mx-auto w-full max-w-[1200px] md:grid md:grid-cols-12 border border-brand-gray-200 rounded-t-[32px] bg-white overflow-hidden">
+        <div class="md:block h-[calc(100vh-5rem)] md:max-h-full md:h-[calc(100vh-6.25rem)] md:min-h-[600px] overflow-y-auto md:col-span-6 md:border-r md:border-brand-gray-200 lg:col-span-5 xl:col-span-4 p-4 md:p-6" id="chat-schedule">
           <h1 class="font-medium text-2xl md:text-3.5xl text-brand-gray-700">Schedule</h1>
           <.admin {assigns} />
           <.hallway {assigns} />
           <.rooms_list {assigns} />
         </div>
-        <div class="relative min-h-[208px] h-[calc(67vh-2rem)] md:max-h-full md:h-[calc(100vh-6.25rem)] md:min-h-[600px] md:col-span-6 lg:col-span-7 xl:col-span-8">
+        <div class="hidden md:block relative h-[calc(100vh-5rem)] md:max-h-full md:h-[calc(100vh-6.25rem)] md:min-h-[600px] md:col-span-6 lg:col-span-7 xl:col-span-8" id="chat-messages">
           <%= if @room_page do %>
             <.room_page {assigns} />
           <% else %>
@@ -425,7 +425,7 @@ defmodule ElixirconfChatWeb.ChatLive do
         <br />
       <% else %>
         <%= if @messages == [] do %>
-          <div class="h-[calc(67vh-11.5rem)] md:h-[calc(100vh-17.5rem)] max-w-xs mx-auto flex items-center justify-center text-lg text-center text-brand-gray-600">
+          <div class="h-[calc(100vh-15rem)] md:h-[calc(100vh-17.5rem)] max-w-xs mx-auto flex items-center justify-center text-lg text-center text-brand-gray-600">
             <div>
               <span>👋</span>
               <p class="mt-3">
@@ -437,7 +437,7 @@ defmodule ElixirconfChatWeb.ChatLive do
           <div
             id={"chat_history_#{@room.id}"}
             phx-hook="ChatAutoscroll"
-            class="h-[calc(67vh-11.5rem)] md:h-[calc(100vh-17.5rem)] md:min-h-[400px] overflow-y-scroll space-y-3 px-4 md:px-6"
+            class="h-[calc(100vh-15rem)] md:h-[calc(100vh-17.5rem)] md:min-h-[400px] overflow-y-scroll space-y-3 px-4 md:px-6"
           >
             <div class="space-y-3">
               <%= for {message, index} <- Enum.with_index(@messages) do %>
