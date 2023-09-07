@@ -10,7 +10,7 @@ defmodule ElixirconfChatWeb.PrivacyPolicyLive do
         <div class="text-center pt-8">
           <h1 class="text-xl font-semibold">Privacy Policy</h1>
           <p class="m-2 font-normal text-brand-gray-600">
-            The ElixirConf 2022 Chat app stores the email addresses and names of attendees, and any messages that are sent through the app.
+            The ElixirConf 2023 Chat app stores the email addresses and names of attendees, and any messages that are sent through the app.
             <br>
             No other personal information is stored.
           </p>
