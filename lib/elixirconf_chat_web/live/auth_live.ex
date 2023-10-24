@@ -1,8 +1,6 @@
 defmodule ElixirconfChatWeb.AuthLive do
   use Phoenix.LiveView
-  use LiveViewNative.LiveView
-
-  import ElixirconfChatWeb.Modclasses.SwiftUi, only: [modclass: 3]
+  use LiveViewNative.LiveView, stylesheet: ElixirconfChatWeb.Styles.AppStyles
 
   alias ElixirconfChat.Auth
   alias ElixirconfChat.Users
@@ -22,10 +20,10 @@ defmodule ElixirconfChatWeb.AuthLive do
   @impl true
   def render(%{platform_id: :swiftui} = assigns) do
     ~SWIFTUI"""
-    <VStack modifiers={multiline_text_alignment(alignment: :center) |> text_field_style(style: :rounded_border)}}>
+    <VStack class="align-center text-field-roundedBorder">
       <.logo logo_title={true} {assigns} />
-      <Spacer modclass="h-24" />
-      <VStack modclass="p-24">
+      <Spacer class="h-24" />
+      <VStack class="p-24">
         <%= if assigns[:user] do %>
           <.login_code_form {assigns} />
         <% else %>
@@ -106,8 +104,8 @@ defmodule ElixirconfChatWeb.AuthLive do
   def logo(%{platform_id: :swiftui} = assigns) do
     ~SWIFTUI"""
     <VStack>
-      <Image modclass="stretch w-82 h-82 offset-y-8" name="Logo" />
-      <Text modclass="capitalize type-size-x-small kerning-2 font-weight-semibold">ElixirConf Chat</Text>
+      <Image class="stretch w-82 h-82 offset-y-8" name="Logo" />
+      <Text class="capitalize type-size-x-small kerning-2 font-weight-semibold">ElixirConf Chat</Text>
     </VStack>
     """
   end
@@ -125,23 +123,23 @@ defmodule ElixirconfChatWeb.AuthLive do
     ~SWIFTUI"""
     <LiveForm id="email" phx-submit="check_email">
       <.welcome_message {assigns} />
-      <Spacer modclass="h-48" />
-      <HStack modclass="align-leading h-32">
+      <Spacer class="h-48" />
+      <HStack class="align-leading h-32">
         <Text>Your Email Address</Text>
         <Spacer />
       </HStack>
-      <TextField name="email" modclass="disable-autocorrect autocapitalize-never h-42 p-8 text-field-plain overlay:rect type-size-x-large align-leading">
-        <RoundedRectangle modclass="stroke:lightchrome fg-color-clear" corner-radius="8" template={:rect} />
+      <TextField name="email" class="disable-autocorrect autocapitalize-never h-42 p-8 text-field-plain overlay:rect type-size-xLarge align-leading">
+        <RoundedRectangle class="stroke:lightchrome fg-color-clear" corner-radius="8" template={:rect} />
       </TextField>
-      <Spacer modclass="h-32" />
-      <LiveSubmitButton modclass="w-full h-56 background:rect">
+      <Spacer class="h-32" />
+      <LiveSubmitButton class="w-full h-56 background:rect">
         <Spacer />
-        <Text modclass="fg-color-white font-weight-semibold type-size-x-large">Log In</Text>
+        <Text class="fg-color-white font-weight-semibold type-size-x-large">Log In</Text>
         <Spacer />
-        <RoundedRectangle modclass="fg-color:elixirpurple" corner-radius="8" template={:rect} />
+        <RoundedRectangle class="fg-color:elixirpurple" corner-radius="8" template={:rect} />
       </LiveSubmitButton>
       <%= if assigns[:error] do %>
-        <Text modifiers={foreground_style({:color, :red})}>
+        <Text class="fg-color-red">
           <%= @error %>
         </Text>
       <% end %>
@@ -176,47 +174,47 @@ defmodule ElixirconfChatWeb.AuthLive do
   defp login_code_form(%{platform_id: :swiftui} = assigns) do
     ~SWIFTUI"""
     <LiveForm id="login_code" phx-submit="verify_code">
-      <Text modclass="font-title font-weight-semibold p-8">Enter Code to access</Text>
-      <Text modclass="line-spacing-8 font-weight-light">
+      <Text class="font-title font-weight-semibold p-8">Enter Code to access</Text>
+      <Text class="line-spacing-8 font-weight-light">
         We’ve sent a unique code to your email address. Please enter it below to continue.
       </Text>
-      <Spacer modclass="h-64" />
-      <HStack modclass="h-12 offset-y--16 fg-color:errorcolor">
+      <Spacer class="h-64" />
+      <HStack class="h-12 offset-y--16 fg-color:errorcolor">
         <%= if assigns[:error] do %>
           <Image system-name="exclamationmark.circle.fill" />
-          <Text modclass="italic type-size-small">
+          <Text class="italic type-size-small">
             <%= @error %>
           </Text>
         <% end %>
       </HStack>
-      <HStack modclass="scroll-disabled">
+      <HStack class="scroll-disabled">
         <ZStack>
-          <TextField name="login_code" phx-change="set_login_code_buffer" modclass="text-field-plain align-leading kerning-46 w-300 keyboard-type-numbers-and-punctuation fg-color-clear">
+          <TextField name="login_code" phx-change="set_login_code_buffer" class="text-field-plain align-leading kerning-46 w-300 keyboard-type-numbersAndPunctuation fg-color-clear">
           </TextField>
-          <HStack modclass="offset-x--6">
+          <HStack class="offset-x--6">
             <%= for n <- 0..5 do %>
-              <ZStack modclass="overlay:rect h-48 w-48">
+              <ZStack class="overlay:rect h-48 w-48">
                 <%= if String.at(@login_code_buffer, n) do %>
                   <Text><%= String.at(@login_code_buffer, n) %></Text>
                 <% end %>
                 <%= if assigns[:error] do %>
-                  <RoundedRectangle modclass="stroke:errorcolor h-48 w-48 overlay:step-bg" corner-radius="8">
-                    <RoundedRectangle template={:step_bg} modclass="fg-color:errorcolor opacity-0.125 h-48 w-48" corner-radius="8" />
+                  <RoundedRectangle class="stroke:errorcolor h-48 w-48 overlay:step-bg" corner-radius="8">
+                    <RoundedRectangle template={:step_bg} class="fg-color:errorcolor opacity-0.125 h-48 w-48" corner-radius="8" />
                   </RoundedRectangle>
                 <% else %>
-                  <RoundedRectangle modclass="stroke:lightchrome h-48 w-48" corner-radius="8" />
+                  <RoundedRectangle class="stroke:lightchrome h-48 w-48" corner-radius="8" />
                 <% end %>
               </ZStack>
             <% end %>
           </HStack>
         </ZStack>
       </HStack>
-      <Spacer modclass="h-64" />
-      <LiveSubmitButton modclass="w-full h-56 background:rect">
+      <Spacer class="h-64" />
+      <LiveSubmitButton class="w-full h-56 background:rect">
         <Spacer />
-        <Text modclass="fg-color-white font-weight-semibold type-size-x-large">Log In</Text>
+        <Text class="fg-color-white font-weight-semibold type-size-x-large">Log In</Text>
         <Spacer />
-        <RoundedRectangle modclass="fg-color:elixirpurple" corner-radius="8" template={:rect} />
+        <RoundedRectangle class="fg-color:elixirpurple" corner-radius="8" template={:rect} />
       </LiveSubmitButton>
     </LiveForm>
     """
@@ -285,11 +283,11 @@ defmodule ElixirconfChatWeb.AuthLive do
   defp welcome_message(%{platform_id: :swiftui} = assigns) do
     ~SWIFTUI"""
     <VStack id="welcome">
-      <VStack modclass="font-title font-weight-semibold p-16">
+      <VStack class="font-title font-weight-semibold p-16">
         <Text>Welcome to ElixirConf</Text>
         <Text>2023 Chat</Text>
       </VStack>
-      <VStack modclass="line-spacing-8 font-weight-light">
+      <VStack class="line-spacing-8 font-weight-light">
         <Text>To get started, enter the email address</Text>
         <Text>you used to register for ElixirConf 2023</Text>
       </VStack>

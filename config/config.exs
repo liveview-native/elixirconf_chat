@@ -74,7 +74,12 @@ config :phoenix, :json_library, Jason
 # Define platform support for LiveView Native
 config :live_view_native,
   plugins: [
-    LiveViewNativeSwiftUi
+    LiveViewNative.SwiftUI
+  ]
+
+config :live_view_native_stylesheet,
+  parsers: [
+    swiftui: LiveViewNative.SwiftUI.RulesParser
   ]
 
 # Use Oban for background job processing

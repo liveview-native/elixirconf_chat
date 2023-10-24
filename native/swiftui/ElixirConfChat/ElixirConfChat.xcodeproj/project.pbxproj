@@ -403,7 +403,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/liveview-native/liveview-client-swiftui";
 			requirement = {
-				branch = "revert-navigation-page-clear";
+				branch = "modifier-sheets";
 				kind = branch;
 			};
 		};
