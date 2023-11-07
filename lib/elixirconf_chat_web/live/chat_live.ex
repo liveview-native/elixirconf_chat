@@ -36,14 +36,14 @@ defmodule ElixirconfChatWeb.ChatLive do
 
   @impl true
   def render(
-        %{native: %{platform_config: %{user_interface_idiom: ui_idiom}}, platform_id: :swiftui} =
+        %{native: %{platform_config: %{user_interface_idiom: ui_idiom}}, format: :swiftui} =
           assigns
       )
       when ui_idiom in ~w(mac pad) do
     ~SWIFTUI"""
     <VStack class="w-full">
       <HStack>
-        <.logo height={48} width={48} native={@native} platform_id={:swiftui} />
+        <.logo height={48} width={48} native={@native} format={:swiftui} />
       </HStack>
       <HStack>
         <VStack class="w-400">
@@ -66,12 +66,12 @@ defmodule ElixirconfChatWeb.ChatLive do
   end
 
   @impl true
-  def render(%{platform_id: :swiftui} = assigns) do
+  def render(%{format: :swiftui} = assigns) do
     ~SWIFTUI"""
     <VStack class="w-full">
       <.room_page {assigns} />
       <HStack>
-        <.logo height={48} width={48} native={@native} platform_id={:swiftui} />
+        <.logo height={48} width={48} native={@native} format={:swiftui} />
       </HStack>
       <.hallway {assigns} />
       <.rooms_list {assigns} />
@@ -127,7 +127,7 @@ defmodule ElixirconfChatWeb.ChatLive do
     end
 
     case assigns do
-      %{platform_id: :swiftui} ->
+      %{format: :swiftui} ->
         # Load Room asynchronously on iOS to avoid potential large renders
         Process.send_after(self(), {:join_room, room_id, user.id}, 200)
 
@@ -232,7 +232,7 @@ defmodule ElixirconfChatWeb.ChatLive do
     {:noreply, socket}
   end
 
-  def logo(%{platform_id: :swiftui} = assigns) do
+  def logo(%{format: :swiftui} = assigns) do
     ~SWIFTUI"""
     <VStack class="pv-12">
       <Image class="stretch w-52 h-52" name="Logo" />
@@ -252,7 +252,7 @@ defmodule ElixirconfChatWeb.ChatLive do
     """
   end
 
-  def chat_input(%{platform_id: :swiftui} = assigns) do
+  def chat_input(%{format: :swiftui} = assigns) do
     ~SWIFTUI"""
     <LiveForm id="chat" phx-submit="post_message">
       <HStack class="background:rect">
@@ -312,11 +312,11 @@ defmodule ElixirconfChatWeb.ChatLive do
     """
   end
 
-  def chat_history(%{platform_id: :swiftui} = assigns) do
+  def chat_history(%{format: :swiftui} = assigns) do
     ~SWIFTUI"""
     <VStack>
       <ZStack class="font-weight-semibold fg-color:elixirpurple ph-24">
-        <%= if @native.platform_config.user_interface_idiom == "phone" do %>
+        <%= if @target == :phone do %>
           <HStack>
             <HStack>
               <Image system-name="arrow.left" />
@@ -326,7 +326,7 @@ defmodule ElixirconfChatWeb.ChatLive do
             </HStack>
             <Spacer />
           </HStack>
-          <.logo height={48} width={48} native={@native} platform_id={:swiftui} />
+          <.logo height={48} width={48} native={@native} format={:swiftui} />
         <% end %>
       </ZStack>
       <%= if @loading_room do %>
@@ -344,7 +344,7 @@ defmodule ElixirconfChatWeb.ChatLive do
             <HStack>
               <ZStack class="background:hero_emoji">
                 <Circle class="w-60 h-60 fg-color:lightchrome opacity-0.325" template={:hero_emoji} />
-                <Text class="type-size-accessibility-2">👋</Text>
+                <Text class="type-size-accessibility2">👋</Text>
               </ZStack>
             </HStack>
             <Spacer class="h-24" />
@@ -363,7 +363,7 @@ defmodule ElixirconfChatWeb.ChatLive do
                   index={index}
                   message={message}
                   native={@native}
-                  platform_id={:swiftui}
+                  format={:swiftui}
                 />
               <% end %>
             </ScrollView>
@@ -449,7 +449,7 @@ defmodule ElixirconfChatWeb.ChatLive do
     """
   end
 
-  def chat_message(%{platform_id: :swiftui} = assigns) do
+  def chat_message(%{format: :swiftui} = assigns) do
     ~SWIFTUI"""
     <HStack id={"message_#{@index}"}>
       <%= if @message.user_id == @current_user_id do %>
@@ -550,11 +550,11 @@ defmodule ElixirconfChatWeb.ChatLive do
     """
   end
 
-  def hallway(%{platform_id: :swiftui} = assigns) do
+  def hallway(%{format: :swiftui} = assigns) do
     ~SWIFTUI"""
     <%= for timeslot <- @schedule.pinned do %>
       <%= for room <- timeslot.rooms do %>
-        <.hallway_item room={room} native={@native} platform_id={:swiftui} />
+        <.hallway_item room={room} native={@native} format={:swiftui} />
       <% end %>
     <% end %>
     """
@@ -570,7 +570,7 @@ defmodule ElixirconfChatWeb.ChatLive do
     """
   end
 
-  def hallway_item(%{platform_id: :swiftui} = assigns) do
+  def hallway_item(%{format: :swiftui} = assigns) do
     ~SWIFTUI"""
     <VStack class="background:rect ph-24">
       <RoundedRectangle class="fg-color:lightchrome opacity-0.25" template={:rect} corner-radius="16" />
@@ -609,7 +609,7 @@ defmodule ElixirconfChatWeb.ChatLive do
     """
   end
 
-  def rooms_list(%{platform_id: :swiftui} = assigns) do
+  def rooms_list(%{format: :swiftui} = assigns) do
     ~SWIFTUI"""
     <ScrollView>
       <%= for {day, timeslots} <- @sorted_days do %>
@@ -620,7 +620,7 @@ defmodule ElixirconfChatWeb.ChatLive do
                 <.timeslot_item
                   timeslot={timeslot}
                   native={@native}
-                  platform_id={:swiftui}
+                  format={:swiftui}
                   track_labels={@track_labels} />
               <% end %>
             </VStack>
@@ -660,7 +660,7 @@ defmodule ElixirconfChatWeb.ChatLive do
   end
 
   def room_page(
-        %{native: %{platform_config: %{user_interface_idiom: ui_idiom}}, platform_id: :swiftui} =
+        %{native: %{platform_config: %{user_interface_idiom: ui_idiom}}, format: :swiftui} =
           assigns
       )
       when ui_idiom in ~w(mac pad) do
@@ -672,9 +672,9 @@ defmodule ElixirconfChatWeb.ChatLive do
     """
   end
 
-  def room_page(%{platform_id: :swiftui} = assigns) do
+  def room_page(%{format: :swiftui} = assigns) do
     ~SWIFTUI"""
-    <VStack class="full-screen-cover:room-page">
+    <VStack class="full-screen-cover:room_page" showing={@room_page}>
       <VStack template={:room_page}>
         <Spacer />
         <.chat_history {assigns} />
@@ -697,7 +697,7 @@ defmodule ElixirconfChatWeb.ChatLive do
     """
   end
 
-  def timeslot_item(%{platform_id: :swiftui} = assigns) do
+  def timeslot_item(%{format: :swiftui} = assigns) do
     ~SWIFTUI"""
     <VStack class="background:rect ph-24 align-leading image-scale-small">
       <RoundedRectangle class="fg-color:lightchrome opacity-0.25" template={:rect} corner-radius="16" />
@@ -733,7 +733,7 @@ defmodule ElixirconfChatWeb.ChatLive do
                 <% end %>
               </VStack>
               <.live_component
-                platform_id={:swiftui}
+                format={:swiftui}
                 native={@native}
                 module={ActiveUserComponent}
                 id={"user_count_#{room.id}"}

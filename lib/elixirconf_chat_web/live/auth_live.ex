@@ -18,7 +18,7 @@ defmodule ElixirconfChatWeb.AuthLive do
   end
 
   @impl true
-  def render(%{platform_id: :swiftui} = assigns) do
+  def render(%{format: :swiftui} = assigns) do
     ~SWIFTUI"""
     <VStack class="align-center text-field-roundedBorder">
       <.logo logo_title={true} {assigns} />
@@ -58,7 +58,7 @@ defmodule ElixirconfChatWeb.AuthLive do
            {:user_with_code, Auth.randomize_user_login_code(user)},
          {:ok, _result} <- deliver_login_email(user_with_code)
     do
-      {:noreply, push_navigate(socket, to: "/?email=#{email}", replace: true)}
+      {:noreply, push_navigate(socket, to: "/?email=#{email}", replace: false)}
     else
       {:user, nil} ->
         {:noreply,
@@ -84,7 +84,7 @@ defmodule ElixirconfChatWeb.AuthLive do
            Map.get(socket.assigns, :user),
          {:login_code_valid?, true} <- {:login_code_valid?, login_code == user_login_code},
          token <- Auth.generate_token(user_id) do
-      {:noreply, push_navigate(socket, to: "/chat?token=#{token}", replace: true)}
+      {:noreply, push_navigate(socket, to: "/chat?token=#{token}", replace: false)}
     else
       {:login_code_valid?, false} ->
         {:noreply, assign(socket, error: "The code doesn't match")}
@@ -101,11 +101,11 @@ defmodule ElixirconfChatWeb.AuthLive do
 
   ###
 
-  def logo(%{platform_id: :swiftui} = assigns) do
+  def logo(%{format: :swiftui} = assigns) do
     ~SWIFTUI"""
     <VStack>
       <Image class="stretch w-82 h-82 offset-y-8" name="Logo" />
-      <Text class="capitalize type-size-x-small kerning-2 font-weight-semibold">ElixirConf Chat</Text>
+      <Text class="capitalize type-size-xSmall kerning-2 font-weight-semibold">ElixirConf Chat</Text>
     </VStack>
     """
   end
@@ -119,7 +119,7 @@ defmodule ElixirconfChatWeb.AuthLive do
     """
   end
 
-  defp email_form(%{platform_id: :swiftui} = assigns) do
+  defp email_form(%{format: :swiftui} = assigns) do
     ~SWIFTUI"""
     <LiveForm id="email" phx-submit="check_email">
       <.welcome_message {assigns} />
@@ -134,7 +134,7 @@ defmodule ElixirconfChatWeb.AuthLive do
       <Spacer class="h-32" />
       <LiveSubmitButton class="w-full h-56 background:rect">
         <Spacer />
-        <Text class="fg-color-white font-weight-semibold type-size-x-large">Log In</Text>
+        <Text class="fg-color-white font-weight-semibold type-size-xLarge">Log In</Text>
         <Spacer />
         <RoundedRectangle class="fg-color:elixirpurple" corner-radius="8" template={:rect} />
       </LiveSubmitButton>
@@ -171,7 +171,7 @@ defmodule ElixirconfChatWeb.AuthLive do
     """
   end
 
-  defp login_code_form(%{platform_id: :swiftui} = assigns) do
+  defp login_code_form(%{format: :swiftui} = assigns) do
     ~SWIFTUI"""
     <LiveForm id="login_code" phx-submit="verify_code">
       <Text class="font-title font-weight-semibold p-8">Enter Code to access</Text>
@@ -212,7 +212,7 @@ defmodule ElixirconfChatWeb.AuthLive do
       <Spacer class="h-64" />
       <LiveSubmitButton class="w-full h-56 background:rect">
         <Spacer />
-        <Text class="fg-color-white font-weight-semibold type-size-x-large">Log In</Text>
+        <Text class="fg-color-white font-weight-semibold type-size-xLarge">Log In</Text>
         <Spacer />
         <RoundedRectangle class="fg-color:elixirpurple" corner-radius="8" template={:rect} />
       </LiveSubmitButton>
@@ -280,7 +280,7 @@ defmodule ElixirconfChatWeb.AuthLive do
     """
   end
 
-  defp welcome_message(%{platform_id: :swiftui} = assigns) do
+  defp welcome_message(%{format: :swiftui} = assigns) do
     ~SWIFTUI"""
     <VStack id="welcome">
       <VStack class="font-title font-weight-semibold p-16">

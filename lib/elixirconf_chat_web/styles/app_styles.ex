@@ -3,23 +3,23 @@ defmodule ElixirconfChatWeb.Styles.AppStyles do
 
   ~SHEET"""
   "button-style-" <> button_style do
-    buttonStyle(style: to_ime(button_style))
+    buttonStyle(to_ime(button_style))
   end
 
   "p-" <> padding do
-    padding(edges: .all, length: to_integer(padding))
+    padding(to_integer(padding))
   end
 
   "ph-" <> padding do
-    padding(edges: .horizontal, length: to_integer(padding))
+    padding(.horizontal, to_integer(padding))
   end
 
   "pv-" <> padding do
-    padding(edges: .vertical, length: to_integer(padding))
+    padding(.vertical, to_integer(padding))
   end
 
   "w-full" do
-    frame(maxWidth: .infinity, width: .infinity)
+    frame(maxWidth: .infinity)
   end
 
   "w-" <> width do
@@ -27,19 +27,19 @@ defmodule ElixirconfChatWeb.Styles.AppStyles do
   end
 
   "h-full" do
-    frame(maxHeight: .infinity, height: .infinity)
+    frame(maxHeight: .infinity)
   end
 
   "h-" <> height do
-    frame(width: to_integer(height))
+    frame(height: to_integer(height))
   end
 
   "offset-x-" <> offset do
-    offset(x: to_integer(offset))
+    offset(x: to_integer(offset), y: 0)
   end
 
   "offset-y-" <> offset do
-    offset(y: to_integer(offset))
+    offset(x: 0, y: to_integer(offset))
   end
 
   "hidden" do
@@ -51,7 +51,7 @@ defmodule ElixirconfChatWeb.Styles.AppStyles do
   end
 
   "italic" do
-    italic(isActive: true)
+    italic(true)
   end
 
   "capitalize" do
@@ -83,7 +83,7 @@ defmodule ElixirconfChatWeb.Styles.AppStyles do
   end
 
   "scroll-disabled" do
-    scrollDisabled(disabled: true)
+    scrollDisabled(true)
   end
 
   "align-" <> alignment do
@@ -92,15 +92,15 @@ defmodule ElixirconfChatWeb.Styles.AppStyles do
   end
 
   "autocapitalize-" <> autocapitalization do
-    textInputAutocapitalization(autocapitalization: to_ime(autocapitalization))
+    textInputAutocapitalization(to_ime(autocapitalization))
   end
 
   "disable-autocorrect" do
-    autocorrectionDisabled(disable: true)
+    autocorrectionDisabled(true)
   end
 
   "text-field-" <> style do
-    textFieldStyle(style: to_ime(style))
+    textFieldStyle(to_ime(style))
   end
 
   "background:" <> content do
@@ -112,47 +112,47 @@ defmodule ElixirconfChatWeb.Styles.AppStyles do
   end
 
   "fg-color-" <> fg_color do
-    foregroundColor(color: to_ime(fg_color))
+    foregroundStyle(to_ime(fg_color))
   end
 
   "fg-color:" <> fg_color do
-    foregroundColor(color: fg_color)
+    foregroundStyle(Color(fg_color))
   end
 
   "tint-" <> tint do
-    tint(color: to_ime(tint))
+    tint(to_ime(tint))
   end
 
   "tint:" <> tint do
-    tint(color: tint)
+    tint(Color(tint))
   end
 
   "border-" <> border_color do
-    border(content: to_ime(border_color), width: 1)
+    border(to_ime(border_color), width: 1)
   end
 
   "border:" <> border_color do
-    border(content: to_ime(border_color), width: 1)
+    border(Color(border_color), width: 1)
   end
 
   "stroke-" <> stroke_color do
-    stroke(content: to_ime(stroke_color), lineWidth: 1)
+    stroke(to_ime(stroke_color), lineWidth: 1)
   end
 
   "stroke:" <> stroke_color do
-    stroke(content: stroke_color, lineWidth: 1)
+    stroke(Color(stroke_color), lineWidth: 1)
   end
 
   "line-limit-" <> number do
-    lineLimit(number: to_integer(number))
+    lineLimit(to_integer(number))
   end
 
   "keyboard-type-" <> keyboard_type do
-    keyboardType(keyboardType: to_ime(keyboard_type))
+    keyboardType(to_ime(keyboard_type))
   end
 
   "opacity-" <> opacity do
-    opacity(opacity: to_float(opacity))
+    opacity(to_float(opacity))
   end
 
   "full-screen-cover:" <> content do
@@ -163,4 +163,6 @@ defmodule ElixirconfChatWeb.Styles.AppStyles do
     imageScale(to_ime(image_scale))
   end
   """
+
+  def class(_, _), do: {:unmatched, []}
 end

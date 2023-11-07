@@ -2,7 +2,7 @@ defmodule ElixirconfChatWeb.SharedComponents do
   use Phoenix.Component
   use LiveViewNative.Component
 
-  def logo(%{platform_id: :swiftui} = assigns) do
+  def logo(%{format: :swiftui} = assigns) do
     ~SWIFTUI"""
     <VStack>
       <Image class="stretch w-82 h-82 offset-y-8" name="Logo" />

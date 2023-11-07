@@ -6,7 +6,7 @@ defmodule ElixirconfChatWeb.ActiveUserComponent do
 
   alias ElixirconfChat.Chat.Server
 
-  def render(%{platform_id: :swiftui} = assigns) do
+  def render(%{format: :swiftui} = assigns) do
     ~SWIFTUI"""
     <HStack class="opacity-0.75 type-size-xSmall">
       <Image system-name="person.2" />
