@@ -158,10 +158,6 @@ defmodule ElixirconfChatWeb.Styles.AppStyles do
   "full-screen-cover:" <> content do
     fullScreenCover(content: to_atom(content), isPresented: attr("showing"))
   end
-
-  "image-scale-" <> image_scale do
-    imageScale(to_ime(image_scale))
-  end
   """
 
   def class(_, _), do: {:unmatched, []}

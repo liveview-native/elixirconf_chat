@@ -53,6 +53,7 @@ defmodule ElixirconfChatWeb do
     quote do
       use Phoenix.LiveView,
         layout: {ElixirconfChatWeb.Layouts, :app}
+      use LiveViewNative.LiveView
 
       unquote(html_helpers())
     end

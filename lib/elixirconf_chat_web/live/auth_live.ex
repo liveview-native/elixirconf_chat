@@ -1,6 +1,7 @@
 defmodule ElixirconfChatWeb.AuthLive do
-  use Phoenix.LiveView
-  use LiveViewNative.LiveView, stylesheet: ElixirconfChatWeb.Styles.AppStyles
+  use ElixirconfChatWeb, :live_view
+  use ElixirconfChatWeb.Styles.AppStyles
+  use ElixirconfChatWeb.Styles.ExtraStyles
 
   alias ElixirconfChat.Auth
   alias ElixirconfChat.Users
@@ -303,13 +304,6 @@ defmodule ElixirconfChatWeb.AuthLive do
         To get started, enter the email address you used to register for ElixirConf 2023
       </p>
     </div>
-    """
-  end
-
-  # Allow heroicons to be used
-  def icon(%{name: "hero-" <> _} = assigns) do
-    ~H"""
-    <span class={[@name, @class]} />
     """
   end
 
