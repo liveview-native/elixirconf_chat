@@ -14,12 +14,15 @@ config :elixirconf_chat,
 config :elixirconf_chat, ElixirconfChatWeb.Endpoint,
   url: [host: "localhost"],
   render_errors: [
-    formats: [html: ElixirconfChatWeb.ErrorHTML, json: ElixirconfChatWeb.ErrorJSON],
+    formats: [html: ElixirconfChatWeb.ErrorHTML, json: ElixirconfChatWeb.ErrorJSON, swiftui: ElixirconfChatWeb.ErrorHTML],
     layout: false
   ],
   pubsub_server: ElixirconfChat.PubSub,
   live_view: [signing_salt: "zXGftF2q"]
 
+config :mime, :types, %{
+  "application/swiftui" => ["swiftui"]
+}
 # Configures the mailer
 #
 # By default it uses the "Local" adapter which stores the emails
