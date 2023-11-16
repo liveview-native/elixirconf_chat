@@ -2,7 +2,7 @@ defmodule ElixirconfChatWeb.Router do
   use ElixirconfChatWeb, :router
 
   pipeline :browser do
-    plug(:accepts, ["html"])
+    plug(:accepts, ["html", "swiftui"])
     plug(:fetch_session)
     plug(:fetch_live_flash)
     plug(:put_root_layout, html: {ElixirconfChatWeb.Layouts, :root})
