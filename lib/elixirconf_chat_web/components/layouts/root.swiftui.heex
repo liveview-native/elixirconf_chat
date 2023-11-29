@@ -1,0 +1,8 @@
+<csrf-token value={get_csrf_token()} />
+<HStack class="background:rect w-full h-32">
+  <Text class="w-full h-32 fg-color-white">SwiftUI header</Text>
+  <Rectangle class="w-full h-32 fg-color:elixirpurple" template={:rect} corner-radius="8" />
+</HStack>
+<NavigationStack>
+  <%= @inner_content %>
+</NavigationStack>

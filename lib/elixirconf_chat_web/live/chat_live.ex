@@ -59,6 +59,7 @@ defmodule ElixirconfChatWeb.ChatLive do
             <.room_page {assigns} />
           <% end %>
           <Spacer class="h-24" />
+          <Spacer class="h-32" />
         </VStack>
       </HStack>
     </VStack>

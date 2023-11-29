@@ -124,7 +124,7 @@ defmodule ElixirconfChatWeb.AuthLive do
     ~SWIFTUI"""
     <LiveForm id="email" phx-submit="check_email">
       <.welcome_message {assigns} />
-      <Spacer class="h-48" />
+      <Spacer class="h-48 fg-color-purple" />
       <HStack class="align-leading h-32">
         <Text>Your Email Address</Text>
         <Spacer />

@@ -38,7 +38,7 @@ struct ContentView: View {
             }
             return baseURL
         }(),
-        config: LiveSessionConfiguration(navigationMode: .enabled)
+        config: LiveSessionConfiguration()
     )
     
     var body: some View {

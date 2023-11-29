@@ -1,5 +1,4 @@
 defmodule ElixirconfChat.Users do
-  alias Ecto.Multi
   alias ElixirconfChat.Chat.Messages
   alias ElixirconfChat.Repo
   alias ElixirconfChat.Users.User

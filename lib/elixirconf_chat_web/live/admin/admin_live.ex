@@ -1,9 +1,7 @@
 defmodule ElixirconfChatWeb.Admin.AdminLive do
   use Phoenix.LiveView
 
-  alias ElixirconfChat.Auth
   alias ElixirconfChat.Users
-  alias ElixirconfChat.Users.User
 
   on_mount ElixirconfChatWeb.AssignUser
 
