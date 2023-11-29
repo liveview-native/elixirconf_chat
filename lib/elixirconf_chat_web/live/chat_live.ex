@@ -1,6 +1,7 @@
 defmodule ElixirconfChatWeb.ChatLive do
   use Phoenix.LiveView
-  use LiveViewNative.LiveView, stylesheet: ElixirconfChatWeb.Styles.AppStyles
+  use LiveViewNative.LiveView
+  use ElixirconfChatWeb.Styles.AppStyles
 
   alias ElixirconfChat.RateLimiter
   alias ElixirconfChat.Chat
