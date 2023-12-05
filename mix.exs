@@ -9,7 +9,16 @@ defmodule ElixirconfChat.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+
+      # Docs
+      name: "ElixirConf Chat",
+      source_url: "https://github.com/liveview-native/elixirconf_chat",
+      homepage_url: "https://github.com/liveview-native/elixirconf_chat",
+      docs: [
+        main: "ElixirConf Chat",
+        extras: []
+      ]
     ]
   end
 
@@ -51,12 +60,13 @@ defmodule ElixirconfChat.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:tz, "~> 0.26.2"},
-      {:live_view_native, github: "liveview-native/live_view_native", branch: "layouts"},
-      {:live_view_native_swift_ui, github: "liveview-native/liveview-client-swiftui", branch: "define-default-layouts"},
+      {:live_view_native, github: "liveview-native/live_view_native", branch: "main"},
+      {:live_view_native_swift_ui, github: "liveview-native/liveview-client-swiftui", branch: "main"},
       {:oban, "~> 2.14"},
       {:hackney, "~> 1.18.0"},
       {:ets, "~> 0.9.0"},
-      {:nimble_csv, "~> 1.2.0"}
+      {:nimble_csv, "~> 1.2.0"},
+      {:ex_doc, "~> 0.27", only: :dev, runtime: false}
     ]
   end
 

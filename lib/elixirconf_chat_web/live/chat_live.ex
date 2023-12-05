@@ -1,6 +1,5 @@
 defmodule ElixirconfChatWeb.ChatLive do
-  use Phoenix.LiveView
-  use LiveViewNative.LiveView
+  use ElixirconfChatWeb, :live_view
   use ElixirconfChatWeb.Styles.AppStyles
 
   alias ElixirconfChat.RateLimiter
