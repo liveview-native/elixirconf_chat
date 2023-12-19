@@ -24,9 +24,9 @@ Repo.insert!(%User{
 
 # Test user
 Repo.insert!(%User{
-  email: "tester@dockyard.com",
+  email: "narwin@dockyard.com",
   first_name: "Testy",
-  last_name: "Tester",
+  last_name: "Narwin",
   role: "base"
 })
 

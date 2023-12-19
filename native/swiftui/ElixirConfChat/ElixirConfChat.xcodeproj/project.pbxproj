@@ -3,16 +3,17 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2F426ECF2AA2B91800EA7556 /* LiveViewNative in Frameworks */ = {isa = PBXBuildFile; productRef = 2F426ECE2AA2B91800EA7556 /* LiveViewNative */; };
 		2F426ED42AA2B9DA00EA7556 /* LiveViewNativeLiveForm in Frameworks */ = {isa = PBXBuildFile; productRef = 2F426ED32AA2B9DA00EA7556 /* LiveViewNativeLiveForm */; };
 		2F9983042A60800400F76113 /* ElixirConfChatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9983032A60800400F76113 /* ElixirConfChatApp.swift */; };
 		2F9983062A60800400F76113 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9983052A60800400F76113 /* ContentView.swift */; };
 		2F9983082A60800500F76113 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F9983072A60800500F76113 /* Assets.xcassets */; };
 		2F99830B2A60800500F76113 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F99830A2A60800500F76113 /* Preview Assets.xcassets */; };
+		2FC09DD32AFAB6A6008900D6 /* LiveViewNative in Frameworks */ = {isa = PBXBuildFile; productRef = 2FC09DD22AFAB6A6008900D6 /* LiveViewNative */; };
+		2FC09DD52AFAB6A6008900D6 /* BuiltinRegistryGenerator in Frameworks */ = {isa = PBXBuildFile; productRef = 2FC09DD42AFAB6A6008900D6 /* BuiltinRegistryGenerator */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,8 +34,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2FC09DD32AFAB6A6008900D6 /* LiveViewNative in Frameworks */,
 				2F426ED42AA2B9DA00EA7556 /* LiveViewNativeLiveForm in Frameworks */,
-				2F426ECF2AA2B91800EA7556 /* LiveViewNative in Frameworks */,
+				2FC09DD52AFAB6A6008900D6 /* BuiltinRegistryGenerator in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,8 +132,9 @@
 			);
 			name = ElixirConfChat;
 			packageProductDependencies = (
-				2F426ECE2AA2B91800EA7556 /* LiveViewNative */,
 				2F426ED32AA2B9DA00EA7556 /* LiveViewNativeLiveForm */,
+				2FC09DD22AFAB6A6008900D6 /* LiveViewNative */,
+				2FC09DD42AFAB6A6008900D6 /* BuiltinRegistryGenerator */,
 			);
 			productName = ElixirConfChat;
 			productReference = 2F9983002A60800400F76113 /* ElixirConfChat.app */;
@@ -162,8 +165,8 @@
 			);
 			mainGroup = 2F9982F72A60800400F76113;
 			packageReferences = (
-				2F426ECD2AA2B91800EA7556 /* XCRemoteSwiftPackageReference "liveview-client-swiftui" */,
 				2F426ED22AA2B9DA00EA7556 /* XCRemoteSwiftPackageReference "liveview-native-live-form" */,
+				2FC09DD12AFAB6A6008900D6 /* XCLocalSwiftPackageReference "../../../../../liveview-client-swiftui" */,
 			);
 			productRefGroup = 2F9983012A60800400F76113 /* Products */;
 			projectDirPath = "";
@@ -398,15 +401,14 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		2F426ECD2AA2B91800EA7556 /* XCRemoteSwiftPackageReference "liveview-client-swiftui" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/liveview-native/liveview-client-swiftui";
-			requirement = {
-				branch = "revert-navigation-page-clear";
-				kind = branch;
-			};
+/* Begin XCLocalSwiftPackageReference section */
+		2FC09DD12AFAB6A6008900D6 /* XCLocalSwiftPackageReference "../../../../../liveview-client-swiftui" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../../../../liveview-client-swiftui";
 		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCRemoteSwiftPackageReference section */
 		2F426ED22AA2B9DA00EA7556 /* XCRemoteSwiftPackageReference "liveview-native-live-form" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/liveview-native/liveview-native-live-form";
@@ -418,15 +420,18 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		2F426ECE2AA2B91800EA7556 /* LiveViewNative */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 2F426ECD2AA2B91800EA7556 /* XCRemoteSwiftPackageReference "liveview-client-swiftui" */;
-			productName = LiveViewNative;
-		};
 		2F426ED32AA2B9DA00EA7556 /* LiveViewNativeLiveForm */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 2F426ED22AA2B9DA00EA7556 /* XCRemoteSwiftPackageReference "liveview-native-live-form" */;
 			productName = LiveViewNativeLiveForm;
+		};
+		2FC09DD22AFAB6A6008900D6 /* LiveViewNative */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LiveViewNative;
+		};
+		2FC09DD42AFAB6A6008900D6 /* BuiltinRegistryGenerator */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BuiltinRegistryGenerator;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

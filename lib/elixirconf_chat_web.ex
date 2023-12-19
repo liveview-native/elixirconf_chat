@@ -55,6 +55,8 @@ defmodule ElixirconfChatWeb do
         layout: {ElixirconfChatWeb.Layouts, :app}
 
       unquote(html_helpers())
+
+      use LiveViewNative.LiveView
     end
   end
 

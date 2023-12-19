@@ -9,7 +9,16 @@ defmodule ElixirconfChat.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+
+      # Docs
+      name: "ElixirConf Chat",
+      source_url: "https://github.com/liveview-native/elixirconf_chat",
+      homepage_url: "https://github.com/liveview-native/elixirconf_chat",
+      docs: [
+        main: "ElixirConf Chat",
+        extras: []
+      ]
     ]
   end
 
@@ -38,9 +47,9 @@ defmodule ElixirconfChat.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 3.3"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_view, "~> 0.18.18"},
-      {:floki, ">= 0.30.0", only: :test},
-      {:phoenix_live_dashboard, "~> 0.7.2"},
+      {:phoenix_live_view, ">= 0.18.0"},
+      {:floki, ">= 0.30.0"},
+      {:phoenix_live_dashboard, "~> 0.8.3"},
       {:esbuild, "~> 0.7", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.2.0", runtime: Mix.env() == :dev},
       {:swoosh, "~> 1.3"},
@@ -51,12 +60,13 @@ defmodule ElixirconfChat.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:tz, "~> 0.26.2"},
-      {:live_view_native, "~> 0.1"},
-      {:live_view_native_swift_ui, "~> 0.1"},
+      {:live_view_native, "~> 0.2.0-beta.2"},
+      {:live_view_native_swiftui, "~> 0.2.0-beta.2"},
       {:oban, "~> 2.14"},
       {:hackney, "~> 1.18.0"},
       {:ets, "~> 0.9.0"},
-      {:nimble_csv, "~> 1.2.0"}
+      {:nimble_csv, "~> 1.2.0"},
+      {:ex_doc, "~> 0.27", only: :dev, runtime: false}
     ]
   end
 
